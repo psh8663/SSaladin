@@ -13,8 +13,8 @@ create table request (
 	request_num number primary key,
 	user_id varchar2(12) not null,
 	request_content varchar2(300) not null,
-	request_date date not null,
+	request_date date default SYSDATE not null,
 	foreign key (user_id) references users (user_id) on delete cascade
 );
 
-create sequence request_seq;  
+create sequence request_seq;
