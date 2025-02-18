@@ -16,4 +16,4 @@ CREATE TABLE order_details (
   order_price NUMBER DEFAULT 0,
   CONSTRAINT fk_order_num FOREIGN KEY (order_num) REFERENCES orders(order_num)
 );
-    
+       
