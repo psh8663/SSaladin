@@ -17,4 +17,4 @@ create table request (
 	foreign key (user_id) references users (user_id) on delete cascade
 );
 
-create sequence request_seq;
+create sequence request_seq;  
