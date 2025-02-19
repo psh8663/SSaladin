@@ -18,3 +18,13 @@ CREATE TABLE order_details (
   CONSTRAINT fk_order_num FOREIGN KEY (detail_num) REFERENCES orders(order_num) on delete cascade
 );
     
+
+-- cart 테이블 생성
+CREATE TABLE cart (
+  cart_num NUMBER PRIMARY KEY,
+  user_id NUMBER NOT NULL,
+  book_code NUMBER NOT NULL,
+  cart_quantity NUMBER DEFAULT 0 NOT NULL,
+  CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) on delete cascade,
+  CONSTRAINT fk_book_code FOREIGN KEY (book_code) REFERENCES books(book_code)
+);
