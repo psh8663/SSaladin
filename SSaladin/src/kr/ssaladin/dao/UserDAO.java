@@ -54,7 +54,7 @@ public class UserDAO {
 		boolean flag = false;
 		
         try {
-            // db 연결
+            // db 연결.
         	conn = DBUtil.getConnection();   
             // 로그인 쿼리
             sql = "SELECT user_id FROM users WHERE user_id = ? AND user_pw = ?";
