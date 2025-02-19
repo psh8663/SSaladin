@@ -6,12 +6,9 @@ CREATE TABLE users (
     user_pw VARCHAR2(12) NOT NULL,
     user_phone VARCHAR2(15) NOT NULL,
     user_address VARCHAR2(50) NOT NULL,
-    user_date DATE DEFAULT SYSDATE NOT NULL,
-    CONSTRAINT chk_user_auth CHECK (user_auth IN (0, 1, 2)),
-    CONSTRAINT chk_user_id CHECK (REGEXP_LIKE(user_id, '^[A-Za-z0-9]{6,12}$')),
-    CONSTRAINT chk_user_phone CHECK (REGEXP_LIKE(user_phone, '^010-\d{4}-\d{4}$')),
-    CONSTRAINT chk_user_pw CHECK (REGEXP_LIKE(user_pw, '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,12}$'))
+    user_date DATE DEFAULT SYSDATE NOT NULL
 );
+
 
 CREATE SEQUENCE seq_request_num
     START WITH 1
