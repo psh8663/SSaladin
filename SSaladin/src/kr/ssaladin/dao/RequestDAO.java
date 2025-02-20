@@ -18,7 +18,8 @@ public class RequestDAO {
 		
 		try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT * FROM requst ORDER BY request_num DESC";
+			sql = "SELECT * FROM requst r, users u "
+					+ "WHERE r.user_id=u.user_id ORDER BY request_num DESC";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
@@ -50,10 +51,11 @@ public class RequestDAO {
 	public void insertRequest(String userId, String requestContent) {
 		try {
 			conn = DBUtil.getConnection();
-			sql = "INSERT INTO request (request_num, request_content, request_date)"
-					+ "VALUES (request_seq.nextval, ?, SYSDATE)";
+			sql = "INSERT INTO request (request_num, user_id, request_content, request_date)"
+					+ "VALUES (request_seq.nextval, ?, ?, SYSDATE)";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, requestContent);
+			pstmt.setString(1, userId);
+			pstmt.setString(2, requestContent);
 			int count = pstmt.executeUpdate();
 			System.out.println(count + "개의 글을 등록했습니다.");
 		} catch (Exception e) {
