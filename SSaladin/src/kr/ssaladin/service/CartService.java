@@ -18,6 +18,34 @@ public class CartService {
         cartDAO = new CartDAO();
         userDAO = new UserDAO();
     }
+    // CartItem 내부 클래스 선언
+    public static class CartItem {
+        private int cartNum;
+        private int bookCode;
+        private String bookName;
+        private int bookPrice;
+        private int cartQuantity;
+
+        public CartItem() {}
+
+        public int getCartNum() { return cartNum; }
+        public void setCartNum(int cartNum) { this.cartNum = cartNum; }
+
+        public int getBookCode() { return bookCode; }
+        public void setBookCode(int bookCode) { this.bookCode = bookCode; }
+
+        public String getBookName() { return bookName; }
+        public void setBookName(String bookName) { this.bookName = bookName; }
+
+        public int getBookPrice() { return bookPrice; }
+        public void setBookPrice(int bookPrice) { this.bookPrice = bookPrice; }
+
+        public int getCartQuantity() { return cartQuantity; }
+        public void setCartQuantity(int cartQuantity) { this.cartQuantity = cartQuantity; }
+    }
+
+    // 나머지 CartService 코드는 그대로 유지...
+
 
     // 로그인 상태 확인
     private boolean checkLoginStatus(String userId, String userPw){
@@ -34,16 +62,16 @@ public class CartService {
     public boolean addToCart(String userId, String userPw, int bookCode, int quantity) {
         Connection conn = null;
         boolean result = false;
-        
+
         try {
             if (!checkLoginStatus(userId, userPw)) {
                 return false;  // 로그인 실패
             }
-            
+
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             result = cartDAO.insertCart(userId, bookCode, quantity);
-            
+
         } catch (Exception e) {
             System.out.println("장바구니 추가 중 오류 발생");
             e.printStackTrace();
@@ -57,16 +85,16 @@ public class CartService {
     public boolean updateQuantity(String userId, String userPw, int cartNum, int quantity) {
         Connection conn = null;
         boolean result = false;
-        
+
         try {
             if (!checkLoginStatus(userId, userPw)) {
                 return false;  // 로그인 실패
             }
-            
+
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             result = cartDAO.updateCartQuantity(cartNum, quantity);
-            
+
         } catch (Exception e) {
             System.out.println("수량 수정 중 오류 발생");
             e.printStackTrace();
@@ -80,16 +108,16 @@ public class CartService {
     public boolean removeFromCart(String userId, String userPw, int cartNum) {
         Connection conn = null;
         boolean result = false;
-        
+
         try {
             if (!checkLoginStatus(userId, userPw)) {
                 return false;  // 로그인 실패
             }
-            
+
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             result = cartDAO.deleteCart(cartNum);
-            
+
         } catch (Exception e) {
             System.out.println("장바구니 항목 삭제 중 오류 발생");
             e.printStackTrace();
@@ -104,16 +132,16 @@ public class CartService {
         Connection conn = null;
         ResultSet rs = null;
         List<CartItem> cartItems = new ArrayList<>();
-        
+
         try {
             if (!checkLoginStatus(userId, userPw)) {
                 return null;  // 로그인 실패
             }
-            
+
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             rs = cartDAO.getUserCart(userId);
-            
+
             while (rs.next()) {
                 CartItem item = new CartItem();
                 item.setCartNum(rs.getInt("cart_num"));
@@ -123,7 +151,7 @@ public class CartService {
                 item.setCartQuantity(rs.getInt("cart_quantity"));
                 cartItems.add(item);
             }
-            
+
         } catch (Exception e) {
             System.out.println("장바구니 목록 조회 중 오류 발생");
             e.printStackTrace();
@@ -139,16 +167,16 @@ public class CartService {
         Connection conn = null;
         ResultSet rs = null;
         CartItem item = null;
-        
+
         try {
             if (!checkLoginStatus(userId, userPw)) {
                 return null;  // 로그인 실패
             }
-            
+
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             rs = cartDAO.getCartItem(cartNum);
-            
+
             if (rs.next()) {
                 item = new CartItem();
                 item.setCartNum(rs.getInt("cart_num"));
@@ -157,7 +185,7 @@ public class CartService {
                 item.setBookPrice(rs.getInt("book_price"));
                 item.setCartQuantity(rs.getInt("cart_quantity"));
             }
-            
+
         } catch (Exception e) {
             System.out.println("장바구니 항목 조회 중 오류 발생");
             e.printStackTrace();
@@ -167,7 +195,7 @@ public class CartService {
         return item;
     }
 
-    // 장바구니 총액 계산 (로그인 체크 포함)
+ // 장바구니 총액 계산 (로그인 체크 포함)
     public int calculateTotal(String userId, String userPw) {
         List<CartItem> items = getUserCartItems(userId, userPw);
         if (items == null) return 0;
