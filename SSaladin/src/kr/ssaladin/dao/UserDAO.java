@@ -8,41 +8,41 @@ import java.sql.SQLException;
 import kr.util.DBUtil;
 
 public class UserDAO {
-	
-	private Connection conn;  // Connection 객체를 클래스 변수로 선언
 
-    // Connection을 매개변수로 받는 생성자 추가
-    public UserDAO(Connection conn) {
-        this.conn = conn;  // 외부에서 주입된 Connection 사용
-    }
+	private Connection conn;
 
-	// 회원가입	
-	public boolean JoinCheck(String userId, String userPw, String userName, String userPhone, String userAddress) throws Exception {
+	public UserDAO(Connection conn) {
+		this.conn = conn;
+	}
+
+	// 회원가입
+	public boolean JoinCheck(String userId, String userPw, String userName, String userPhone, String userAddress) {
 
 		PreparedStatement pstmt = null;
 		String sql = null;
 		boolean flag = false;
 
 		try {
-			// db 연결
-			conn = DBUtil.getConnection();
+
 			// 회원가입 쿼리
 			sql = "INSERT INTO users (user_id, user_auth, user_point, user_name, user_pw, user_phone, user_address) "
 					+ "VALUES (?, 0, 0, ?, ?, ?, ?)";
-			// 객체 생성
+
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, userId);
 			pstmt.setString(2, userName);
 			pstmt.setString(3, userPw);
 			pstmt.setString(4, userPhone);
 			pstmt.setString(5, userAddress);
-			// 데이터 삽입
+
 			int result = pstmt.executeUpdate();
 			if (result > 0) {
 				flag = true;
 			}
 
+			// 예외 처리
 		} catch (SQLException e) {
+			System.out.println("오류가 발생 했습니다. 다시 시도해주세요.");
 			e.printStackTrace();
 		} finally {
 			DBUtil.executeClose(null, pstmt, conn);
@@ -52,37 +52,83 @@ public class UserDAO {
 	}
 
 	// 로그인
-	public boolean LoginCheck(String userId, String userPw) throws Exception {
-		
+	public boolean LoginCheck(String userId, String userPw) {
+
 		PreparedStatement pstmt = null;
 		String sql = null;
 		ResultSet rs = null;
 		boolean flag = false;
-		
-        try {
-            // db 연결.
-        	conn = DBUtil.getConnection();   
-            // 로그인 쿼리
-            sql = "SELECT user_id FROM users WHERE user_id = ? AND user_pw = ?";
-            // 객체 생성
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, userId);
-            pstmt.setString(2, userPw);
 
-            // 쿼리 실행
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                flag = true;
-            }
+		try {
 
-        } catch (SQLException e) {
-            System.out.println("SQL 실행 오류 발생");
-            e.printStackTrace();
-        } finally {
-            // 자원 정리
-            DBUtil.executeClose(rs, pstmt, conn);
-        }
+			// 로그인 쿼리
+			sql = "SELECT user_id FROM users WHERE user_id = ? AND user_pw = ?";
 
-        return flag;
-    }
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			pstmt.setString(2, userPw);
+
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				flag = true;
+			}
+
+			// 예외 처리
+		} catch (SQLException e) {
+			System.out.println("오류가 발생 했습니다. 다시 시도해주세요.");
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+
+		return flag;
+	}
+
+	// 아이디 중복 체크
+	public boolean isUserIdExists(String userId) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT user_id FROM users WHERE user_id = ?";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			System.out.println("오류가 발생 했습니다. 다시 시도해주세요.");
+			if (e.getMessage().contains("duplicate")) {
+				System.out.println("이미 사용 중인 아이디입니다.");
+			} else {
+				System.out.println("데이터베이스 연결 오류. 관리자에게 문의 해주세요.");
+			}
+			return false;
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+	}
+
+	// 전화번호 중복 체크
+	public boolean isUserPhoneExists(String userPhone) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT user_phone FROM users WHERE user_phone = ?";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userPhone);
+			rs = pstmt.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			System.out.println("오류가 발생 했습니다. 다시 시도해주세요.");
+			if (e.getMessage().contains("duplicate")) {
+				System.out.println("이미 사용 중인 전화번호입니다.");
+			} else {
+				System.out.println("데이터베이스 연결 오류. 관리자에게 문의 해주세요.");
+			}
+			return false;
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+	}
 }
