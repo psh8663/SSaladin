@@ -27,4 +27,3 @@ CREATE TABLE point_requests (
     CONSTRAINT chk_request_status CHECK (request_status IN (1, 2, 3))
 );
 
-.
