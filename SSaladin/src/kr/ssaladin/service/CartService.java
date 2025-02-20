@@ -21,9 +21,9 @@ public class CartService {
     // CartItem 내부 클래스 선언
     public static class CartItem {
         private int cartNum;
-        private int bookCode;
-        private String bookName;
-        private int bookPrice;
+        private int book_code;
+        private String book_title;
+        private int book_price;
         private int cartQuantity;
 
         public CartItem() {}
@@ -31,20 +31,18 @@ public class CartService {
         public int getCartNum() { return cartNum; }
         public void setCartNum(int cartNum) { this.cartNum = cartNum; }
 
-        public int getBookCode() { return bookCode; }
-        public void setBookCode(int bookCode) { this.bookCode = bookCode; }
+        public int getBookCode() { return book_code; }
+        public void setBookCode(int book_code) { this.book_code = book_code; }
 
-        public String getBookName() { return bookName; }
-        public void setBookName(String bookName) { this.bookName = bookName; }
+        public String getBookName() { return book_title; }
+        public void setBookName(String bookName) { this.book_title = book_title; }
 
-        public int getBookPrice() { return bookPrice; }
-        public void setBookPrice(int bookPrice) { this.bookPrice = bookPrice; }
+        public int getBookPrice() { return book_price; }
+        public void setBookPrice(int bookPrice) { this.book_price = book_price; }
 
         public int getCartQuantity() { return cartQuantity; }
         public void setCartQuantity(int cartQuantity) { this.cartQuantity = cartQuantity; }
     }
-
-    // 나머지 CartService 코드는 그대로 유지...
 
 
     // 로그인 상태 확인
@@ -59,7 +57,7 @@ public class CartService {
     }
 
     // 장바구니 추가 (로그인 체크 포함)
-    public boolean addToCart(String userId, String userPw, int bookCode, int quantity) {
+    public boolean addToCart(String userId, String userPw, int book_code, int quantity) {
         Connection conn = null;
         boolean result = false;
 
@@ -70,7 +68,7 @@ public class CartService {
 
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
-            result = cartDAO.insertCart(userId, bookCode, quantity);
+            result = cartDAO.insertCart(userId, book_code, quantity);
 
         } catch (Exception e) {
             System.out.println("장바구니 추가 중 오류 발생");
