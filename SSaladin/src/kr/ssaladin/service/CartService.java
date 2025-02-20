@@ -161,6 +161,7 @@ public class CartService {
         return cartItems;
     }
 
+    
     // 장바구니 개별 항목 조회 (로그인 체크 포함)
     public CartItem getCartItem(String userId, String userPw, int cartNum) {
         Connection conn = null;
