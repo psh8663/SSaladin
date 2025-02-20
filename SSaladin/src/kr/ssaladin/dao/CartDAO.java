@@ -12,7 +12,10 @@ public class CartDAO {
     private String sql = null;
     private ResultSet rs = null;
     private boolean flag = false;
-
+    
+    public CartDAO() {}
+    
+    
     public CartDAO(Connection conn) {
         this.conn = conn;
     }
@@ -48,7 +51,7 @@ public class CartDAO {
     }
 
     // 사용자의 장바구니 목록 조회
-    public ResultSet getUserCart(String userId) throws SQLException {
+    public ResultSet getUserCart(Connection conn, String userId) throws SQLException {
         sql = "SELECT c.*, b.book_name, b.book_price " +
              "FROM cart c " +
              "JOIN books b ON c.book_code = b.book_code " +
