@@ -50,7 +50,7 @@ public class ReviewsDAO {
 	}
 	
 	// 게시판 글 작성
-	public void insertRequest(String userId, String bookTitle, String reviewsContent, int rating) {
+	public void insertReviews(String userId, String bookTitle, String reviewsContent, int rating) {
 		try {
 			conn = DBUtil.getConnection();
 			sql = "INSERT INTO reviews (reiview_num, book_title, reviews_content, rating, reg_date)"
@@ -69,7 +69,7 @@ public class ReviewsDAO {
 	}
 	
 	// 게시글 수정
-	public void updateRequest(String userId, int reviewNum, String reviewsContent, int rating) {
+	public void updateReviews(String userId, int reviewNum, String reviewsContent, int rating) {
         if (!checkPermission(userId, reviewNum)) {
             System.out.println("권한이 없습니다.");
             return;
@@ -92,7 +92,7 @@ public class ReviewsDAO {
 	}
 	
 	// 게시글 삭제
-	public void deleteRequest(String userId, int reiviewNum) {
+	public void deleteReviews(String userId, int reiviewNum) {
         if (!checkPermission(userId, reiviewNum)) {
             System.out.println("권한이 없습니다.");
             return;
@@ -126,5 +126,46 @@ public class ReviewsDAO {
         }
         return false;
     }
+    
+    // 조회하는 리뷰 글이 존재하는지 여부
+    public int checkReviews(int reviewNum) {
+    	
+    	int count = 0;
+    	
+    	try {
+			conn = DBUtil.getConnection();
+			sql = "SELECT * FROM reviews WHERE review_num=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, reviewNum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				count = 1;
+			} // if
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		} // try_finally
+    	
+    	return count;
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
