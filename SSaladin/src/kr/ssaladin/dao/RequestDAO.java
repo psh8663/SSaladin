@@ -18,21 +18,22 @@ public class RequestDAO {
 		
 		try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT * FROM requst r, users u "
-					+ "WHERE r.user_id=u.user_id ORDER BY request_num DESC";
+			sql = "SELECT * FROM request ORDER BY request_num DESC";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
 			System.out.println("-".repeat(30));
 			
 			if (rs.next()) {
-				System.out.println("번호\t닉네임\t등록일");
+				System.out.println("번호\t닉네임\t내용\t\t\t\t등록일");
 				do {
 					System.out.print(rs.getInt("request_num"));
 					System.out.print("\t");
 					System.out.print(rs.getString("user_id"));
 					System.out.print("\t");
-					System.out.println(rs.getDate("reg_date"));
+					System.out.print(rs.getString("request_content"));
+					System.out.print("\t");
+					System.out.println(rs.getDate("request_date"));
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 게시글이 없습니다.");
@@ -121,6 +122,28 @@ public class RequestDAO {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public int checkRequest(int requestNum) {
+    	
+    	int count = 0;
+    	
+    	try {
+			conn = DBUtil.getConnection();
+			sql = "SELECT * FROM request WHERE request_num=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, requestNum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				count = 1;
+			} // if
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		} // try_finally
+    	
+    	return count;
     }
 
 }

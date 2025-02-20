@@ -11,9 +11,12 @@ public class ReviewsService {
 	private BufferedReader br;
 	private ReviewsDAO dao;
 
-	public void reviewService(String userId, int reviewNum, int bookCode) throws IOException {
+	public void reviewService(String userId, int bookCode) throws IOException {
+		
 		dao = new ReviewsDAO();
 		br = new BufferedReader(new InputStreamReader(System.in));
+		
+		int reviewNum;
 		while(true) {
 			System.out.println("1.리뷰 목록 보기, 2.리뷰 작성, 3. 리뷰 수정, 4. 리뷰 삭제, 5. 상세정보로 돌아가기>");
 			try {
@@ -55,7 +58,7 @@ public class ReviewsService {
 				} else if (no == 4) { // 리뷰 삭제
 					dao.selectReviews(bookCode);
 					System.out.println("삭제할 리뷰의 번호 : ");
-					int num = Integer.parseInt(br.readLine());
+					reviewNum = Integer.parseInt(br.readLine());
 					int count = dao.checkReviews(reviewNum);
 
 					if (count == 1) {
