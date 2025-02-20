@@ -83,6 +83,34 @@ public class UserDAO {
 
 		return flag;
 	}
+	
+	// 권한 체크 
+	public int getUserAuth(String userId) {
+	    PreparedStatement pstmt = null;
+	    String sql = null;
+	    ResultSet rs = null;
+
+	    try {
+	    	// 권한확인 쿼리
+	    	sql = "SELECT user_auth FROM users WHERE user_id = ?";
+	    	
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, userId);
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            return rs.getInt("user_auth");
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("오류가 발생 했습니다. 다시 시도해주세요.");
+	        e.printStackTrace();
+	    } finally {
+	        DBUtil.executeClose(rs, pstmt, conn);
+	    }
+
+	    return -1;
+	}
+
 
 	// 아이디 중복 체크
 	public boolean isUserIdExists(String userId) {
