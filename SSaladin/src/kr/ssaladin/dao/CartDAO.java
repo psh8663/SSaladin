@@ -71,4 +71,14 @@ public class CartDAO {
         pstmt.setInt(1, cartNum);
         return pstmt.executeQuery();
     }
+    
+ // 장바구니 상품 구매 후 장바구니 초기화
+    public boolean clearCart(String userId) throws SQLException {
+        sql = "DELETE FROM cart WHERE user_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+
 }

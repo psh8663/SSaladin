@@ -19,7 +19,9 @@ public class ReviewsDAO {
 		
 		try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT * FROM reviews ORDER BY review_num DESC";
+			sql = "SELECT * FROM reviews r, users u, books b "
+					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title "
+					+ "ORDER BY review_num DESC";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
@@ -51,13 +53,15 @@ public class ReviewsDAO {
 	
 	// 게시판 글 작성
 	public void insertReviews(String userId, String bookTitle, String reviewsContent, int rating) {
+		
 		try {
 			conn = DBUtil.getConnection();
-			sql = "INSERT INTO reviews (reiview_num, book_title, reviews_content, rating, reg_date)"
-					+ "VALUES (reivews_seq.nextval, ?, ?, ?, SYSDATE)";
+			sql = "INSERT INTO reviews (review_num, book_title, reviews_content, rating, reg_date)"
+					+ "VALUES (reivews_seq.nextval, ?, ?, ?, SYSDATE) "
+					+ "SELECT book_title FROM reviews r, books b WHERE r.book_title=b.book_title";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, bookTitle);
-			pstmt.setString(1, reviewsContent);
+			pstmt.setString(2, reviewsContent);
 			pstmt.setInt(3, rating);
 			int count = pstmt.executeUpdate();
 			System.out.println(count + "개의 글을 등록했습니다.");
