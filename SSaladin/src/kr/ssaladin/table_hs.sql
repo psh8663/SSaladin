@@ -26,3 +26,5 @@ CREATE TABLE point_requests (
     CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id),
     CONSTRAINT chk_request_status CHECK (request_status IN (1, 2, 3))
 );
+
+.
