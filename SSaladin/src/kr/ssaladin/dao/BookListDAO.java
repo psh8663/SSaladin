@@ -71,7 +71,7 @@ public class BookListDAO {
 			try {
 				conn = DBUtil.getConnection();
 				//SQL문 작성
-				sql = "SELECT * FROM books WHERE book_code=?";
+				sql = "SELECT * FROM books b, categories c WHERE b.category_num=c.category_num and book_code=? ";
 				//JDBC 수행 3단계
 				pstmt = conn.prepareStatement(sql);
 				//?에 데이터 할당
@@ -80,13 +80,13 @@ public class BookListDAO {
 				rs = pstmt.executeQuery();
 				if(rs.next()) {
 					System.out.println("도서코드 : " + rs.getInt("book_code"));
-					System.out.println("카테고리명 : " + rs.getInt("category_num")); //카테고리명으로 수정
+					System.out.println("카테고리명 : " + rs.getString("category_name"));
 					System.out.println("도서명 : " + rs.getString("book_title"));
 					System.out.println("저자명 : " + rs.getString("book_author"));
 					System.out.println("가격 : " + rs.getInt("book_price"));
 					System.out.println("출판사 : " + rs.getString("book_publisher"));
 					System.out.println("설명 : " + rs.getString("book_description"));
-					System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));//숫자 설명or변환
+					System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
 					System.out.println("평균평점 : " + rs.getFloat("rating_avg")); //수정요함(avg)
 					System.out.println("등록일 : " + rs.getDate("book_reg_date"));
 					
