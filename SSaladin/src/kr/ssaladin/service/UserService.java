@@ -70,17 +70,20 @@ public class UserService {
     }
 
     // 로그인
-    public boolean login(String userId, String userPw) {
+    public int login(String userId, String userPw) {
         try (Connection conn = DBUtil.getConnection()) {
             UserDAO userDAO = new UserDAO(conn);
             boolean result = userDAO.LoginCheck(userId, userPw);
+            
             if (!result) {
                 throw new Exception("아이디 또는 비밀번호가 올바르지 않습니다.");
             }
-            return true;
+            
+            int userAuth = userDAO.getUserAuth(userId);
+            return userAuth;
         } catch (Exception e) {
             System.out.println("로그인 오류: " + e.getMessage()); // 예외 발생 시 메시지 출력
-            return false;
+            return -1;
         }
     }
 

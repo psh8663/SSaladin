@@ -14,10 +14,12 @@ public class CartService {
     private CartDAO cartDAO;
     private UserDAO userDAO;
 
-    public CartService() {
-        cartDAO = new CartDAO();
-        userDAO = new UserDAO();
+    public CartService() throws ClassNotFoundException, SQLException {
+        Connection conn = DBUtil.getConnection();  // DB 연결 생성
+        cartDAO = new CartDAO(conn);  // CartDAO에 Connection 전달
+        userDAO = new UserDAO(conn);  // UserDAO에 Connection 전달
     }
+
     // CartItem 내부 클래스 선언
     public static class CartItem {
         private int cartNum;
@@ -35,15 +37,14 @@ public class CartService {
         public void setBookCode(int book_code) { this.book_code = book_code; }
 
         public String getBookName() { return book_title; }
-        public void setBookName(String bookName) { this.book_title = book_title; }
+        public void setBookName(String bookName) { this.book_title = bookName; }
 
         public int getBookPrice() { return book_price; }
-        public void setBookPrice(int bookPrice) { this.book_price = book_price; }
+        public void setBookPrice(int bookPrice) { this.book_price = bookPrice; }
 
         public int getCartQuantity() { return cartQuantity; }
         public void setCartQuantity(int cartQuantity) { this.cartQuantity = cartQuantity; }
     }
-
 
     // 로그인 상태 확인
     private boolean checkLoginStatus(String userId, String userPw){
@@ -160,6 +161,7 @@ public class CartService {
         return cartItems;
     }
 
+    
     // 장바구니 개별 항목 조회 (로그인 체크 포함)
     public CartItem getCartItem(String userId, String userPw, int cartNum) {
         Connection conn = null;
@@ -174,7 +176,7 @@ public class CartService {
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             rs = cartDAO.getCartItem(cartNum);
-
+ 
             if (rs.next()) {
                 item = new CartItem();
                 item.setCartNum(rs.getInt("cart_num"));
@@ -193,7 +195,7 @@ public class CartService {
         return item;
     }
 
- // 장바구니 총액 계산 (로그인 체크 포함)
+    // 장바구니 총액 계산 (로그인 체크 포함)
     public int calculateTotal(String userId, String userPw) {
         List<CartItem> items = getUserCartItems(userId, userPw);
         if (items == null) return 0;
