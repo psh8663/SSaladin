@@ -5,11 +5,17 @@ import kr.ssaladin.dao.UserDAO;
 import kr.util.DBUtil;
 
 public class UserService {
+    private Connection conn;
+    private UserDAO userDAO;
 
+    public UserService(Connection conn) {
+        this.conn = conn;
+        this.userDAO = new UserDAO(conn);
+    }
+    
     // 아이디 중복 체크
     public boolean isUserIdDuplicate(String userId) {
-        try (Connection conn = DBUtil.getConnection()) {
-            UserDAO userDAO = new UserDAO(conn);
+        try {
             return userDAO.isUserIdExists(userId); // DB에서 아이디 중복 여부 확인
         } catch (Exception e) {
             System.out.println("아이디 중복 확인 오류: " + e.getMessage());
@@ -19,8 +25,7 @@ public class UserService {
 
     // 전화번호 중복 체크
     public boolean isUserPhoneDuplicate(String userPhone) {
-        try (Connection conn = DBUtil.getConnection()) {
-            UserDAO userDAO = new UserDAO(conn);
+        try {
             return userDAO.isUserPhoneExists(userPhone); // DB에서 전화번호 중복 여부 확인
         } catch (Exception e) {
             System.out.println("전화번호 중복 확인 오류: " + e.getMessage());
@@ -51,12 +56,9 @@ public class UserService {
             }
 
             // 유효성 검사 후 회원가입 시도
-            try (Connection conn = DBUtil.getConnection()) {
-                UserDAO userDAO = new UserDAO(conn);
-                boolean result = userDAO.JoinCheck(userId, userPw, userName, userPhone, userAddress);
-                if (!result) {
-                    throw new Exception("회원가입에 실패하였습니다. 다시 시도해주세요.");
-                }
+            boolean result = userDAO.JoinCheck(userId, userPw, userName, userPhone, userAddress);
+            if (!result) {
+                throw new Exception("회원가입에 실패하였습니다. 다시 시도해주세요.");
             }
 
             return true;
@@ -71,8 +73,7 @@ public class UserService {
 
     // 로그인
     public int login(String userId, String userPw) {
-        try (Connection conn = DBUtil.getConnection()) {
-            UserDAO userDAO = new UserDAO(conn);
+        try {
             boolean result = userDAO.LoginCheck(userId, userPw);
             
             if (!result) {
@@ -89,8 +90,8 @@ public class UserService {
 
     // 유효성 검사 - 아이디
     private boolean isValidUserId(String userId) {
-        if (!userId.matches("^[A-Za-z0-9]{6,12}$")) {
-            throw new IllegalArgumentException("아이디는 6~12자의 영문자와 숫자만 가능합니다.");
+        if (!userId.matches("^[A-Za-z0-9]{4,12}$")) {
+            throw new IllegalArgumentException("아이디는 4~12자의 영문자와 숫자만 가능합니다.");
         }
         return true;
     }

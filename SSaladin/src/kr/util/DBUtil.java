@@ -34,4 +34,9 @@ public class DBUtil {
       if (cstmt != null) try { cstmt.close(); } catch (SQLException e) {}
       if (conn != null) try { conn.close(); } catch (SQLException e) {}
    }
+   
+   public static void executeClose(ResultSet rs, PreparedStatement pstmt) {
+	    if (rs != null) try { rs.close(); } catch (SQLException e) {}
+	    if (pstmt != null) try { pstmt.close(); } catch (SQLException e) {}
+	}
 }
