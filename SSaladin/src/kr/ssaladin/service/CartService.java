@@ -175,7 +175,7 @@ public class CartService {
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             rs = cartDAO.getCartItem(cartNum);
-
+ 
             if (rs.next()) {
                 item = new CartItem();
                 item.setCartNum(rs.getInt("cart_num"));
