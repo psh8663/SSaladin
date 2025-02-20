@@ -8,11 +8,17 @@ import java.sql.SQLException;
 import kr.util.DBUtil;
 
 public class UserDAO {
+	
+	private Connection conn;  // Connection 객체를 클래스 변수로 선언
+
+    // Connection을 매개변수로 받는 생성자 추가
+    public UserDAO(Connection conn) {
+        this.conn = conn;  // 외부에서 주입된 Connection 사용
+    }
 
 	// 회원가입	
 	public boolean JoinCheck(String userId, String userPw, String userName, String userPhone, String userAddress) throws Exception {
 
-		Connection conn = null;
 		PreparedStatement pstmt = null;
 		String sql = null;
 		boolean flag = false;
@@ -47,7 +53,7 @@ public class UserDAO {
 
 	// 로그인
 	public boolean LoginCheck(String userId, String userPw) throws Exception {
-		Connection conn = null;
+		
 		PreparedStatement pstmt = null;
 		String sql = null;
 		ResultSet rs = null;
