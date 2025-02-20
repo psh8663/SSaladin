@@ -161,6 +161,7 @@ public class CartService {
         return cartItems;
     }
 
+    
     // 장바구니 개별 항목 조회 (로그인 체크 포함)
     public CartItem getCartItem(String userId, String userPw, int cartNum) {
         Connection conn = null;
@@ -203,32 +204,4 @@ public class CartService {
             .mapToInt(item -> item.getBookPrice() * item.getCartQuantity())
             .sum();
     }
-    
- // 장바구니 비우기 (구매 후 장바구니 비우는 작업)
-    public boolean completePurchase(String userId, String userPw) {
-        Connection conn = null;
-        boolean result = false;
-
-        try {
-            // 로그인 상태 확인
-            if (!checkLoginStatus(userId, userPw)) {
-                return false;  // 로그인 실패
-            }
-
-            conn = DBUtil.getConnection();
-            cartDAO = new CartDAO(conn);
-
-            // 장바구니 항목을 모두 삭제
-            result = cartDAO.clearCart(userId);
-
-        } catch (Exception e) {
-            System.out.println("구매 완료 후 장바구니 비우기 중 오류 발생");
-            e.printStackTrace();
-        } finally {
-            DBUtil.executeClose(null, null, conn);
-        }
-
-        return result;
-    }
-
 }
