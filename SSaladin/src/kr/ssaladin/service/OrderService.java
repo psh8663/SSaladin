@@ -152,6 +152,23 @@ public class OrderService {
             return -1;
         }
     }
+    //주문 상태 관리 관련 메서드 (상수 정의)
+    public class OrderStatus {
+        public static final int PENDING = 1; 	     // 결제 대기
+        public static final int PROCESSING = 2;     // 결제 완료
+        public static final int IN_DELIVERY = 3;   // 배송 중
+        public static final int  DELIVERY_COM= 4; // 배송 완료
+        public static final int CANCELLED = 5;   // 주문 취소
+    }
+    //주문 취소 기능
+    public boolean cancelOrder(int orderNum) {
+    	try {
+			return ordersDAO.updateOrderStatus(orderNum, OrderStatus.CANCELLED);
+		} catch (SQLException e) {
+			e.printStackTrace();
+	    	return false;
+		}
+    }
 
     // 리소스 해제
     public void close() {
@@ -191,7 +208,7 @@ class OrderInfo {
     private java.sql.Date orderDate;
     private List<OrderDetailInfo> orderDetails;
 
-    // Getters and Setters
+    // Getter, Setter
     public void setOrderNum(int orderNum) { this.orderNum = orderNum; }
     public void setUserId(String userId) { this.userId = userId; }
     public void setOrderTotal(int orderTotal) { this.orderTotal = orderTotal; }
@@ -208,7 +225,7 @@ class OrderDetailInfo {
     private int orderQuantity;
     private int orderPrice;
 
-    // Getters and Setters
+    // Getter, Setter
     public void setDetailNum(int detailNum) { this.detailNum = detailNum; }
     public void setBookCode(int bookCode) { this.bookCode = bookCode; }
     public void setBookName(String bookName) { this.bookName = bookName; }

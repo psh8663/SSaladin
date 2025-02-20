@@ -12,7 +12,10 @@ public class CartDAO {
     private String sql = null;
     private ResultSet rs = null;
     private boolean flag = false;
-
+    
+    public CartDAO() {}
+    
+    
     public CartDAO(Connection conn) {
         this.conn = conn;
     }
