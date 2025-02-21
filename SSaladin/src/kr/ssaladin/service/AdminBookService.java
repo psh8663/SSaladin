@@ -20,19 +20,12 @@ public class AdminBookService {
 			adminBookManage();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			// 자원정리
-			if (br != null)
-				try {
-					br.close();
-				} catch (IOException e) {
-				}
-		}
+		} 
 	}
 
 	private void adminBookManage() throws IOException, ClassNotFoundException {
 		while (true) {
-			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 6.종료> ");
+			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 6.뒤로가기> ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 

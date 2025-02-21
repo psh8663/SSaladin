@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import kr.ssaladin.dao.PointRequestDAO;
+import kr.ssaladin.service.AdminBookService;
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
 import kr.ssaladin.service.RequestService;
@@ -342,6 +343,7 @@ public class SSaladinMain {
 				} else if (no == 2) {
 					// 상품 관리
 					System.out.println("상품 관리 화면");
+					new AdminBookService();
 				} else if (no == 3) {
 					// 로그아웃
 					System.out.println("관리자 로그아웃 완료.");
