@@ -21,10 +21,10 @@ public class SSaladinMain {
 	private int userAuth; // 사용자 권한 (0: 일반회원, 1: VIP, 2: 관리자)
 	private int userPoint; // 사용자 포인트
 	private Connection conn; // 데이터베이스 연결 객체
-	private UserService userService; 
-	private CartService cartService; 
-	private BookListService bookListService; 
-	private PointRequestService pointRequestService; // 
+	private UserService userService;
+	private CartService cartService;
+	private BookListService bookListService;
+	private PointRequestService pointRequestService; //
 	private RequestService requestService; // RequestService 객체 추가
 
 	public SSaladinMain() {
@@ -36,7 +36,7 @@ public class SSaladinMain {
 			pointRequestService = new PointRequestService();
 
 			requestService = new RequestService(); // RequestService 초기화
-			
+
 			// 메뉴 호출
 			callMenu();
 		} catch (Exception e) {
@@ -95,7 +95,25 @@ public class SSaladinMain {
 			flag = true;
 			me_id = userId;
 			System.out.println(userId + "님 환영합니다!");
-			System.out.print("회원 등급: " + this.userAuth + "\t");
+
+			// userAuth 값에 따라 등급 출력
+			String userRole = "";
+			switch (this.userAuth) {
+			case 0:
+				userRole = "일반회원";
+				break;
+			case 1:
+				userRole = "VIP";
+				break;
+			case 2:
+				userRole = "관리자";
+				break;
+			default:
+				userRole = "비회원";
+				break;
+			}
+
+			System.out.println("회원 등급: " + userRole);
 			System.out.println("보유 포인트: " + this.userPoint); // 포인트 출력
 
 			// 권한에 따라 메뉴 출력
@@ -104,8 +122,6 @@ public class SSaladinMain {
 			} else if (this.userAuth == 2) {
 				adminMenu(); // 관리자 메뉴
 			}
-		} else {
-			System.out.println("아이디 또는 비밀번호가 틀렸습니다.");
 		}
 	}
 
@@ -154,7 +170,7 @@ public class SSaladinMain {
 					System.out.println("장바구니 보기");
 				} else if (no == 5) {
 					// 로그아웃
-					System.out.println("로그아웃 완료.");
+					System.out.println("로그아웃 되었습니다.");
 					flag = false; // 로그인 상태 해제
 					break;
 				} else {
@@ -339,8 +355,9 @@ public class SSaladinMain {
 			}
 		}
 	}
+
 	public String getUserId() {
-	    return me_id;
+		return me_id;
 	}
 
 	public static void main(String[] args) {

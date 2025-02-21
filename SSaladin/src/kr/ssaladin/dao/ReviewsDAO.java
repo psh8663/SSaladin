@@ -20,7 +20,7 @@ public class ReviewsDAO {
 		try {
 			conn = DBUtil.getConnection();
 			sql = "SELECT * FROM reviews r, users u, books b "
-					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title AND book_code=?"
+					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title AND r.book_code=?"
 					+ "ORDER BY review_num DESC";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, bookCode);
@@ -51,6 +51,42 @@ public class ReviewsDAO {
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);
 		} // try_finally
+	}
+	
+	public void detailSelectRivews(int bookCode) {
+		
+		try {
+			conn = DBUtil.getConnection();	
+			sql = "SELECT * FROM reviews r, users u, books b "
+					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title AND r.book_code=?"
+					+ "ORDER BY review_num DESC";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, bookCode);
+			pstmt.executeUpdate();
+			rs = pstmt.executeQuery();
+			
+			System.out.println("-".repeat(50));
+			
+			if (rs.next()) {
+				do {
+					System.out.println("번호 : " + rs.getInt("review_num"));
+					System.out.println("닉네임 : " + rs.getString("user_id"));
+					System.out.println("제목 : " + rs.getString("book_title"));
+					System.out.println("내용 : " + rs.getString("reviews_content"));
+					System.out.println("평점 : " + rs.getInt("rating"));
+					System.out.println("등록일" + rs.getDate("reg_date"));
+					System.out.println("-".repeat(50));
+				} while (rs.next());
+			} else {
+				System.out.println("등록된 게시글이 없습니다.");
+			} // if
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		} // try_finally
+		
 	}
 	
 	// 게시판 글 작성
