@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import kr.ssaladin.dao.PointRequestDAO;
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
+import kr.ssaladin.service.RequestService;
 import kr.ssaladin.service.UserService;
 import kr.ssaladin.service.PointRequestService;
 import kr.util.DBUtil;
@@ -20,20 +21,25 @@ public class SSaladinMain {
 	private int userAuth; // 사용자 권한 (0: 일반회원, 1: VIP, 2: 관리자)
 	private int userPoint; // 사용자 포인트
 	private Connection conn; // 데이터베이스 연결 객체
-	private UserService userService;
-	private CartService cartService;
-	private BookListService bookListService;
+	private UserService suserService;
+	private CartService scartService;
+	private BookListService sbookListService;
 	private PointRequestService pointRequestService; //
+	private UserService userService; // UserService 객체 추가
+	private CartService cartService; // CartService 객체 추가
+	private BookListService bookListService; // BookListService 객체 추가
+	private RequestService requestService; // RequestService 객체 추가
 
 	public SSaladinMain() {
 		try {
 			br = new BufferedReader(new InputStreamReader(System.in));
 			conn = DBUtil.getConnection(); // 데이터베이스 연결
 			userService = new UserService(); // UserService 초기화
-			bookListService = new BookListService();
 			cartService = new CartService();
 			pointRequestService = new PointRequestService();
 
+			requestService = new RequestService(); // RequestService 초기화
+			
 			// 메뉴 호출
 			callMenu();
 		} catch (Exception e) {
@@ -138,13 +144,14 @@ public class SSaladinMain {
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
-					bookListService.booklist();
+					new BookListService(this);
 				} else if (no == 2) {
 					// 마이페이지
 					myPage();
 				} else if (no == 3) {
 					// 도서 신청 게시판
 					System.out.println("도서 신청 게시판");
+					requestService.requestService(me_id);
 				} else if (no == 4) {
 					// 장바구니 보기
 					System.out.println("장바구니 보기");
@@ -334,6 +341,9 @@ public class SSaladinMain {
 				System.out.println("[ 숫자만 입력 가능합니다. ]");
 			}
 		}
+	}
+	public String getUserId() {
+	    return me_id;
 	}
 
 	public static void main(String[] args) {

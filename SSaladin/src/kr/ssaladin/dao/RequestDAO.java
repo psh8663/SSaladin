@@ -75,7 +75,8 @@ public class RequestDAO {
 		
 		try {
 			conn =DBUtil.getConnection();
-			sql = "UDATE request_books SET request_content=? WHERE request_num=?";
+			sql = "UPDATE request_books SET request_content=? WHERE request_num=?";
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, requestContent);
 			pstmt.setInt(2, requestNum);
 			int count = pstmt.executeUpdate();
@@ -112,7 +113,7 @@ public class RequestDAO {
 	// 작성자 및 관리자 유효성 검사
     private boolean checkPermission(String userId, int requestNum) {
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement("SELECT u.user_id FROM request r, users u WHERE "
+             PreparedStatement pstmt = conn.prepareStatement("SELECT u.user_id FROM request_books r, users u WHERE "
              		+ "r.user_id=u.user_id AND r.request_num=?")) {
 
             pstmt.setInt(1, requestNum);

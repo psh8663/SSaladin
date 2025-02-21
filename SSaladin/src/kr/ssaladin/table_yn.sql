@@ -8,7 +8,7 @@ CREATE SEQUENCE categories_seq
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
-
+drop table books;
 
 CREATE TABLE books (
     book_code NUMBER PRIMARY KEY,
@@ -20,7 +20,7 @@ CREATE TABLE books (
     book_description VARCHAR2(300) NOT NULL,
     book_stock NUMBER(9) NOT NULL,
     book_status NUMBER(1) NOT NULL,
-    rating_avg FLOAT NOT NULL,
+    rating_avg FLOAT,
     book_reg_date DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT fk_books_category FOREIGN KEY (category_num) REFERENCES categories (category_num) ON DELETE CASCADE
 );
