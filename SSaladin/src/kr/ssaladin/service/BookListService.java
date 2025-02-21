@@ -75,14 +75,17 @@ public class BookListService {
         if (count == 1) {
             dao.selectDetailBook(num); // 상세 정보 출력
             while (true) {
-                System.out.print("0. 장바구니에 담기 1.메뉴로 돌아가기 >");
+                System.out.print("1. 장바구니에 담기 2.리뷰 보기 3.메뉴로 돌아가기 >");
                 int option = Integer.parseInt(br.readLine());
-                if (option == 0) {
+                if (option == 1) {
                     // 장바구니 추가 기능 (dao에 메서드 추가 필요)
                     System.out.println("장바구니에 담았습니다.");
-                } else if (option == 1) {
+                } else if (option == 2) {
+                    //리뷰보기
+                	System.out.println("리뷰를 확인합니다.");
+                } else if (option == 3) {
                     break; // 메뉴로 돌아가기
-                } else {
+                }else {
                     System.out.println("잘못 입력했습니다. 다시 선택하세요.");
                 }
             }
