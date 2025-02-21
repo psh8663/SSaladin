@@ -75,4 +75,20 @@ public class AdminBookDAO {
 		return result;
 	}
 
+	public void updateBookDescription(int book_code, String book_description) {
+		try {
+			conn = DBUtil.getConnection();
+			sql = "UPDATE books SET book_description=? WHERE book_code=?";			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, book_description);
+			pstmt.setInt(2, book_code);
+			int count = pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 자원정리
+			DBUtil.executeClose(null, pstmt, conn);
+		}
+	}
+
 }

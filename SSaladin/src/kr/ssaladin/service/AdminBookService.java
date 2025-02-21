@@ -20,12 +20,12 @@ public class AdminBookService {
 			adminBookManage();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	private void adminBookManage() throws IOException, ClassNotFoundException {
 		while (true) {
-			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 6.뒤로가기> ");
+			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 3.도서 설명 변경   6.뒤로가기> ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 
@@ -73,10 +73,32 @@ public class AdminBookService {
 					if (result == 1) {
 						System.out.println("카테고리가 정상적으로 추가되었습니다.");
 						blDao.selectCategories();
-						
+
 					}
 
-				} else if (no == 6) { 
+				} else if (no == 3) {
+					// 정보수정
+					blDao.selectBook();
+
+					System.out.print("수정할 도서 정보의 관리 번호:");
+					int num = Integer.parseInt(br.readLine());
+					int count = blDao.checkBCode(num);
+					if (count == 1) {
+
+						blDao.selectDetailBook(num);
+
+						System.out.print("도서설명:");
+						String book_description = br.readLine();
+
+						dao.updateBookDescription(num, book_description);
+						System.out.println("도서 설명이 변경됐습니다.");
+					} else if (count == 0) {
+						System.out.println("번호를 잘못 입력하셨습니다.");
+					} else {
+						System.out.println("정보 처리 중 오류 발생");
+					}
+
+				} else if (no == 6) {
 					System.out.println("프로그램 종료");
 					break;
 
