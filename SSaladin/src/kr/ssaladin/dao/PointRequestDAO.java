@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
+
+import kr.ssaladin.model.PointRequest;
 import kr.util.DBUtil;
 
 public class PointRequestDAO {
@@ -16,8 +18,7 @@ public class PointRequestDAO {
 		PreparedStatement pstmt = null;
 		boolean flag = false;
 
-		String sql = "INSERT INTO point_requests " 
-				+ "(request_num, user_id, point_amount, request_status) "
+		String sql = "INSERT INTO point_requests " + "(request_num, user_id, point_amount, request_status) "
 				+ "VALUES (seq_request_num.NEXTVAL, ?, ?, 1)";
 
 		try {
@@ -38,43 +39,40 @@ public class PointRequestDAO {
 		}
 		return flag;
 	}
-}
 
-//	public List<String[]> getAllPointRequests() {
-//		Connection conn = null;
-//		PreparedStatement pstmt = null;
-//		ResultSet rs = null;
-//		List<String[]> requestList = new ArrayList<>();
-//
-//		String sql = "SELECT r.request_num, u.user_id, r.point_amount, r.request_status, r.point_used, r.request_date "
-//				+ "FROM point_charge c JOIN users u ON c.user_id = u.user_id "
-//				+ "WHERE c.charge_status = 1 ORDER BY c.charge_date";
-//
-//		try {
-//			conn = DBUtil.getConnection();
-//			pstmt = conn.prepareStatement(sql);
-//			rs = pstmt.executeQuery();
-//
-//			while (rs.next()) {
-//				PointRequest request = new PointRequest();
-//				request.setRequestNum(rs.getInt("request_num"));
-//				request.setUserId(rs.getString("user_id"));
-//				request.setUserName(rs.getString("user_name"));
-//				request.setPointAmount(rs.getInt("point_amount"));
-//				request.setRequestStatus(rs.getInt("request_status"));
-//				request.setPointUsed(rs.getInt("point_used"));
-//				request.setRequestDate(rs.getDate("request_date"));
-//
-//				requests.add(request);
-//			}
-//		} catch (SQLException | ClassNotFoundException e) {
-//			e.printStackTrace();
-//		} finally {
-//			DBUtil.executeClose(rs, pstmt, conn);
-//		}
-//
-//		return requests;
-//	}
+	// 포인트 충전요청 조회 (관리자)
+	public List<PointRequest> getAllPointRequests() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<PointRequest> requests = new ArrayList<>();
+
+		String sql = "SELECT request_num, user_id, point_amount, request_status, request_date "
+				+ "FROM point_requests ORDER BY request_date ASC";
+
+		try {
+			conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				PointRequest request = new PointRequest();
+				request.setRequestNum(rs.getInt("request_num"));
+				request.setUserId(rs.getString("user_id"));
+				request.setPointAmount(rs.getInt("point_amount"));
+				request.setRequestStatus(rs.getInt("request_status"));
+				request.setRequestDate(rs.getTimestamp("request_date"));
+				requests.add(request);
+			}
+		} catch (SQLException | ClassNotFoundException e) {
+
+		} finally {
+
+		}
+
+		return requests;
+	}
+}
 //
 //	// 사용자: 내 포인트 충전 요청 내역 조회
 //	public List<PointRequest> getUserPointRequests(String userId) {

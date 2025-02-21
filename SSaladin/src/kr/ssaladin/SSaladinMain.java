@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import kr.ssaladin.model.PointRequest;
 
 import kr.ssaladin.dao.PointRequestDAO;
 import kr.ssaladin.service.BookListService;
@@ -331,29 +333,49 @@ public class SSaladinMain {
 	}
 
 	private void adminMenu() throws IOException {
-		// 관리자 메뉴
-		while (flag) {
-			System.out.print("1. 사용자 목록, 2. 상품 관리, 3. 로그아웃: ");
-			try {
-				int no = Integer.parseInt(br.readLine());
-				if (no == 1) {
-					// 사용자 목록
-					System.out.println("사용자 목록을 보여줍니다.");
-				} else if (no == 2) {
-					// 상품 관리
-					System.out.println("상품 관리 화면");
-				} else if (no == 3) {
-					// 로그아웃
-					System.out.println("관리자 로그아웃 완료.");
-					flag = false; // 로그인 상태 해제
-					break;
-				} else {
-					System.out.println("잘못된 입력입니다.");
-				}
-			} catch (NumberFormatException e) {
-				System.out.println("[ 숫자만 입력 가능합니다. ]");
-			}
-		}
+	    while (flag) {
+	        System.out.print("1. 사용자 목록, 2. 상품 관리, 3. 포인트 충전 요청 관리, 4. 로그아웃: ");
+	        try {
+	            int no = Integer.parseInt(br.readLine());
+	            if (no == 1) {
+	                System.out.println("사용자 목록을 보여줍니다.");
+	            } else if (no == 2) {
+	                System.out.println("상품 관리 화면");
+	            } else if (no == 3) {
+	                managePointRequests();
+	            } else if (no == 4) {
+	                System.out.println("관리자 로그아웃 완료.");
+	                flag = false;
+	                break;
+	            } else {
+	                System.out.println("잘못된 입력입니다.");
+	            }
+	        } catch (NumberFormatException e) {
+	            System.out.println("[ 숫자만 입력 가능합니다. ]");
+	        }
+	    }
+	}
+
+	private void managePointRequests() {
+	    System.out.println("\n=== 포인트 충전 요청 관리 ===");
+	    List<PointRequest> requests = pointRequestService.getAllRequests();
+	    
+	    if (requests.isEmpty()) {
+	        System.out.println("처리할 포인트 충전 요청이 없습니다.");
+	        return;
+	    }
+
+	    System.out.println("요청번호\t사용자ID\t요청금액\t상태\t요청일자");
+	    System.out.println("----------------------------------------");
+	    
+	    for (PointRequest request : requests) {
+	        System.out.printf("%d\t%s\t%d\t%s\t%s%n",
+	            request.getRequestNum(),
+	            request.getUserId(),
+	            request.getPointAmount(),
+	            pointRequestService.getStatusString(request.getRequestStatus()),
+	            request.getRequestDate());
+	    }
 	}
 
 	public String getUserId() {
