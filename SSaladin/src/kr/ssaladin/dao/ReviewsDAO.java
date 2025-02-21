@@ -15,14 +15,16 @@ public class ReviewsDAO {
 	boolean flag = false;
 	
 	// 게시판 글 보기
-	public void selectReviews() {
+	public void selectReviews(int bookCode) {
 		
 		try {
 			conn = DBUtil.getConnection();
 			sql = "SELECT * FROM reviews r, users u, books b "
-					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title "
+					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title AND book_code=?"
 					+ "ORDER BY review_num DESC";
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, bookCode);
+			pstmt.executeUpdate();
 			rs = pstmt.executeQuery();
 			
 			System.out.println("-".repeat(30));
@@ -52,17 +54,20 @@ public class ReviewsDAO {
 	}
 	
 	// 게시판 글 작성
-	public void insertReviews(String userId, String bookTitle, String reviewsContent, int rating) {
+	public void insertReviews(String userId, String bookTitle, String reviewsContent, int rating, int bookCode) {
 		
 		try {
 			conn = DBUtil.getConnection();
-			sql = "INSERT INTO reviews (review_num, book_title, reviews_content, rating, reg_date)"
-					+ "VALUES (reivews_seq.nextval, ?, ?, ?, SYSDATE) "
-					+ "SELECT book_title FROM reviews r, books b WHERE r.book_title=b.book_title";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, bookTitle);
-			pstmt.setString(2, reviewsContent);
-			pstmt.setInt(3, rating);
+			sql = "INSERT INTO reviews (review_num, user_id, book_code, book_title, reviews_content, rating, reg_date) "
+				      + "SELECT reviews_seq.nextval, ?, b.book_code, b.book_title, ?, ?, SYSDATE "
+				      + "FROM books b WHERE b.book_code = ?";
+
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, userId);
+				pstmt.setString(2, reviewsContent);
+				pstmt.setInt(3, rating);
+				pstmt.setInt(4, bookCode);
+				
 			int count = pstmt.executeUpdate();
 			System.out.println(count + "개의 글을 등록했습니다.");
 		} catch (Exception e) {

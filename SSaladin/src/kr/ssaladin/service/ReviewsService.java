@@ -11,64 +11,70 @@ public class ReviewsService {
 	private BufferedReader br;
 	private ReviewsDAO dao;
 
-	public void reiviewService(String userId, int reviewNum ) throws IOException {
+	public void reviewService(String userId, int bookCode) throws IOException {
+		
 		dao = new ReviewsDAO();
 		br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("1.리뷰 목록 보기, 2.리뷰 작성, 3. 리뷰 수정, 4. 리뷰 삭제>");
-		try {
-			int no = Integer.parseInt(br.readLine());
+		
+		int reviewNum;
+		while(true) {
+			System.out.println("1.리뷰 목록 보기, 2.리뷰 작성, 3. 리뷰 수정, 4. 리뷰 삭제, 5. 상세정보로 돌아가기>");
+			try {
+				int no = Integer.parseInt(br.readLine());
 
-			if (no == 1) {
-				dao.selectReviews();
+				if (no == 1) { // 리뷰 목록
+					dao.selectReviews(bookCode);
 
-			} else if (no == 2) {
+				} else if (no == 2) { // 리뷰 작성
 
-				System.out.println("제목 : ");
-				String bookTitle = br.readLine();
+					System.out.println("제목 : ");
+					String bookTitle = br.readLine();
 
-				System.out.println("내용 : ");
-				String reviewsContent = br.readLine();
-
-				int rating = parseInputRating("평점 : ");
-				dao.insertReviews(userId, bookTitle, reviewsContent, rating);
-
-			} else if (no == 3) {
-				dao.selectReviews();
-				System.out.println("수정할 리뷰글의 번호 : ");
-				reviewNum = Integer.parseInt(br.readLine());
-				int count = dao.checkReviews(reviewNum);
-
-				if (count == 1) {
 					System.out.println("내용 : ");
 					String reviewsContent = br.readLine();
 
 					int rating = parseInputRating("평점 : ");
+					dao.insertReviews(userId, bookTitle, reviewsContent, rating, bookCode);
 
-					dao.updateReviews(userId, reviewNum, reviewsContent, rating);
-				} else if (count==0) {
-					System.out.println("번호를 잘못 입력했습니다.");
-				} else {
-					System.out.println("정보 처리 중 오류 발생");
-				}// if
+				} else if (no == 3) { // 리뷰 수정
+					dao.selectReviews(bookCode);
+					System.out.println("수정할 리뷰글의 번호 : ");
+					reviewNum = Integer.parseInt(br.readLine());
+					int count = dao.checkReviews(reviewNum);
 
-			} else if (no == 4) {
-				dao.selectReviews();
-				System.out.println("삭제할 리뷰의 번호 : ");
-				int num = Integer.parseInt(br.readLine());
-				int count = dao.checkReviews(reviewNum);
-				
-				if (count == 1) {
-					dao.deleteReviews(userId, reviewNum);
-				} else if (count == 0) {
-					System.out.println("번호를 잘못 입력했습니다.");
-				} else {
-					System.out.println("정보 처리 중 오류 발생");
+					if (count == 1) {
+						System.out.println("내용 : ");
+						String reviewsContent = br.readLine();
+
+						int rating = parseInputRating("평점 : ");
+
+						dao.updateReviews(userId, reviewNum, reviewsContent, rating);
+					} else if (count==0) {
+						System.out.println("번호를 잘못 입력했습니다.");
+					} else {
+						System.out.println("정보 처리 중 오류 발생");
+					}// if
+
+				} else if (no == 4) { // 리뷰 삭제
+					dao.selectReviews(bookCode);
+					System.out.println("삭제할 리뷰의 번호 : ");
+					reviewNum = Integer.parseInt(br.readLine());
+					int count = dao.checkReviews(reviewNum);
+
+					if (count == 1) {
+						dao.deleteReviews(userId, reviewNum);
+					} else if (count == 0) {
+						System.out.println("번호를 잘못 입력했습니다.");
+					} else {
+						System.out.println("정보 처리 중 오류 발생");
+					} // if
+				} else if (no == 5) { // 상세정보로 돌아가기
+					break;
 				} // if
-			} // if
-		} catch (NumberFormatException e) {
-			System.out.println("[숫자만 입력 가능]");
-		}
-
+			} catch (NumberFormatException e) {
+				System.out.println("[숫자만 입력 가능]");
+			}
+		} // while
 
 	}
 
