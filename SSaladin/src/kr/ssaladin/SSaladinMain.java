@@ -170,7 +170,7 @@ public class SSaladinMain {
 					System.out.println("장바구니 보기");
 				} else if (no == 5) {
 					// 로그아웃
-					System.out.println("로그아웃 완료.");
+					System.out.println("로그아웃 되었습니다.");
 					flag = false; // 로그인 상태 해제
 					break;
 				} else {
