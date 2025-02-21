@@ -116,11 +116,11 @@ public class BookListDAO {
 		            System.out.println("도서명 : " + rs.getString("book_title"));
 		            System.out.println("저자명 : " + rs.getString("book_author"));
 		            System.out.println("가격 : " + rs.getInt("book_price"));
-		            System.out.println("출판사 : " + rs.getString("book_publisher"));
-		            System.out.println("설명 : " + rs.getString("book_description"));
-		            System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
-		            System.out.println("평균평점 : " + rs.getFloat("rating_avg"));
-		            System.out.println("등록일 : " + rs.getDate("book_reg_date"));
+//		            System.out.println("출판사 : " + rs.getString("book_publisher"));
+//		            System.out.println("설명 : " + rs.getString("book_description"));
+//		            System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
+//		            System.out.println("평균평점 : " + rs.getFloat("rating_avg"));
+//		            System.out.println("등록일 : " + rs.getDate("book_reg_date"));
 		            System.out.println("------------------------------------------------");
 		        }
 
