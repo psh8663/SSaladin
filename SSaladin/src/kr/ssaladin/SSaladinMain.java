@@ -95,8 +95,26 @@ public class SSaladinMain {
 			flag = true;
 			me_id = userId;
 			System.out.println(userId + "님 환영합니다!");
-			System.out.print("회원 등급: " + this.userAuth + "\t");
-			System.out.println("보유 포인트: " + this.userPoint); // 포인트 출력
+			
+			// userAuth 값에 따라 등급 출력
+	        String userRole = "";
+	        switch (this.userAuth) {
+	            case 0:
+	                userRole = "일반회원";
+	                break;
+	            case 1:
+	                userRole = "VIP";
+	                break;
+	            case 2:
+	                userRole = "관리자";
+	                break;
+	            default:
+	                userRole = "알 수 없는 등급";
+	                break;
+	        }
+
+	        System.out.println("회원 등급: " + userRole);
+	        System.out.println("보유 포인트: " + this.userPoint); // 포인트 출력
 
 			// 권한에 따라 메뉴 출력
 			if (this.userAuth == 0) {
