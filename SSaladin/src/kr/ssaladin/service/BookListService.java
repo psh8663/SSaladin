@@ -6,17 +6,20 @@ import java.io.InputStreamReader;
 
 import kr.ssaladin.SSaladinMain;
 import kr.ssaladin.dao.BookListDAO;
+import kr.ssaladin.dao.ReviewsDAO;
 
 public class BookListService {
     private BufferedReader br;
     private BookListDAO dao;
     private String userId;  // 현재 로그인한 사용자 ID 저장
+    private ReviewsDAO rDAO;
 
     public BookListService(SSaladinMain sSaladinMain) {
         try {
             this.userId = sSaladinMain.getUserId();  // 로그인한 사용자 ID 가져오기
             br = new BufferedReader(new InputStreamReader(System.in));
             dao = new BookListDAO();
+            rDAO = new ReviewsDAO();
             booklist();
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,6 +90,8 @@ public class BookListService {
                 } else if (option == 2) {
                     // 리뷰 보기
                     System.out.println("리뷰를 확인합니다.");
+                    
+                    rDAO.detailSelectRivews(num);
                 } else if (option == 3) {
                     break; // 메뉴로 돌아가기
                 } else {
