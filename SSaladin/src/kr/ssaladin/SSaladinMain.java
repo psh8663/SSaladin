@@ -117,7 +117,7 @@ public class SSaladinMain {
    private void userMenu() throws IOException {
       // 로그인 성공 후 회원제 서비스 영역 (일반 사용자)
       while (flag) {
-         System.out.print("1. 상품목록, 2. 회원 정보 조회 , 3. 도서 신청 게시판 ,4. 로그아웃: ");
+         System.out.print("1. 상품목록, 2. 회원 정보 조회 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: ");
          try {
             int no = Integer.parseInt(br.readLine());
             if (no == 1) {
@@ -130,6 +130,9 @@ public class SSaladinMain {
                // 도서 신청 게시판
                System.out.println("도서 신청 게시판");
             } else if (no == 4) {
+            	// 장바구니 보기
+            	System.out.println("장바구니 보기");
+            } else if (no == 5) {
                // 로그아웃
                System.out.println("로그아웃 완료.");
                flag = false; // 로그인 상태 해제
@@ -142,6 +145,32 @@ public class SSaladinMain {
          }
       }
    }
+   
+   //======================================//
+   // 장바구니 관리 메서드 추가중 
+   //  + 구매기능 (장바구니에서 최종 구매) 추가구현 필요
+   //     도서 목록에서 장바구니에 책을 담고, 장바구니에서 최종 구매
+   //		구매 시 장바구니에 담겨있는 도서들의 포인트 합계만큼 포인트 차감
+   
+   
+   //장바구니 관리
+   public void manageCart() throws IOException{
+	   
+   }
+   
+   
+
+   public void showCartItems() throws IOException{
+   //장바구니 목록
+	   
+   }
+   
+
+   public void updateCart() throws IOException{
+   //장바구니 수정 
+	   return;
+   }
+   
 
    private void adminMenu() throws IOException {
       // 관리자 메뉴
