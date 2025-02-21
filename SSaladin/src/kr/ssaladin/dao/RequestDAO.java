@@ -75,7 +75,8 @@ public class RequestDAO {
 		
 		try {
 			conn =DBUtil.getConnection();
-			sql = "UDATE request_books SET request_content=? WHERE request_num=?";
+			sql = "UPDATE request_books SET request_content=? WHERE request_num=?";
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, requestContent);
 			pstmt.setInt(2, requestNum);
 			int count = pstmt.executeUpdate();
