@@ -28,9 +28,6 @@ public class RequestService {
 					
 				} else if (no == 2) {
 					
-					System.out.println("도서 제목 : ");
-					String bookTitle = br.readLine();
-					
 					System.out.println("내용 : ");
 					String requestContent = br.readLine();
 					dao.insertRequest(userId, requestContent);
@@ -43,8 +40,6 @@ public class RequestService {
 					int count = dao.checkRequest(requestNum);
 					
 					if(count == 1) {
-					System.out.println("도서 제목 : ");
-					String bookTitle = br.readLine();
 					
 					System.out.println("내용 : ");
 					String requestContent = br.readLine();
