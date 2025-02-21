@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
+import kr.ssaladin.service.RequestService;
 import kr.ssaladin.service.UserService;
 import kr.util.DBUtil;
 
@@ -20,6 +21,7 @@ public class SSaladinMain {
 	private UserService userService; // UserService 객체 추가
 	private CartService cartService; // CartService 객체 추가
 	private BookListService bookListService; // BookListService 객체 추가
+	private RequestService requestService; // RequestService 객체 추가
 
 	public SSaladinMain() {
 		try {
@@ -27,6 +29,7 @@ public class SSaladinMain {
 			conn = DBUtil.getConnection(); // 데이터베이스 연결
 			userService = new UserService(); // UserService 초기화
 			cartService = new CartService();
+			requestService = new RequestService(); // RequestService 초기화
 			
 			// 메뉴 호출
 			callMenu();
@@ -134,6 +137,7 @@ public class SSaladinMain {
 				} else if (no == 3) {
 					// 도서 신청 게시판
 					System.out.println("도서 신청 게시판");
+					requestService.requestService(me_id);
 				} else if (no == 4) {
 					// 장바구니 보기
 					System.out.println("장바구니 보기");
