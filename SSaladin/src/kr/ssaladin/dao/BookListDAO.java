@@ -72,7 +72,14 @@ public class BookListDAO {
 			String sql = null;
 			try {
 				conn = DBUtil.getConnection();
-				sql = "SELECT * FROM books b, categories c WHERE b.category_num=c.category_num and book_code=? ";
+				 sql = "SELECT " +
+				          "    b.*, " +
+				          "    c.category_name, " +
+				          "    (SELECT AVG(rating) FROM reviews r WHERE r.book_code = b.book_code) AS avg_rating " +
+				          "FROM books b " +
+				          "JOIN categories c ON b.category_num = c.category_num " +
+				          "WHERE b.book_code = ?";
+
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setInt(1, num);
 				rs = pstmt.executeQuery();
@@ -85,7 +92,9 @@ public class BookListDAO {
 					System.out.println("출판사 : " + rs.getString("book_publisher"));
 					System.out.println("설명 : " + rs.getString("book_description"));
 					System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
-					System.out.println("평균평점 : " + rs.getFloat("rating_avg")); //수정요함(avg)
+					// 평균 평점 처리 (NULL 값 방지)
+			        Float avgRating = rs.getObject("avg_rating", Float.class);
+			        System.out.println("평균평점 : " + (avgRating != null ? avgRating : "평점 없음"));
 					System.out.println("등록일 : " + rs.getDate("book_reg_date"));
 					
 				}else {

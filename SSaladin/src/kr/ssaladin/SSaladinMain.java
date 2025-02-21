@@ -26,7 +26,6 @@ public class SSaladinMain {
 			br = new BufferedReader(new InputStreamReader(System.in));
 			conn = DBUtil.getConnection(); // 데이터베이스 연결
 			userService = new UserService(); // UserService 초기화
-			bookListService = new BookListService();
 			cartService = new CartService();
 			
 			// 메뉴 호출
@@ -128,7 +127,7 @@ public class SSaladinMain {
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
-					bookListService.booklist();
+					new BookListService(this);
 				} else if (no == 2) {
 					// 회원 정보 조회
 					System.out.println("회원 정보 조회 화면");
@@ -264,6 +263,9 @@ public class SSaladinMain {
 				System.out.println("[ 숫자만 입력 가능합니다. ]");
 			}
 		}
+	}
+	public String getUserId() {
+	    return me_id;
 	}
 
 	public static void main(String[] args) {
