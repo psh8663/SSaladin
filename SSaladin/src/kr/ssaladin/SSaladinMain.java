@@ -21,13 +21,10 @@ public class SSaladinMain {
 	private int userAuth; // 사용자 권한 (0: 일반회원, 1: VIP, 2: 관리자)
 	private int userPoint; // 사용자 포인트
 	private Connection conn; // 데이터베이스 연결 객체
-	private UserService suserService;
-	private CartService scartService;
-	private BookListService sbookListService;
-	private PointRequestService pointRequestService; //
-	private UserService userService; // UserService 객체 추가
-	private CartService cartService; // CartService 객체 추가
-	private BookListService bookListService; // BookListService 객체 추가
+	private UserService userService; 
+	private CartService cartService; 
+	private BookListService bookListService; 
+	private PointRequestService pointRequestService; // 
 	private RequestService requestService; // RequestService 객체 추가
 
 	public SSaladinMain() {
