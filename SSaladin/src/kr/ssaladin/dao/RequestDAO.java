@@ -18,7 +18,7 @@ public class RequestDAO {
 		
 		try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT * FROM request ORDER BY request_num DESC";
+			sql = "SELECT * FROM request_books ORDER BY request_num DESC";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
@@ -52,8 +52,8 @@ public class RequestDAO {
 	public void insertRequest(String userId, String requestContent) {
 		try {
 			conn = DBUtil.getConnection();
-			sql = "INSERT INTO request (request_num, user_id, request_content, request_date)"
-					+ "VALUES (request_seq.nextval, ?, ?, SYSDATE)";
+			sql = "INSERT INTO request_books (request_num, user_id, request_content, request_date)"
+					+ "VALUES (request_books_seq.nextval, ?, ?, SYSDATE)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, userId);
 			pstmt.setString(2, requestContent);
@@ -75,7 +75,7 @@ public class RequestDAO {
 		
 		try {
 			conn =DBUtil.getConnection();
-			sql = "UDATE request SET request_content=? WHERE request_num=?";
+			sql = "UDATE request_books SET request_content=? WHERE request_num=?";
 			pstmt.setString(1, requestContent);
 			pstmt.setInt(2, requestNum);
 			int count = pstmt.executeUpdate();
@@ -97,7 +97,7 @@ public class RequestDAO {
 		
 		try {
 			conn = DBUtil.getConnection();
-			sql = "DELETE FROM reaquest WHERE request_num=?";
+			sql = "DELETE FROM request_books WHERE request_num=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, requestNum);
 			int count = pstmt.executeUpdate();
@@ -112,7 +112,8 @@ public class RequestDAO {
 	// 작성자 및 관리자 유효성 검사
     private boolean checkPermission(String userId, int requestNum) {
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement("SELECT user_id FROM request WHERE request_num=?")) {
+             PreparedStatement pstmt = conn.prepareStatement("SELECT u.user_id FROM request r, users u WHERE "
+             		+ "r.user_id=u.user_id AND r.request_num=?")) {
 
             pstmt.setInt(1, requestNum);
             ResultSet rs = pstmt.executeQuery();
@@ -124,13 +125,14 @@ public class RequestDAO {
         return false;
     }
     
+    // 요청 글이 있는지 확인
     public int checkRequest(int requestNum) {
     	
     	int count = 0;
     	
     	try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT * FROM request WHERE request_num=?";
+			sql = "SELECT * FROM request_books WHERE request_num=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, requestNum);
 			rs = pstmt.executeQuery();
