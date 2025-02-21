@@ -358,7 +358,7 @@ public class SSaladinMain {
 	    }
 	}
 
-	private void managePointRequests() {
+	private void managePointRequests() throws IOException {
 	    System.out.println("\n=== 포인트 충전 요청 관리 ===");
 	    List<PointRequest> requests = pointRequestService.getAllRequests();
 	    
@@ -399,7 +399,7 @@ public class SSaladinMain {
 				} else {
 					System.out.println("잘못된 입력입니다.");
 				}
-			} catch (NumberFormatException | IOException e) {
+			} catch (NumberFormatException e) {
 				System.out.println("[ 숫자만 입력 가능합니다. ]");
 			}
 		}
