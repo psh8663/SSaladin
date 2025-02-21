@@ -26,8 +26,9 @@ public class SSaladinMain {
 			br = new BufferedReader(new InputStreamReader(System.in));
 			conn = DBUtil.getConnection(); // 데이터베이스 연결
 			userService = new UserService(); // UserService 초기화
-			bookListService = new BookListService(); // BookListServcice 초기화
-
+			bookListService = new BookListService();
+			cartService = new CartService();
+			
 			// 메뉴 호출
 			callMenu();
 		} catch (Exception e) {
@@ -127,7 +128,7 @@ public class SSaladinMain {
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
-					new BookListService();
+					bookListService.booklist();
 				} else if (no == 2) {
 					// 회원 정보 조회
 					System.out.println("회원 정보 조회 화면");
