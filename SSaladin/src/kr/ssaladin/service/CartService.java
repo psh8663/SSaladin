@@ -17,7 +17,7 @@ public class CartService {
     public CartService() throws ClassNotFoundException, SQLException {
         Connection conn = DBUtil.getConnection();  // DB 연결 생성
         cartDAO = new CartDAO(conn);  // CartDAO에 Connection 전달
-        userDAO = new UserDAO(conn);  // UserDAO에 Connection 전달
+        this.userDAO = new UserDAO();
     }
 
     // CartItem 내부 클래스 선언
@@ -49,7 +49,7 @@ public class CartService {
     // 로그인 상태 확인
     private boolean checkLoginStatus(String userId, String userPw){
         try {
-            return userDAO.LoginCheck(userId, userPw);
+            return userDAO.checkLogin(userId, userPw);
         } catch (Exception e) {
             System.out.println("로그인 체크 중 오류 발생");
             e.printStackTrace();
