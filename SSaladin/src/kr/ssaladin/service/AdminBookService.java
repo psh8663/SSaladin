@@ -27,7 +27,7 @@ public class AdminBookService {
 
 	private void adminbookmanage() throws IOException{
 		while (true) {
-	        System.out.print("1.카테고리 추가, 6.종료> ");
+	        System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 6.종료> ");
 	        try {
 	            int no = Integer.parseInt(br.readLine());
 	            if (no == 1) {

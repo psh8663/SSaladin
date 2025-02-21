@@ -41,7 +41,7 @@ public class BookListService {
                     dao.selectBook();
                     System.out.print("도서코드 선택:");
                     int num = Integer.parseInt(br.readLine());
-                    showBookDetails(num); // 모듈화된 메서드 호출
+                    showBookDetails(num);
                 } else if (no == 2) {
                     // 도서 제목 검색 기능
                     System.out.print("검색할 도서 제목 입력: ");
@@ -49,13 +49,16 @@ public class BookListService {
                     dao.selectBookByTitle(title);
                     System.out.print("도서코드 선택:");
                     int num = Integer.parseInt(br.readLine());
-                    showBookDetails(num); // 모듈화된 메서드 호출
+                    showBookDetails(num); 
                 } else if (no == 3) {
                     // 카테고리별 도서 검색
                     dao.selectCategories(); // 카테고리 목록 출력
                     System.out.print("조회할 카테고리 번호 선택: ");
                     int categoryNum = Integer.parseInt(br.readLine());
                     dao.selectBooksByCategory(categoryNum); // 해당 카테고리의 도서 출력
+                    System.out.print("도서코드 선택:");
+                    int num = Integer.parseInt(br.readLine());
+                    showBookDetails(num); 
                 } else if (no == 6) {
                     // 종료
                     System.out.println("프로그램 종료");
@@ -75,7 +78,7 @@ public class BookListService {
         if (count == 1) {
             dao.selectDetailBook(num); // 상세 정보 출력
             while (true) {
-                System.out.print("1. 장바구니에 담기 2.리뷰 보기 3.메뉴로 돌아가기 >");
+                System.out.print("1. 장바구니에 담기 2. 리뷰 보기 3.메뉴로 돌아가기 >");
                 int option = Integer.parseInt(br.readLine());
                 if (option == 1) {
                     // 장바구니 추가 기능 (dao에 메서드 추가 필요)

@@ -18,21 +18,23 @@ public class BookListDAO {
 	        sql = "SELECT book_code, book_title, '(' || book_author || ')', CONCAT(book_price, '원') AS book_price FROM BOOKS";
 	        pstmt = conn.prepareStatement(sql);
 	        rs = pstmt.executeQuery();
-	        System.out.println("------------------");
+	        System.out.println("------------------------------------------------------");
+	        System.out.printf("%-10s %-30s %-20s %-10s%n", "도서코드", "도서명", "저자명", "가격");
+	        System.out.println("------------------------------------------------------");
+
 	        if(rs.next()) {
-	            System.out.println("도서코드\t도서명\t저자명\t\t\t\t가격");
 	            do {
-	            	System.out.print(rs.getInt(1));  // book_code
-	                System.out.print("\t");
-	                System.out.print(rs.getString(2));  // book_title
-	                System.out.print(rs.getString(3));  // book_author
-	                System.out.print("\t\t\t\t");
-	                System.out.println(rs.getString(4));  // book_price
+	            	int bookCode = rs.getInt(1);
+	                String bookTitle = rs.getString(2);
+	                String bookAuthor = rs.getString(3);
+	                String bookPrice = rs.getString(4);
+	                
+	                System.out.printf("%-10d %-30s %-20s %-10s%n", bookCode, bookTitle, bookAuthor, bookPrice);
 	            } while(rs.next());
 	        } else {
 	            System.out.println("등록된 도서가 없습니다.");
 	        }
-	        System.out.println("------------------");
+	        System.out.println("------------------------------------------------------");
 	    } catch(Exception e) {
 	        e.printStackTrace();
 	    } finally {
@@ -62,7 +64,7 @@ public class BookListDAO {
 			}	
 			return count;
 		}
-		//책 상세보기
+		//도서 상세보기
 		public void selectDetailBook(int num) {
 			Connection conn = null;
 			PreparedStatement pstmt = null;
@@ -96,6 +98,7 @@ public class BookListDAO {
 				DBUtil.executeClose(rs, pstmt, conn);
 			}
 		}
+		//도서검색(제목)
 		public void selectBookByTitle(String title) {
 		    Connection conn = null;
 		    PreparedStatement pstmt = null;
@@ -116,11 +119,6 @@ public class BookListDAO {
 		            System.out.println("도서명 : " + rs.getString("book_title"));
 		            System.out.println("저자명 : " + rs.getString("book_author"));
 		            System.out.println("가격 : " + rs.getInt("book_price"));
-//		            System.out.println("출판사 : " + rs.getString("book_publisher"));
-//		            System.out.println("설명 : " + rs.getString("book_description"));
-//		            System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
-//		            System.out.println("평균평점 : " + rs.getFloat("rating_avg"));
-//		            System.out.println("등록일 : " + rs.getDate("book_reg_date"));
 		            System.out.println("------------------------------------------------");
 		        }
 
@@ -133,8 +131,7 @@ public class BookListDAO {
 		        DBUtil.executeClose(rs, pstmt, conn);
 		    }
 		}
-		// BookListDAO.java
-		// 1. 모든 카테고리를 조회하는 메서드
+		// 카테고리 조회
 		public void selectCategories() {
 		    Connection conn = null;
 		    PreparedStatement pstmt = null;
@@ -159,7 +156,7 @@ public class BookListDAO {
 		    }
 		}
 
-		// 2. 선택한 카테고리에 속한 책들을 조회하는 메서드
+		// 카테고리내 도서 조회
 		public void selectBooksByCategory(int categoryNum) {
 		    Connection conn = null;
 		    PreparedStatement pstmt = null;
