@@ -43,18 +43,25 @@ public class UserService {
 	}
 
 	// 로그인
-	public int login(String userId, String userPw) {
-		try {
-			if (userDAO.checkLogin(userId, userPw)) {
-				return userDAO.getUserAuth(userId);
-			}
-			System.out.println("아이디 또는 비밀번호가 올바르지 않습니다.");
-			return -1;
-		} catch (Exception e) {
-			System.out.println("로그인 처리 중 오류 발생: " + e.getMessage());
-			return -1;
-		}
+	public int[] login(String userId, String userPw) {
+	    int[] result = new int[2]; // 결과 배열 선언: [0] - userAuth, [1] - userPoint
+
+	    try {
+	        if (userDAO.checkLogin(userId, userPw)) {
+	            result[0] = userDAO.getUserAuth(userId);  // userAuth 가져오기
+	            result[1] = userDAO.getUserPoint(userId); // userPoint 가져오기
+	            return result;
+	        }
+	        System.out.println("아이디 또는 비밀번호가 올바르지 않습니다.");
+	        result[0] = -1; // 로그인 실패
+	        return result;
+	    } catch (Exception e) {
+	        System.out.println("로그인 처리 중 오류 발생: " + e.getMessage());
+	        result[0] = -1; // 로그인 실패
+	        return result;
+	    }
 	}
+
 
 	// 유효성 검사 - 아이디
 	private boolean isValidUserId(String userId) {

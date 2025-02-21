@@ -64,6 +64,31 @@ public class UserDAO {
 		return flag;
 	}
 
+	// 포인트 확인
+	public int getUserPoint(String userId) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int userPoint = 0;
+
+		String sql = "SELECT user_point FROM users WHERE user_id = ?";
+
+		try {
+			conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery(); 
+			if (rs.next()) {
+				userPoint = rs.getInt("user_point");
+			}
+		} catch (SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+		return userPoint;
+	}
+
 	// 권한 체크
 	public int getUserAuth(String userId) {
 		Connection conn = null;

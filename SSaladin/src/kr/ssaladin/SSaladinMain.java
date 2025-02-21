@@ -6,9 +6,11 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import kr.ssaladin.dao.PointRequestDAO;
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
 import kr.ssaladin.service.UserService;
+import kr.ssaladin.service.PointRequestService;
 import kr.util.DBUtil;
 
 public class SSaladinMain {
@@ -16,10 +18,12 @@ public class SSaladinMain {
 	private String me_id;
 	private boolean flag; // 로그인 상태 체크
 	private int userAuth; // 사용자 권한 (0: 일반회원, 1: VIP, 2: 관리자)
+	private int userPoint; // 사용자 포인트
 	private Connection conn; // 데이터베이스 연결 객체
-	private UserService userService; // UserService 객체 추가
-	private CartService cartService; // CartService 객체 추가
-	private BookListService bookListService; // BookListService 객체 추가
+	private UserService userService;
+	private CartService cartService;
+	private BookListService bookListService;
+	private PointRequestService pointRequestService; //
 
 	public SSaladinMain() {
 		try {
@@ -28,7 +32,8 @@ public class SSaladinMain {
 			userService = new UserService(); // UserService 초기화
 			bookListService = new BookListService();
 			cartService = new CartService();
-			
+			pointRequestService = new PointRequestService();
+
 			// 메뉴 호출
 			callMenu();
 		} catch (Exception e) {
@@ -45,6 +50,7 @@ public class SSaladinMain {
 		}
 	}
 
+	// 첫 화면
 	private void callMenu() throws IOException {
 		// 로그인 체크 영역
 		while (true) {
@@ -70,6 +76,7 @@ public class SSaladinMain {
 		}
 	}
 
+	// 로그인 페이지
 	private void login() throws IOException {
 		System.out.print("아이디: ");
 		String userId = br.readLine();
@@ -77,14 +84,16 @@ public class SSaladinMain {
 		String userPw = br.readLine();
 
 		// 로그인 성공 여부와 user_auth 값 받기
-		this.userAuth = userService.login(userId, userPw); // 인스턴스 변수에 저장
-
-		System.out.println("로그인한 아이디의 userAuth: " + this.userAuth);
+		int[] loginResult = userService.login(userId, userPw);
+		this.userAuth = loginResult[0];
+		this.userPoint = loginResult[1];
 
 		if (this.userAuth != -1) {
 			flag = true;
 			me_id = userId;
 			System.out.println(userId + "님 환영합니다!");
+			System.out.print("회원 등급: " + this.userAuth + "\t");
+			System.out.println("보유 포인트: " + this.userPoint); // 포인트 출력
 
 			// 권한에 따라 메뉴 출력
 			if (this.userAuth == 0) {
@@ -97,6 +106,7 @@ public class SSaladinMain {
 		}
 	}
 
+	// 회원가입 페이지
 	private void join() throws IOException {
 		System.out.print("아이디: ");
 		String userId = br.readLine();
@@ -121,17 +131,17 @@ public class SSaladinMain {
 		}
 	}
 
+	// 로그인 후 메뉴 (유저)
 	private void userMenu() throws IOException {
-		// 로그인 성공 후 회원제 서비스 영역 (일반 사용자)
 		while (flag) {
-			System.out.print("1. 상품목록, 2. 회원 정보 조회 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: ");
+			System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
 					bookListService.booklist();
 				} else if (no == 2) {
-					// 회원 정보 조회
-					System.out.println("회원 정보 조회 화면");
+					// 마이페이지
+					myPage();
 				} else if (no == 3) {
 					// 도서 신청 게시판
 					System.out.println("도서 신청 게시판");
@@ -149,6 +159,66 @@ public class SSaladinMain {
 			} catch (NumberFormatException e) {
 				System.out.println("[ 숫자만 입력 가능합니다. ]");
 			}
+		}
+	}
+
+	// 마이페이지
+	private void myPage() throws IOException {
+		// 마이페이지 메뉴
+		while (flag) {
+			System.out.println("\n=== 마이페이지 ===");
+			System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 구매내역, 5. 뒤로가기: ");
+			try {
+				int no = Integer.parseInt(br.readLine());
+				if (no == 1) {
+					// 회원정보 수정
+					System.out.println("회원정보 수정 페이지");
+					// 회원정보 수정 기능 구현 필요
+				} else if (no == 2) {
+					// 포인트 충전
+					chargePoint();
+				} else if (no == 3) {
+					// 장바구니
+					manageCart();
+				} else if (no == 4) {
+					// 구매내역
+					System.out.println("구매내역 페이지");
+					// 구매내역 페이지 구현 필요
+				} else if (no == 5) {
+					// 뒤로가기
+					break; // 마이페이지 메뉴 종료
+				} else {
+					System.out.println("잘못된 입력입니다.");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("[ 숫자만 입력 가능합니다. ]");
+			}
+		}
+	}
+
+	// 포인트 충전 페이지
+	private void chargePoint() throws IOException {
+		// 포인트 충전
+		System.out.println("충전할 금액을 입력하세요: ");
+		try {
+			int chargeAmount = Integer.parseInt(br.readLine());
+
+			// 포인트 충전 요청을 DB에 생성 (PointRequestDAO 사용)
+
+			boolean requestCreated = pointRequestService.requestCharge(me_id, chargeAmount);
+
+			if (requestCreated) {
+				System.out.println("현재 보유 포인트: " + userPoint + "원");
+				System.out.println("충전 요청금액: " + chargeAmount + "원");
+			} else {
+				System.out.println("포인트 충전 요청에 실패했습니다. 잠시 후 다시 시도해주세요.");
+			}
+		} catch (NumberFormatException e) {
+			// 입력이 숫자가 아닐 때
+			System.out.println("올바른 금액을 입력해주세요.");
+		} catch (Exception e) {
+			// 그 외의 예외가 발생했을 때
+			System.out.println("포인트 충전 중 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
 
