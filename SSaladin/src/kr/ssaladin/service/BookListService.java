@@ -43,24 +43,37 @@ public class BookListService {
 					int num = Integer.parseInt(br.readLine());
 					int count = dao.checkBCode(num);
 					if (count == 1) {
-						dao.selectDetailBook(num);
+						dao.selectDetailBook(num); // 상세 정보 출력
+						while (true) {
+							System.out.print("0. 장바구니에 담기 1.메뉴로 돌아가기 >");
+							int option = Integer.parseInt(br.readLine());
+							if (option == 0) {
+								// 장바구니 추가 기능 (dao에 메서드 추가 필요)
+								System.out.println("장바구니에 담았습니다.");
+							} else if (option == 1) {
+								break; // 메뉴로 돌아가기
+							} else {
+								System.out.println("잘못 입력했습니다. 다시 선택하세요.");
+							}
+						}
 					} else if (count == 0) {
 						System.out.println("번호를 잘못 입력했습니다.");
 					} else {
 						System.out.println("정보 처리 중 오류 발생");
 					}
 				} else if (no == 2) {
-	                // 도서 제목 검색 기능
-	                System.out.print("검색할 도서 제목 입력: ");
-	                String title = br.readLine();
-	                dao.selectBookByTitle(title);
+					// 도서 제목 검색 기능
+					System.out.print("검색할 도서 제목 입력: ");
+					String title = br.readLine();
+					dao.selectBookByTitle(title);
+					
 				} else if (no == 3) {
-	                // 카테고리별 도서 검색
-	                dao.selectCategories(); // 카테고리 목록 출력
-	                System.out.print("조회할 카테고리 번호 선택: ");
-	                int categoryNum = Integer.parseInt(br.readLine());
-	                dao.selectBooksByCategory(categoryNum); // 해당 카테고리의 도서 출력
-	            } else if (no == 6) {
+					// 카테고리별 도서 검색
+					dao.selectCategories(); // 카테고리 목록 출력
+					System.out.print("조회할 카테고리 번호 선택: ");
+					int categoryNum = Integer.parseInt(br.readLine());
+					dao.selectBooksByCategory(categoryNum); // 해당 카테고리의 도서 출력
+				} else if (no == 6) {
 					// 종료
 					System.out.println("프로그램 종료");
 					break;
