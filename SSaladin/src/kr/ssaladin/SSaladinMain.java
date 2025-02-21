@@ -9,6 +9,7 @@ import java.util.List;
 import kr.ssaladin.model.PointRequest;
 
 import kr.ssaladin.dao.PointRequestDAO;
+import kr.ssaladin.service.AdminBookService;
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
 import kr.ssaladin.service.RequestService;
@@ -333,6 +334,7 @@ public class SSaladinMain {
 	}
 
 	private void adminMenu() throws IOException {
+
 	    while (flag) {
 	        System.out.print("1. 사용자 목록, 2. 상품 관리, 3. 포인트 충전 요청 관리, 4. 로그아웃: ");
 	        try {
@@ -376,6 +378,32 @@ public class SSaladinMain {
 	            pointRequestService.getStatusString(request.getRequestStatus()),
 	            request.getRequestDate());
 	    }
+
+		// 관리자 메뉴
+		while (flag) {
+			System.out.print("1. 사용자 목록, 2. 상품 관리, 3. 로그아웃: ");
+			try {
+				int no = Integer.parseInt(br.readLine());
+				if (no == 1) {
+					// 사용자 목록
+					System.out.println("사용자 목록을 보여줍니다.");
+				} else if (no == 2) {
+					// 상품 관리
+					System.out.println("상품 관리 화면");
+					new AdminBookService();
+				} else if (no == 3) {
+					// 로그아웃
+					System.out.println("관리자 로그아웃 완료.");
+					flag = false; // 로그인 상태 해제
+					break;
+				} else {
+					System.out.println("잘못된 입력입니다.");
+				}
+			} catch (NumberFormatException | IOException e) {
+				System.out.println("[ 숫자만 입력 가능합니다. ]");
+			}
+		}
+
 	}
 
 	public String getUserId() {

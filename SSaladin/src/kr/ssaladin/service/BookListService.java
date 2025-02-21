@@ -23,21 +23,13 @@ public class BookListService {
             booklist();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        } 
     }
 
     // 메뉴
     private void booklist() throws IOException {
         while (true) {
-            System.out.print("1.전체 도서 목록 조회 2.도서 검색 조회 3.카테고리별 도서 조회 6.종료> ");
+            System.out.print("1.전체 도서 목록 조회 2.도서 검색 조회 3.카테고리별 도서 조회 6.뒤로가기> ");
             try {
                 int no = Integer.parseInt(br.readLine());
                 if (no == 1) {

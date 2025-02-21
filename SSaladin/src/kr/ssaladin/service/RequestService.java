@@ -28,20 +28,20 @@ public class RequestService {
 					
 				} else if (no == 2) {
 					
-					System.out.println("내용 : ");
+					System.out.print("내용 : ");
 					String requestContent = br.readLine();
 					dao.insertRequest(userId, requestContent);
 					
 				} else if (no == 3) {
 					
 					dao.selectRequest();
-					System.out.println("수정할 요청글의 번호 : ");
+					System.out.print("수정할 요청글의 번호 : ");
 					requestNum = Integer.parseInt(br.readLine());
 					int count = dao.checkRequest(requestNum);
 					
 					if(count == 1) {
 					
-					System.out.println("내용 : ");
+					System.out.print("내용 : ");
 					String requestContent = br.readLine();
 					
 					dao.updateRequest(userId, requestNum, requestContent);
@@ -53,7 +53,7 @@ public class RequestService {
 					
 				} else if (no == 4) {
 					dao.selectRequest();
-					System.out.println("삭제할 요청글 번호 : ");
+					System.out.print("삭제할 요청글 번호 : ");
 					requestNum = Integer.parseInt(br.readLine());
 					int count = dao.checkRequest(requestNum);
 					
