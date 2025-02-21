@@ -23,15 +23,7 @@ public class BookListService {
             booklist();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        } 
     }
 
     // 메뉴
