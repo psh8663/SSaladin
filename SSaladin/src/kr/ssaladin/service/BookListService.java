@@ -6,15 +6,15 @@ import java.io.InputStreamReader;
 
 import kr.ssaladin.dao.BookListDAO;
 
-public class BooksService {
+public class BookListService {
 	private BufferedReader br;
 	private BookListDAO dao;
 
 	public static void main(String[] args) {
-		new BooksService();
+		new BookListService();
 	}
 
-	public BooksService() {
+	public BookListService() {
 		try {
 			br = new BufferedReader(new InputStreamReader(System.in));
 			dao = new BookListDAO();
@@ -33,14 +33,11 @@ public class BooksService {
 	// 메뉴
 	private void booklist() throws IOException {
 		while (true) {
-			System.out.print("1.전체 도서 목록 보기, 2.도서 상세페이지 6.종료>");
+			System.out.print("1.전체 도서 목록 조회 2.도서 검색 조회 3.카테고리별 도서 조회 6.종료>");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
-					// 전체 책목록 보기
-					dao.selectBook();
-				} else if (no == 2) {
-					// 상세정보
+					// 1.전체 도서 목록 및 상세정보 보기
 					dao.selectBook();
 					System.out.print("도서코드 선택:");
 					int num = Integer.parseInt(br.readLine());
@@ -52,7 +49,18 @@ public class BooksService {
 					} else {
 						System.out.println("정보 처리 중 오류 발생");
 					}
-				} else if (no == 6) {
+				} else if (no == 2) {
+	                // 도서 제목 검색 기능
+	                System.out.print("검색할 도서 제목 입력: ");
+	                String title = br.readLine();
+	                dao.selectBookByTitle(title);
+				} else if (no == 3) {
+	                // 카테고리별 도서 검색
+	                dao.selectCategories(); // 카테고리 목록 출력
+	                System.out.print("조회할 카테고리 번호 선택: ");
+	                int categoryNum = Integer.parseInt(br.readLine());
+	                dao.selectBooksByCategory(categoryNum); // 해당 카테고리의 도서 출력
+	            } else if (no == 6) {
 					// 종료
 					System.out.println("프로그램 종료");
 					break;
