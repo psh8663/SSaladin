@@ -22,7 +22,6 @@ public class PointRequestDAO {
 				+ "VALUES (seq_request_num.NEXTVAL, ?, ?, 1)";
 
 		try {
-
 			conn = DBUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, userId);
@@ -36,6 +35,91 @@ public class PointRequestDAO {
 			e.printStackTrace();
 		} finally {
 			DBUtil.executeClose(null, pstmt, conn);
+		}
+		return flag;
+	}
+
+	// 포인트 요청 상태 변경 및 승인 처리 (관리자)
+	public boolean updateRequestStatus(int requestNum, int newStatus) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		boolean flag = false;
+
+		String sql = "UPDATE point_requests SET request_status = ? WHERE request_num = ?";
+
+		try {
+			conn = DBUtil.getConnection();
+			conn.setAutoCommit(false); // 트랜잭션 시작
+
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, newStatus);
+			pstmt.setInt(2, requestNum);
+
+			int result = pstmt.executeUpdate();
+
+			// 승인(상태값 2)인 경우 사용자 포인트 증가 처리
+			if (newStatus == 2 && result > 0) {
+				if (addPointsToUser(requestNum, conn)) {
+					flag = true;
+					conn.commit();
+				} else {
+					conn.rollback();
+				}
+			} else if (result > 0) {
+				flag = true;
+				conn.commit();
+			}
+		} catch (SQLException | ClassNotFoundException e) {
+			try {
+				if (conn != null) {
+					conn.rollback();
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			e.printStackTrace();
+		} finally {
+			try {
+				if (conn != null) {
+					conn.setAutoCommit(true); // 트랜잭션 설정 복구
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			DBUtil.executeClose(null, pstmt, conn);
+		}
+		return flag;
+	}
+
+	// 포인트 요청 승인 시 사용자 포인트 증가 처리
+	private boolean addPointsToUser(int requestNum, Connection conn) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		boolean flag = false;
+
+		String selectsql = "SELECT user_id, point_amount FROM point_requests WHERE request_num = ?";
+
+		try {
+			pstmt = conn.prepareStatement(selectsql);
+			pstmt.setInt(1, requestNum);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				String userId = rs.getString("user_id");
+				int pointAmount = rs.getInt("point_amount");
+
+				String updatesql = "UPDATE users SET user_point = user_point + ? WHERE user_id = ?";
+				pstmt = conn.prepareStatement(updatesql);
+				pstmt.setInt(1, pointAmount);
+				pstmt.setString(2, userId);
+
+				int result = pstmt.executeUpdate();
+				flag = (result > 0);
+			}
+		} catch (SQLException e) { 
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, null); 
 		}
 		return flag;
 	}
@@ -65,9 +149,9 @@ public class PointRequestDAO {
 				requests.add(request);
 			}
 		} catch (SQLException | ClassNotFoundException e) {
-
+			e.printStackTrace();
 		} finally {
-
+			DBUtil.executeClose(rs, pstmt, conn);
 		}
 
 		return requests;

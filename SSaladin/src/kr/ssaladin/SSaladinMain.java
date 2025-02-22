@@ -335,66 +335,20 @@ public class SSaladinMain {
 
 	private void adminMenu() throws IOException {
 
-	    while (flag) {
-	        System.out.print("1. 사용자 목록, 2. 상품 관리, 3. 포인트 충전 요청 관리, 4. 로그아웃: ");
-	        try {
-	            int no = Integer.parseInt(br.readLine());
-	            if (no == 1) {
-	                System.out.println("사용자 목록을 보여줍니다.");
-	            } else if (no == 2) {
-	                System.out.println("상품 관리 화면");
-	            } else if (no == 3) {
-	                managePointRequests();
-	            } else if (no == 4) {
-	                System.out.println("관리자 로그아웃 완료.");
-	                flag = false;
-	                break;
-	            } else {
-	                System.out.println("잘못된 입력입니다.");
-	            }
-	        } catch (NumberFormatException e) {
-	            System.out.println("[ 숫자만 입력 가능합니다. ]");
-	        }
-	    }
-	}
-
-	private void managePointRequests() throws IOException {
-	    System.out.println("\n=== 포인트 충전 요청 관리 ===");
-	    List<PointRequest> requests = pointRequestService.getAllRequests();
-	    
-	    if (requests.isEmpty()) {
-	        System.out.println("처리할 포인트 충전 요청이 없습니다.");
-	        return;
-	    }
-
-	    System.out.println("요청번호\t사용자ID\t요청금액\t상태\t요청일자");
-	    System.out.println("----------------------------------------");
-	    
-	    for (PointRequest request : requests) {
-	        System.out.printf("%d\t%s\t%d\t%s\t%s%n",
-	            request.getRequestNum(),
-	            request.getUserId(),
-	            request.getPointAmount(),
-	            pointRequestService.getStatusString(request.getRequestStatus()),
-	            request.getRequestDate());
-	    }
-
-		// 관리자 메뉴
 		while (flag) {
-			System.out.print("1. 사용자 목록, 2. 상품 관리, 3. 로그아웃: ");
+			System.out.print("1. 사용자 목록, 2. 상품 관리, 3. 포인트 충전 요청 관리, 4. 로그아웃: ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
-					// 사용자 목록
 					System.out.println("사용자 목록을 보여줍니다.");
 				} else if (no == 2) {
-					// 상품 관리
 					System.out.println("상품 관리 화면");
 					new AdminBookService();
 				} else if (no == 3) {
-					// 로그아웃
+					managePointRequests();
+				} else if (no == 4) {
 					System.out.println("관리자 로그아웃 완료.");
-					flag = false; // 로그인 상태 해제
+					flag = false;
 					break;
 				} else {
 					System.out.println("잘못된 입력입니다.");
@@ -403,7 +357,51 @@ public class SSaladinMain {
 				System.out.println("[ 숫자만 입력 가능합니다. ]");
 			}
 		}
+	}
 
+	private void managePointRequests() throws IOException {
+		while (true) {
+			System.out.println("\n=== 포인트 충전 요청 관리 ===");
+			List<PointRequest> requests = pointRequestService.getAllRequests();
+
+			if (requests.isEmpty()) {
+				System.out.println("처리할 포인트 충전 요청이 없습니다.");
+				break;
+			}
+
+			System.out.println("요청번호\t사용자ID\t요청금액\t상태\t요청일자");
+			System.out.println("----------------------------------------");
+
+			for (PointRequest request : requests) {
+				System.out.printf("%d\t%s\t%d\t%s\t%s%n", request.getRequestNum(), request.getUserId(),
+						request.getPointAmount(), pointRequestService.getStatusString(request.getRequestStatus()),
+						request.getRequestDate());
+			}
+
+			System.out.println("\n1. 요청 처리하기 2. 이전 메뉴로 돌아가기");
+			int choice = Integer.parseInt(br.readLine());
+
+			if (choice == 1) {
+				System.out.print("처리할 요청 번호를 입력하세요: ");
+				int requestNum = Integer.parseInt(br.readLine());
+
+				System.out.print("처리 방법을 선택하세요 (2: 승인, 3: 거절): ");
+				int status = Integer.parseInt(br.readLine());
+
+				boolean success = pointRequestService.processRequest(requestNum, status);
+
+				if (success) {
+					System.out.println("요청이 성공적으로 처리되었습니다.");
+					if (status == 2) {
+						System.out.println("사용자의 포인트가 증가되었습니다.");
+					}
+				} else {
+					System.out.println("요청 처리에 실패했습니다.");
+				}
+			} else if (choice == 2) {
+				return;
+			}
+		}
 	}
 
 	public String getUserId() {
