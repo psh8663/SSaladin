@@ -191,12 +191,17 @@ public class BookListDAO {
 	// 베스트셀러 도서
 	public void selectBestSeller() throws SQLException, ClassNotFoundException {
 		try {
-			String sql = "SELECT ROWNUM AS ranking, book_code, book_title, book_author, book_price, total_quantity "
-					+ "FROM ( "
-					+ "    SELECT b.book_code, b.book_title, b.book_author, b.book_price, SUM(od.order_quantity) AS total_quantity "
-					+ "    FROM order_details od " + "    JOIN books b ON od.book_code = b.book_code "
-					+ "    GROUP BY b.book_code, b.book_title, b.book_author, b.book_price "
-					+ "    ORDER BY total_quantity DESC " + ") " + "WHERE ROWNUM <= 5";
+			String sql = "SELECT * FROM ("
+					+ "    SELECT ROWNUM AS ranking, book_code, book_title, book_author, book_price, total_quantity"
+					+ "    FROM ("
+					+ "        SELECT b.book_code, b.book_title, b.book_author, b.book_price, SUM(od.order_quantity) AS total_quantity"
+					+ "        FROM order_details od"
+					+ "        JOIN books b ON od.book_code = b.book_code"
+					+ "        GROUP BY b.book_code, b.book_title, b.book_author, b.book_price"
+					+ "        ORDER BY total_quantity DESC"
+					+ "    )"
+					+ ")"
+					+ "WHERE ranking <= 5;";
 			conn = DBUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
