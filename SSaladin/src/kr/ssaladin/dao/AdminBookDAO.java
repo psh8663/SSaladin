@@ -78,7 +78,7 @@ public class AdminBookDAO {
 	public void updateBookDescription(int book_code, String book_description) {
 		try {
 			conn = DBUtil.getConnection();
-			sql = "UPDATE books SET book_description=? WHERE book_code=?";			
+			sql = "UPDATE books SET book_description=? WHERE book_code=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, book_description);
 			pstmt.setInt(2, book_code);
@@ -88,6 +88,17 @@ public class AdminBookDAO {
 		} finally {
 			// 자원정리
 			DBUtil.executeClose(null, pstmt, conn);
+		}
+	}
+
+	public boolean updateStock(int bookCode, int quantity) throws SQLException {
+		String sql = "UPDATE books SET book_stock = book_stock - ? WHERE book_code = ? AND book_stock >= ?";
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, quantity);
+			pstmt.setInt(2, bookCode);
+			pstmt.setInt(3, quantity); // 현재 재고보다 많은 경우 차감 방지
+
+			return pstmt.executeUpdate() > 0;
 		}
 	}
 
