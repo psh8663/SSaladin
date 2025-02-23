@@ -52,7 +52,7 @@ public class CartDAO {
 
     // 사용자의 장바구니 목록 조회
     public ResultSet getUserCart(String userId) throws SQLException {
-        sql = "SELECT c.*, b.book_name, b.book_price " +
+        sql = "SELECT c.*, b.book_title, b.book_price " +
              "FROM cart c " +
              "JOIN books b ON c.book_code = b.book_code " +
              "WHERE c.user_id = ?";
@@ -63,7 +63,7 @@ public class CartDAO {
 
     // 장바구니 개별 항목 조회
     public ResultSet getCartItem(int cartNum) throws SQLException {
-        sql = "SELECT c.*, b.book_name, b.book_price " +
+        sql = "SELECT c.*, b.book_title, b.book_price " +
              "FROM cart c " +
              "JOIN books b ON c.book_code = b.book_code " +
              "WHERE c.cart_num = ?";

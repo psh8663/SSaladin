@@ -12,6 +12,7 @@ import kr.ssaladin.dao.PointRequestDAO;
 import kr.ssaladin.service.AdminBookService;
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
+import kr.ssaladin.service.CartService.CartItem;
 import kr.ssaladin.service.RequestService;
 import kr.ssaladin.service.ReviewsService;
 import kr.ssaladin.service.UserService;
@@ -171,7 +172,7 @@ public class SSaladinMain {
 					System.out.println("도서 신청 게시판");
 					requestService.requestService(me_id);
 				} else if (no == 4) {
-					// 장바구니 보기
+					manageCart();
 					System.out.println("장바구니 보기");
 				} else if (no == 5) {
 					// 로그아웃
@@ -250,73 +251,90 @@ public class SSaladinMain {
 	}
 
 	// ======================================//
-	// 장바구니 관리 메서드 추가중
+
 	// + 구매기능 (장바구니에서 최종 구매) 추가구현 필요
 	// 도서 목록에서 장바구니에 책을 담고, 장바구니에서 최종 구매
-	// 구매 시 장바구니에 담겨있는 도서들의 포인트 합계만큼 포인트 차감 (포인트처리 클래스 작성중)
 
-	public void manageCart() throws IOException {
-		// 장바구니 관리
-		boolean cartMenu = true;
-		while (cartMenu) {
-			System.out.println("\n=== 장바구니 관리 ===");
-			System.out.print("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 뒤로가기: ");
-			try {
-				int no = Integer.parseInt(br.readLine());
-				if (no == 1) {
-//	               showCartItems();
-				} else if (no == 2) {
-					updateCartItemQuantity();
-				} else if (no == 3) {
-					deleteCartItem();
-				} else if (no == 4) {
-					cartMenu = false;
-				} else {
-					System.out.println("잘못된 입력입니다.");
-				}
-			} catch (NumberFormatException e) {
-				System.out.println("[ 숫자만 입력 가능합니다. ]");
-			}
-		}
-	}
 
-	/*
-	 * private void showCartItems() throws IOException { // 로그인 상태 체크 if (!flag) {
-	 * // flag - false = 로그인 안된거임 System.out.println("로그인 후 장바구니 목록을 조회할 수 있습니다.");
-	 * return; }
-	 * 
-	 * // 로그인 상태일 때만 장바구니 목록 조회 try {
-	 * System.out.println("--------- 내 장바구니 목록 ---------");
-	 * 
-	 * // 로그인된 사용자 ID(me_id)로 장바구니 조회 cartService.getUserCartItems(me_id
-	 * ).forEach(item -> System.out.println("도서코드: " + item.getProductId() +
-	 * ", 도서명: " + item.getProductName() + ", 수량: " + item.getQuantity() + ", 가격: "
-	 * + item.getPrice())); } catch (Exception e) {
-	 * System.out.println("장바구니 목록 조회 중 오류가 발생했습니다: " + e.getMessage()); } }
-	 * 
-	 */
+	   public void manageCart() throws IOException {
+		      // 장바구니 관리
+		      boolean cartMenu = true;
+		      while (cartMenu) {
+		         System.out.println("\n=== 장바구니 관리 ===");
+		         System.out.print("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 뒤로가기: ");
+		         try {
+		            int no = Integer.parseInt(br.readLine());
+		            if (no == 1) {
+		               showCartItems();
+		            } else if (no == 2) {
+		               updateCartItemQuantity();
+		            } else if (no == 3) {
+		               deleteCartItem();
+		            } else if (no == 4) {
+		               cartMenu = false;
+		            } else {
+		               System.out.println("잘못된 입력입니다.");
+		            }
+		         } catch (NumberFormatException e) {
+		            System.out.println("[ 숫자만 입력 가능합니다. ]");
+		         }
+		      }
+		   }
 
-	private void updateCartItemQuantity() throws IOException {
-		// 장바구니에 담긴 상품의 수량 수정
-		try {
-			System.out.print("수정할 상품 ID를 입력하세요: ");
-			int productId = Integer.parseInt(br.readLine());
-			System.out.print("새로운 수량을 입력하세요: ");
-			int newQuantity = Integer.parseInt(br.readLine());
+	   
+	   private void showCartItems() throws IOException {
+	       // 로그인 상태 체크
 
-			// 로그인 후 상품 수량 수정
-			boolean success = cartService.updateQuantity(me_id, null, productId, newQuantity);
-			if (success) {
-				System.out.println("상품 수량이 성공적으로 수정되었습니다.");
-			} else {
-				System.out.println("상품 수량 수정에 실패했습니다.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("올바른 숫자를 입력해주세요.");
-		} catch (Exception e) {
-			System.out.println("수량 수정 중 오류가 발생했습니다: " + e.getMessage());
-		}
-	}
+	       if (!flag) {
+	           System.out.println("로그인 후 장바구니 목록을 조회할 수 있습니다.");
+	           return;
+	       }
+	       
+	       // 로그인 상태일 때만 장바구니 목록 조회
+	       try {
+	           System.out.println("--------- 내 장바구니 목록 ---------");
+	           
+	           // 장바구니 항목을 가져오기
+	           List<CartItem> cartItems = cartService.getUserCartItems(me_id);
+	           
+	           // 장바구니가 비어있는지 확인
+	           if (cartItems.isEmpty()) {
+	               System.out.println("장바구니에 담긴 상품이 없습니다.");
+	           } else {
+	               // 장바구니 목록 출력
+	               cartItems.forEach(item -> 
+	                   System.out.println("도서코드: " + item.getBookCode() +
+	                   ", 도서명: " + item.getBookTitle() + 
+	                   ", 수량: " + item.getCartQuantity() + 
+	                   ", 가격: " + item.getBookPrice())
+	               );
+	           }
+	       } catch (Exception e) {
+	           System.out.println("장바구니 목록 조회 중 오류가 발생했습니다: " + e.getMessage());
+	       }
+	   }
+
+	   private void updateCartItemQuantity() throws IOException {
+		      // 장바구니에 담긴 상품의 수량 수정
+		      try {
+		         System.out.print("수정할 상품 ID를 입력하세요: ");
+		         int productId = Integer.parseInt(br.readLine());
+		         System.out.print("새로운 수량을 입력하세요: ");
+		         int newQuantity = Integer.parseInt(br.readLine());
+
+		         // 로그인 후 상품 수량 수정
+		         boolean success = cartService.updateQuantity(me_id, null, productId, newQuantity);
+		         if (success) {
+		            System.out.println("상품 수량이 성공적으로 수정되었습니다.");
+		         } else {
+		            System.out.println("상품 수량 수정에 실패했습니다.");
+		         }
+		      } catch (NumberFormatException e) {
+		         System.out.println("올바른 숫자를 입력해주세요.");
+		      } catch (Exception e) {
+		         System.out.println("수량 수정 중 오류가 발생했습니다: " + e.getMessage());
+		      }
+		   }
 
 	private void deleteCartItem() throws IOException {
 		try {

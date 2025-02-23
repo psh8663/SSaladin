@@ -16,7 +16,7 @@ public class CartService {
 
     public CartService() throws ClassNotFoundException, SQLException {
         Connection conn = DBUtil.getConnection();  // DB 연결 생성
-        cartDAO = new CartDAO(conn);  // CartDAO에 Connection 전달
+        cartDAO = this.cartDAO;  // CartDAO에 Connection 전달
         this.userDAO = new UserDAO();
     }
 
@@ -36,8 +36,8 @@ public class CartService {
         public int getBookCode() { return book_code; }
         public void setBookCode(int book_code) { this.book_code = book_code; }
 
-        public String getBookName() { return book_title; }
-        public void setBookName(String bookName) { this.book_title = bookName; }
+        public String getBookTitle() { return book_title; }
+        public void setBookTitle(String bookTitle) { this.book_title = bookTitle; }
 
         public int getBookPrice() { return book_price; }
         public void setBookPrice(int bookPrice) { this.book_price = bookPrice; }
@@ -127,16 +127,12 @@ public class CartService {
     }
 
     // 사용자의 장바구니 목록 조회 (로그인 체크 포함)
-    public List<CartItem> getUserCartItems(String userId, String userPw) {
+    public List<CartItem> getUserCartItems(String userId) {
         Connection conn = null;
         ResultSet rs = null;
         List<CartItem> cartItems = new ArrayList<>();
 
         try {
-            if (!checkLoginStatus(userId, userPw)) {
-                return null;  // 로그인 실패
-            }
-
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             rs = cartDAO.getUserCart(userId);
@@ -145,7 +141,7 @@ public class CartService {
                 CartItem item = new CartItem();
                 item.setCartNum(rs.getInt("cart_num"));
                 item.setBookCode(rs.getInt("book_code"));
-                item.setBookName(rs.getString("book_name"));
+                item.setBookTitle(rs.getString("book_title"));
                 item.setBookPrice(rs.getInt("book_price"));
                 item.setCartQuantity(rs.getInt("cart_quantity"));
                 cartItems.add(item);
@@ -181,7 +177,7 @@ public class CartService {
                 item = new CartItem();
                 item.setCartNum(rs.getInt("cart_num"));
                 item.setBookCode(rs.getInt("book_code"));
-                item.setBookName(rs.getString("book_name"));
+                item.setBookTitle(rs.getString("book_title"));
                 item.setBookPrice(rs.getInt("book_price"));
                 item.setCartQuantity(rs.getInt("cart_quantity"));
             }
@@ -196,8 +192,8 @@ public class CartService {
     }
 
     // 장바구니 총액 계산 (로그인 체크 포함)
-    public int calculateTotal(String userId, String userPw) {
-        List<CartItem> items = getUserCartItems(userId, userPw);
+    public int calculateTotal(String userId) {
+        List<CartItem> items = getUserCartItems(userId);
         if (items == null) return 0;
         
         return items.stream()

@@ -110,7 +110,7 @@ public class OrderService {
 					OrderDetailInfo detail = new OrderDetailInfo();
 					detail.setDetailNum(detailRs.getInt("detail_num"));
 					detail.setBookCode(detailRs.getInt("book_code"));
-					detail.setBookName(detailRs.getString("book_name"));
+					detail.setBookName(detailRs.getString("book_title"));
 					detail.setOrderQuantity(detailRs.getInt("order_quantity"));
 					detail.setOrderPrice(detailRs.getInt("order_price"));
 					details.add(detail);
