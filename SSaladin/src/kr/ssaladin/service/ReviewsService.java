@@ -11,21 +11,24 @@ public class ReviewsService {
 	private BufferedReader br;
 	private ReviewsDAO dao;
 
-	public void reviewService(String userId, int bookCode) throws IOException {
+	public void reviewService(String userId) throws IOException {
 		
 		dao = new ReviewsDAO();
 		br = new BufferedReader(new InputStreamReader(System.in));
 		
 		int reviewNum;
+		int bookCode;
+		
 		while(true) {
-			System.out.print("1.리뷰 목록 보기, 2.리뷰 작성, 3. 리뷰 수정, 4. 리뷰 삭제, 5. 상세정보로 돌아가기>");
+			System.out.print("1.리뷰 목록 보기, 2.리뷰 작성, 3. 리뷰 수정, 4. 리뷰 삭제, 5. 마이페이지 돌아가기>");
 			try {
 				int no = Integer.parseInt(br.readLine());
 
 				if (no == 1) { // 리뷰 목록
-					dao.selectReviews(bookCode);
+					dao.selectReviews_userId(userId);
 
 				} else if (no == 2) { // 리뷰 작성
+					
 
 					System.out.print("제목 : ");
 					String bookTitle = br.readLine();
@@ -34,10 +37,10 @@ public class ReviewsService {
 					String reviewsContent = br.readLine();
 
 					int rating = parseInputRating("평점 : ");
-					dao.insertReviews(userId, bookTitle, reviewsContent, rating, bookCode);
+					//dao.insertReviews(userId, bookTitle, reviewsContent, rating, bookCode);
 
 				} else if (no == 3) { // 리뷰 수정
-					dao.selectReviews(bookCode);
+					dao.selectReviews_userId(userId);
 					System.out.print("수정할 리뷰글의 번호 : ");
 					reviewNum = Integer.parseInt(br.readLine());
 					int count = dao.checkReviews(reviewNum);
@@ -56,7 +59,7 @@ public class ReviewsService {
 					}// if
 
 				} else if (no == 4) { // 리뷰 삭제
-					dao.selectReviews(bookCode);
+					dao.selectReviews_userId(userId);
 					System.out.print("삭제할 리뷰의 번호 : ");
 					reviewNum = Integer.parseInt(br.readLine());
 					int count = dao.checkReviews(reviewNum);

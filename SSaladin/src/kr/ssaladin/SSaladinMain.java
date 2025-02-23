@@ -13,6 +13,7 @@ import kr.ssaladin.service.AdminBookService;
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
 import kr.ssaladin.service.RequestService;
+import kr.ssaladin.service.ReviewsService;
 import kr.ssaladin.service.UserService;
 import kr.ssaladin.service.PointRequestService;
 import kr.util.DBUtil;
@@ -29,6 +30,7 @@ public class SSaladinMain {
 	private BookListService bookListService;
 	private PointRequestService pointRequestService; //
 	private RequestService requestService; // RequestService 객체 추가
+	private ReviewsService reviewsService;
 
 	public SSaladinMain() {
 		try {
@@ -37,7 +39,7 @@ public class SSaladinMain {
 			userService = new UserService(); // UserService 초기화
 			cartService = new CartService();
 			pointRequestService = new PointRequestService();
-
+			reviewsService = new ReviewsService();
 			requestService = new RequestService(); // RequestService 초기화
 
 			// 메뉴 호출
@@ -190,7 +192,7 @@ public class SSaladinMain {
 		// 마이페이지 메뉴
 		while (flag) {
 			System.out.println("\n=== 마이페이지 ===");
-			System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 구매내역, 5. 뒤로가기: ");
+			System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 구매내역, 5. 리뷰 관리 6. 뒤로가기: ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
@@ -208,6 +210,8 @@ public class SSaladinMain {
 					System.out.println("구매내역 페이지");
 					// 구매내역 페이지 구현 필요
 				} else if (no == 5) {
+					reviewsService.reviewService(me_id);
+				} else if (no == 6) {
 					// 뒤로가기
 					break; // 마이페이지 메뉴 종료
 				} else {
