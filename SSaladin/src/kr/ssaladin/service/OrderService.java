@@ -28,10 +28,19 @@ public class OrderService {
 	}
 
 	// 주문 생성 (트랜잭션 처리)
-	public boolean createOrder(String userId, int orderTotal, int orderStatus, List<OrderItem> orderItems) {
+	public boolean createOrder(String userId, int orderTotal, int orderStatus, List<OrderItem> orderItems) throws ClassNotFoundException {
 		try {
 			conn.setAutoCommit(false); // 트랜잭션 시작
 
+			//재고확인
+			for (OrderItem item : orderItems) {
+	            boolean stockAvailable = adminBookDAO.checkStock(item.getBookCode(), item.getQuantity());
+	            if (!stockAvailable) {
+	                conn.rollback();
+	                return false;  // 재고 부족 시 주문 진행 불가
+	            }
+	        }
+			
 			// 주문 기본 정보 등록
 			boolean orderInserted = ordersDAO.insertOrder(userId, orderTotal, orderStatus);
 			if (!orderInserted) {
@@ -56,6 +65,13 @@ public class OrderService {
 					conn.rollback();
 					return false;
 				}
+				//재고가 0일 경우 품절 상태로 변경
+			    boolean statusUpdated = adminBookDAO.updateBookStatus(item.getBookCode());
+			    if (!statusUpdated) {
+			        conn.rollback();
+			        return false;
+			    } 
+
 			}
 
 			conn.commit();

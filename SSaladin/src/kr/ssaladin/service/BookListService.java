@@ -3,6 +3,7 @@ package kr.ssaladin.service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 
 import kr.ssaladin.SSaladinMain;
 import kr.ssaladin.dao.BookListDAO;
@@ -27,9 +28,9 @@ public class BookListService {
     }
 
     // 메뉴
-    private void booklist() throws IOException {
+    private void booklist() throws IOException, ClassNotFoundException, SQLException {
         while (true) {
-            System.out.print("1.전체 도서 목록 조회 2.도서 검색 조회 3.카테고리별 도서 조회 6.뒤로가기> ");
+            System.out.print("1.전체 도서 목록 조회 2.도서 검색 조회 3.카테고리별 도서 조회 4.베스트셀러 조회 6.뒤로가기> ");
             try {
                 int no = Integer.parseInt(br.readLine());
                 if (no == 1) {
@@ -55,6 +56,13 @@ public class BookListService {
                     System.out.print("도서코드 선택: ");
                     int num = Integer.parseInt(br.readLine());
                     showBookDetails(num);
+                } else if (no == 4) {
+                    // 베스트셀러 도서 조회
+                	System.out.println("베스트셀러 도서");
+                    dao.selectBestSeller(); // 베스트셀러 도서 조회
+                    System.out.print("도서코드 선택: ");
+                    int num = Integer.parseInt(br.readLine());
+                    showBookDetails(num);
                 } else if (no == 6) {
                     // 종료
                     System.out.println("프로그램 종료");
@@ -67,6 +75,7 @@ public class BookListService {
             }
         }
     }
+
 
     // 도서 상세 정보 조회 및 장바구니 기능
     private void showBookDetails(int num) throws IOException {

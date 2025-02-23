@@ -91,15 +91,52 @@ public class AdminBookDAO {
 		}
 	}
 
+	public boolean checkStock(int bookCode, int orderQuantity) throws SQLException, ClassNotFoundException {
+		String sql = "SELECT book_stock FROM books WHERE book_code = ?";
+
+		try (Connection conn = DBUtil.getConnection(); 
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, bookCode);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					int currentStock = rs.getInt("book_stock");
+
+					// 재고가 부족하면 false 반환
+					if (orderQuantity > currentStock) {
+						System.out.println("재고 부족으로 주문할 수 없습니다. (현재 재고: " + currentStock + ")");
+						return false;
+					}
+				} else {
+					System.out.println("도서를 찾을 수 없습니다.");
+					return false;
+				}
+			}
+		}
+		return true; // 재고가 충분한 경우
+	}
+
 	public boolean updateStock(int bookCode, int quantity) throws SQLException {
-		String sql = "UPDATE books SET book_stock = book_stock - ? WHERE book_code = ? AND book_stock >= ?";
+		String sql = "UPDATE books SET book_stock = book_stock - ? WHERE book_code = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, quantity);
 			pstmt.setInt(2, bookCode);
-			pstmt.setInt(3, quantity); // 현재 재고보다 많은 경우 차감 방지
 
 			return pstmt.executeUpdate() > 0;
 		}
 	}
+	
+	public boolean updateBookStatus(int bookCode) throws SQLException {
+	    String sql = "UPDATE books SET book_status = CASE " +
+	                 "WHEN book_stock = 0 THEN 0 " +   // 재고가 0일 때 품절 상태
+	                 "WHEN book_stock > 0 THEN 1 " +  // 재고가 0보다 크면 판매중 상태
+	                 "END WHERE book_code = ?";
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, bookCode);
+	        return pstmt.executeUpdate() > 0;
+	    }
+	}
+
+
 
 }
