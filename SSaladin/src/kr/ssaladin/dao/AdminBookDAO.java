@@ -64,39 +64,6 @@ public class AdminBookDAO {
 		return count;
 	}
 	
-	// 도서 상세보기
-		public void selectAdminDetailBook(int num) {
-			try {
-				conn = DBUtil.getConnection();
-				sql = "SELECT b.*, c.category_name, "
-						+ "(SELECT AVG(rating) FROM reviews r WHERE r.book_code = b.book_code) AS avg_rating "
-						+ "FROM books b " + "JOIN categories c ON b.category_num = c.category_num "
-						+ "WHERE b.book_code = ?";
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setInt(1, num);
-				rs = pstmt.executeQuery();
-
-				if (rs.next()) {
-					System.out.println("도서코드 : " + rs.getInt("book_code"));
-					System.out.println("카테고리명 : " + rs.getString("category_name"));
-					System.out.println("도서명 : " + rs.getString("book_title"));
-					System.out.println("저자명 : " + rs.getString("book_author"));
-					System.out.println("가격 : " + rs.getInt("book_price"));
-					System.out.println("출판사 : " + rs.getString("book_publisher"));
-					System.out.println("설명 : " + rs.getString("book_description"));
-					System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
-					Float avgRating = rs.getObject("avg_rating", Float.class);
-					System.out.println("평균평점 : " + (avgRating != null ? avgRating : "평점 없음"));
-					System.out.println("등록일 : " + rs.getDate("book_reg_date"));
-				} else {
-					System.out.println("검색된 정보가 없습니다.");
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				DBUtil.executeClose(rs, pstmt, conn);
-			}
-		}
 	
 	public int insertBook(int categoryNum, String bookTitle, String bookAuthor, int bookPrice, String bookPublisher,
 			String bookDescription, int bookStock, int bookStatus) throws ClassNotFoundException {
