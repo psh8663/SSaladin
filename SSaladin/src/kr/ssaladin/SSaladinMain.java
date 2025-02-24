@@ -409,9 +409,9 @@ public class SSaladinMain {
 	}
 
 	private void reviewRequest() throws NumberFormatException, IOException {
-		System.out.print("1. 리뷰 관리, 2. 요청 관리, 3. 이전으로 돌아가기");
-		int num = Integer.parseInt(br.readLine());
 		while (true) {
+			System.out.print("1. 리뷰 관리, 2. 요청 관리, 3. 이전으로 돌아가기");
+			int num = Integer.parseInt(br.readLine());
 			if (num == 1) {
 				arvService.aReviewService(me_id);
 			} else if (num == 2) {
