@@ -90,35 +90,33 @@ public class AdminBookDAO {
 			DBUtil.executeClose(null, pstmt, conn);
 		}
 	}
-	
-	public void adminUpdateStock(int book_code, int additionalStock) {
-	    try {
-	        conn = DBUtil.getConnection();
-	        sql = "UPDATE books SET book_stock = book_stock + ? WHERE book_code = ?";
-	        pstmt = conn.prepareStatement(sql);
-	        pstmt.setInt(1, additionalStock); // 기존 재고에 추가할 수량
-	        pstmt.setInt(2, book_code);
-	        int count = pstmt.executeUpdate();
-	        
-	        if (count > 0) {
-	            System.out.println("재고가 성공적으로 추가되었습니다.");
-	        } else {
-	            System.out.println("해당 도서가 존재하지 않습니다.");
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        // 자원 정리
-	        DBUtil.executeClose(null, pstmt, conn);
-	    }
-	}
 
+	public void adminUpdateStock(int book_code, int additionalStock) {
+		try {
+			conn = DBUtil.getConnection();
+			sql = "UPDATE books SET book_stock = book_stock + ? WHERE book_code = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, additionalStock); // 기존 재고에 추가할 수량
+			pstmt.setInt(2, book_code);
+			int count = pstmt.executeUpdate();
+
+			if (count > 0) {
+				System.out.println("재고가 성공적으로 추가되었습니다.");
+			} else {
+				System.out.println("해당 도서가 존재하지 않습니다.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 자원 정리
+			DBUtil.executeClose(null, pstmt, conn);
+		}
+	}
 
 	public boolean checkStock(int bookCode, int orderQuantity) throws SQLException, ClassNotFoundException {
 		String sql = "SELECT book_stock FROM books WHERE book_code = ?";
 
-		try (Connection conn = DBUtil.getConnection(); 
-			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setInt(1, bookCode);
 			try (ResultSet rs = pstmt.executeQuery()) {
@@ -148,18 +146,41 @@ public class AdminBookDAO {
 			return pstmt.executeUpdate() > 0;
 		}
 	}
-	
-	public boolean updateBookStatus(int bookCode) throws SQLException {
-	    String sql = "UPDATE books SET book_status = CASE " +
-	                 "WHEN book_stock = 0 THEN 0 " +   // 재고가 0일 때 품절 상태
-	                 "WHEN book_stock > 0 THEN 1 " +  // 재고가 0보다 크면 판매중 상태
-	                 "END WHERE book_code = ?";
-	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-	        pstmt.setInt(1, bookCode);
-	        return pstmt.executeUpdate() > 0;
-	    }
+
+	public boolean updateBookStatus(int bookCode) throws SQLException, ClassNotFoundException {
+		String sql = "UPDATE books SET book_status = "
+				+ "CASE " 
+				+ "WHEN book_stock = 0 THEN 0 " +
+				"WHEN book_stock > 0 THEN 1 " + 
+				"ELSE book_status END " +
+				"WHERE book_code = ?";
+
+		try (Connection conn = DBUtil.getConnection(); 
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, bookCode);
+			return pstmt.executeUpdate() > 0; 
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
 	}
 
+	public boolean updateOutOfPrintStatus(int bookCode) throws SQLException, ClassNotFoundException {
+		String sql = "UPDATE books SET book_status = 2 WHERE book_code = ?";
 
+		try (Connection conn = DBUtil.getConnection(); // 🔹 DB 연결 초기화
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, bookCode);
+			return pstmt.executeUpdate() > 0;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 }
