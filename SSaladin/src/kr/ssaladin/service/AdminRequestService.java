@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 
 import kr.ssaladin.dao.RequestDAO;
 
-public class RequestService {
+public class AdminRequestService {
 	
 	private BufferedReader br;
 	private RequestDAO dao;
@@ -18,7 +18,7 @@ public class RequestService {
 		int requestNum;
 		
 		while (true) {
-			System.out.println("1. 도서 요청 목록, 2. 도서 요청 작성, 3. 도서 요청 수정, 4. 도서 요청 삭제, 5. 이전으로 돌아가기");
+			System.out.println("1. 도서 요청 목록, 2. 도서 요청 삭제, 3. 이전으로 돌아가기");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				
@@ -26,32 +26,7 @@ public class RequestService {
 					
 					dao.selectRequest();
 					
-				} else if (no == 2) { // 요청 작성
-					
-					System.out.print("내용 : ");
-					String requestContent = br.readLine();
-					dao.insertRequest(userId, requestContent);
-					
-				} else if (no == 3) { // 요청 수정
-					
-					dao.selectRequest();
-					System.out.print("수정할 요청글의 번호 : ");
-					requestNum = Integer.parseInt(br.readLine());
-					int count = dao.checkRequest(requestNum);
-					
-					if(count == 1) {
-					
-					System.out.print("내용 : ");
-					String requestContent = br.readLine();
-					
-					dao.updateRequest(userId, requestNum, requestContent);
-					} else if (count == 0) {
-						System.out.println("번호를 잘못 입력했습니다.");
-					} else {
-						System.out.println("정보 처리 중 오류 발생");
-					}
-					
-				} else if (no == 4) { // 요청 삭제
+				} else if (no == 2) { // 요청 삭제
 					dao.selectRequest();
 					System.out.print("삭제할 요청글 번호 : ");
 					requestNum = Integer.parseInt(br.readLine());
@@ -64,7 +39,7 @@ public class RequestService {
 					} else {
 						System.out.println("정보 처리 중 오류 발생");
 					} // if
-				} else if (no == 5) { // 이전으로
+				} else if (no == 3) { // 이전으로
 					break;
 				} // if
 			} catch (NumberFormatException e) {
