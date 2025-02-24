@@ -34,3 +34,13 @@ CREATE TABLE cart (
 CREATE SEQUENCE cart_num_seq
 START WITH 1
 INCREMENT BY 1;
+
+-- orders 관련 시퀀스 생성
+CREATE SEQUENCE order_num_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- order_details 관련 시퀀스 생성
+CREATE SEQUENCE detail_num_seq
+START WITH 1
+INCREMENT BY 1;
