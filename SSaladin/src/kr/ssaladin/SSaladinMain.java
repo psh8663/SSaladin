@@ -260,7 +260,7 @@ public class SSaladinMain {
 		      // 장바구니 관리
 		      boolean cartMenu = true;
 		      while (cartMenu) {
-		         System.out.println("\n=== 장바구니 관리 ===");
+		         System.out.println("\n========================== 장바구니 관리 ==========================");
 		         System.out.print("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 뒤로가기: ");
 		         try {
 		            int no = Integer.parseInt(br.readLine());
@@ -292,7 +292,8 @@ public class SSaladinMain {
 	       
 	       // 로그인 상태일 때만 장바구니 목록 조회
 	       try {
-	           System.out.println("--------- 내 장바구니 목록 ---------");
+	           System.out.println("-------------------------- 내 장바구니 목록 --------------------------");
+	           					   
 	           
 	           // 장바구니 항목을 가져오기
 	           List<CartItem> cartItems = cartService.getUserCartItems(me_id);
