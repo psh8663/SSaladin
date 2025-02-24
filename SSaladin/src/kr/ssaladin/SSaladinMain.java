@@ -423,7 +423,7 @@ public class SSaladinMain {
 
 	private void displayUserList() {
 
-		System.out.println("\n=== 사용자 목록 ===");
+		System.out.println("\n======================================================== 사용자 목록 ========================================================");
 		List<User> userList = userService.getAllUsers(); 
 
 		if (userList.isEmpty()) {
@@ -431,11 +431,12 @@ public class SSaladinMain {
 		} else {
 
 			for (User user : userList) {
-			    System.out.printf("ID: %-12s 이름: %-10s 전화번호: %-15s 주소: %-20s 가입일: %-12s\n", 
+			    System.out.printf("ID: %-12s 이름: %-10s 전화번호: %-15s 주소: %-20s 보유 포인트: %-10d 가입일: %-12s\n", 
 			                      user.getUserId(), 
 			                      user.getUserName(), 
 			                      user.getUserPhone(), 
 			                      user.getUserAddress(), 
+			                      user.getUserPoint(),
 			                      user.getUser_date());
 			}
 

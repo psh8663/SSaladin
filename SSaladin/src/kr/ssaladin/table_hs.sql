@@ -39,5 +39,3 @@ CREATE TABLE point_uses (
     used_date DATE DEFAULT SYSDATE NOT NULL,  
     CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
-
-.
