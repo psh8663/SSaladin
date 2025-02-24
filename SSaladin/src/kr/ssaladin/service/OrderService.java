@@ -105,8 +105,7 @@ public class OrderService {
 	}
 
 	// 주문 정보 조회
-
-		public OrderInfo getOrderInfo(int orderNum) {
+	public OrderInfo getOrderInfo(int orderNum) {
 		OrderInfo orderInfo = new OrderInfo();
 		try {
 			// 주문 기본 정보 조회
