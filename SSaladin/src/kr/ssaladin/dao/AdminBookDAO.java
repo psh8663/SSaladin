@@ -13,6 +13,55 @@ public class AdminBookDAO {
 	ResultSet rs = null;
 	String sql = null;
 
+	public void selectAdminBook() {
+		try {
+			conn = DBUtil.getConnection();
+			sql = "SELECT book_code, book_title, '(' || book_author || ')', CONCAT(book_price, '원') AS book_price, book_status FROM BOOKS";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+
+			System.out.println("-".repeat(50));
+			System.out.printf("%-10s %-30s %-20s %-10s %-10s%n", "도서코드", "도서명", "저자명", "가격", "상품상태");
+			System.out.println("-".repeat(50));
+
+			if (rs.next()) {
+				do {
+					int bookCode = rs.getInt(1);
+					String bookTitle = rs.getString(2);
+					String bookAuthor = rs.getString(3);
+					String bookPrice = rs.getString(4);
+					int bookStatus = rs.getInt(5);
+					System.out.printf("%-10d %-30s %-20s %-10s %-10s%n", bookCode, bookTitle, bookAuthor, bookPrice, bookStatus);
+				} while (rs.next());
+			} else {
+				System.out.println("등록된 도서가 없습니다.");
+			}
+			System.out.println("-".repeat(50));
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+	}
+	public int checkadminBCode(int num) {
+		int count = 0;
+		try {
+			conn = DBUtil.getConnection();
+			sql = "SELECT * FROM books WHERE book_code=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				count = 1; // 레코드가 존재할 때 1 저장
+			}
+		} catch (Exception e) {
+			count = -1; // 오류 발생
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+		return count;
+	}
 	public int insertBook(int categoryNum, String bookTitle, String bookAuthor, int bookPrice, String bookPublisher,
 			String bookDescription, int bookStock, int bookStatus) throws ClassNotFoundException {
 		String sql = "INSERT INTO books (book_code, category_num, book_title, book_author, book_price, "
