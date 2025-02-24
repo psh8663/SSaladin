@@ -10,6 +10,8 @@ import kr.ssaladin.model.PointRequest;
 import kr.ssaladin.model.User;
 import kr.ssaladin.dao.PointRequestDAO;
 import kr.ssaladin.service.AdminBookService;
+import kr.ssaladin.service.AdminRequestService;
+import kr.ssaladin.service.AdminReviewsService;
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
 import kr.ssaladin.service.CartService.CartItem;
@@ -31,7 +33,9 @@ public class SSaladinMain {
    private BookListService bookListService;
    private PointRequestService pointRequestService; //
    private RequestService requestService; // RequestService 객체 추가
-   private ReviewsService reviewsService;
+   private ReviewsService reviewsService; // ReviewsService 객체 추가
+   private AdminReviewsService arvService; // AdminReviewsService 객체 추가
+   private AdminRequestService arqService; // AdminRequestService 객체 추가
 
    public SSaladinMain() {
       try {
@@ -40,8 +44,10 @@ public class SSaladinMain {
          userService = new UserService(); // UserService 초기화
          cartService = new CartService();
          pointRequestService = new PointRequestService();
-         reviewsService = new ReviewsService();
+         reviewsService = new ReviewsService(); // ReviewsService 초기화
          requestService = new RequestService(); // RequestService 초기화
+         arvService = new AdminReviewsService(); // AdminReviewsService 초기화
+         arqService = new AdminRequestService(); // AdminRequestService 초기화
 
          // 메뉴 호출
          callMenu();
@@ -211,6 +217,7 @@ public class SSaladinMain {
                System.out.println("구매내역 페이지");
                // 구매내역 페이지 구현 필요
             } else if (no == 5) {
+            	// 리뷰 관리
                reviewsService.reviewService(me_id);
             } else if (no == 6) {
                // 뒤로가기
@@ -358,7 +365,7 @@ public class SSaladinMain {
    private void adminMenu() throws IOException {
 
       while (flag) {
-         System.out.print("1. 사용자 목록, 2. 도서 상품 관리, 3. 포인트 충전 요청 관리, 4. 로그아웃: ");
+         System.out.print("1. 사용자 목록, 2. 도서 상품 관리, 3. 포인트 충전 요청 관리, 4. 리뷰/요청 관리 5. 로그아웃: ");
          try {
             int no = Integer.parseInt(br.readLine());
             if (no == 1) {
@@ -369,6 +376,8 @@ public class SSaladinMain {
             } else if (no == 3) {
                managePointRequests();
             } else if (no == 4) {
+            	reviewRequest();
+			} else if (no == 5) {
                System.out.println("관리자 로그아웃 완료.");
                flag = false;
                break;
@@ -396,9 +405,22 @@ public class SSaladinMain {
                   user.getUserId(), user.getUserName(), user.getUserPhone(), user.getUserAddress(),
                   user.getUserPoint(), user.getUser_date());
          }
-
       }
    }
+   
+   private void reviewRequest() throws NumberFormatException, IOException {
+   	System.out.print("1. 리뷰 관리, 2. 요청 관리, 3. 이전으로 돌아가기");
+		int num = Integer.parseInt(br.readLine());
+		while (flag) {
+			if (num == 1) {
+				arvService.aReviewService(me_id);
+			} else if (num == 2) {
+				arqService.aRequestService(me_id);
+			} else if (num == 3) {
+				break;
+			} // if
+		} // while
+}
 
    private void managePointRequests() throws IOException {
       while (true) {

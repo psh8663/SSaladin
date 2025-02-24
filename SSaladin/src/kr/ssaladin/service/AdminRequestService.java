@@ -11,7 +11,7 @@ public class AdminRequestService {
 	private BufferedReader br;
 	private RequestDAO dao;
 	
-	public void requestService(String userId) throws IOException {
+	public void aRequestService(String userId) throws IOException {
 		
 		dao = new RequestDAO();
 		br = new BufferedReader(new InputStreamReader(System.in));

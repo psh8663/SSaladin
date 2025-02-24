@@ -13,6 +13,37 @@ public class ReviewsDAO {
 	String sql = null;
 	ResultSet rs = null;
 	boolean flag = false;
+	
+	// 리뷰 목록 보기
+	public void selectReviews() {
+		
+		try {
+			conn = DBUtil.getConnection();
+			sql = "SELECT * FROM reviews r, users u, books b "
+					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.executeUpdate();
+			rs = pstmt.executeQuery();
+			
+			System.out.println("-".repeat(30));
+
+			if (rs.next()) {
+				System.out.printf("%-10s %-20s %-20s %-10s%n", "번호", "닉네임", "도서명", "등록일");
+				do {
+					System.out.printf("%-10s %-20s %-20s %-10s%n", 
+							rs.getInt("review_num"), rs.getString("user_id"), rs.getString("book_title"), rs.getDate("reg_date"));
+				} while (rs.next());
+			} else {
+				System.out.println("등록된 게시글이 없습니다.");
+			} // if
+
+			System.out.println("-".repeat(30));
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		} // try_finally
+	}
 
 	// user_id에 따른 리뷰 보기
 	public void selectReviews_userId(String userId) {
@@ -56,7 +87,7 @@ public class ReviewsDAO {
 	}
 
 	// bookCode에 따른 리뷰 글 보기
-	public void selectReviews(int bookCode) {
+	public void selectReviewsByBookCod(int bookCode) {
 
 		try {
 			conn = DBUtil.getConnection();

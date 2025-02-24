@@ -20,7 +20,7 @@ public class AdminReviewsService {
 	private ReviewsDAO dao;
 	private Order_detailsDAO odDao;
 
-	public void reviewService(String userId) throws IOException {
+	public void aReviewService(String userId) throws IOException {
 		
 		dao = new ReviewsDAO();
 		br = new BufferedReader(new InputStreamReader(System.in));
@@ -33,8 +33,8 @@ public class AdminReviewsService {
 			try {
 				int no = Integer.parseInt(br.readLine());
 
-				if (no == 1) { // 내가 쓴 리뷰 보기
-					dao.selectReviews_userId(userId);
+				if (no == 1) { // 리뷰 보기
+					dao.selectReviews();
 					System.out.println("확인 할 리뷰 번호 : ");
 					reviewNum = Integer.parseInt(br.readLine());
 					dao.detailSelectRivews_reviewNum(reviewNum);
