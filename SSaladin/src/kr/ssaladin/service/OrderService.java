@@ -60,7 +60,7 @@ public class OrderService {
 					return false;
 				}
 				// 재고 차감
-				boolean stockUpdated = adminBookDAO.updateStock(item.getBookCode(), item.getQuantity());
+				boolean stockUpdated = adminBookDAO.updateOrderStock(item.getBookCode(), item.getQuantity());
 				if (!stockUpdated) {
 					conn.rollback();
 					return false;

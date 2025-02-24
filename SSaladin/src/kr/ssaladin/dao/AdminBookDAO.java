@@ -139,7 +139,7 @@ public class AdminBookDAO {
 		return true; // 재고가 충분한 경우
 	}
 
-	public boolean updateStock(int bookCode, int quantity) throws SQLException {
+	public boolean updateOrderStock(int bookCode, int quantity) throws SQLException {
 		String sql = "UPDATE books SET book_stock = book_stock - ? WHERE book_code = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, quantity);

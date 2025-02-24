@@ -3,6 +3,7 @@ package kr.ssaladin.service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 
 import kr.ssaladin.dao.AdminBookDAO;
 import kr.ssaladin.dao.BookListDAO;
@@ -23,7 +24,7 @@ public class AdminBookService {
 		}
 	}
 
-	private void adminBookManage() throws IOException, ClassNotFoundException {
+	private void adminBookManage() throws IOException, ClassNotFoundException, SQLException {
 		while (true) {
 			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 3.도서 재고 추가, 4.도서 설명 변경   6.뒤로가기> ");
 			try {
@@ -90,6 +91,7 @@ public class AdminBookService {
 
 					dao.adminUpdateStock(num, book_stock);
 					System.out.println("재고가 추가되었습니다.");
+					dao.updateBookStatus(num);
 
 				} else if (no == 4) {
 					// 정보수정
