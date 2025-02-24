@@ -29,15 +29,17 @@ public class ReviewsDAO {
 			System.out.println("-".repeat(30));
 
 			if (rs.next()) {
-				System.out.println("번호\t닉네임\t도서명\t등록일");
+				System.out.printf("%-10s %-20s %-20s %-10s%n", "번호", "닉네임", "도서명", "등록일");
 				do {
-					System.out.print(rs.getInt("review_num"));
-					System.out.print("\t");
-					System.out.print(rs.getString("user_id"));
-					System.out.print("\t");
-					System.out.print(rs.getString("book_title"));
-					System.out.print("\t");
-					System.out.println(rs.getDate("reg_date"));
+//					System.out.print(rs.getInt("review_num"));
+//					System.out.print("\t");
+//					System.out.print(rs.getString("user_id"));
+//					System.out.print("\t");
+//					System.out.print(rs.getString("book_title"));
+//					System.out.print("\t");
+//					System.out.println(rs.getDate("reg_date"));
+					System.out.printf("%-10s %-20s %-20s %-10s%n", 
+							rs.getInt("review_num"), rs.getString("user_id"), rs.getString("book_title"), rs.getDate("reg_date"));
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 게시글이 없습니다.");
@@ -69,15 +71,17 @@ public class ReviewsDAO {
 			System.out.println("-".repeat(30));
 
 			if (rs.next()) {
-				System.out.println("번호\t닉네임\t도서명\t등록일");
+				System.out.printf("%-10s %-20s %-20s %-10s%n", "번호", "닉네임", "도서명", "등록일");
 				do {
-					System.out.print(rs.getInt("review_num"));
-					System.out.print("\t");
-					System.out.print(rs.getString("user_id"));
-					System.out.print("\t");
-					System.out.print(rs.getString("book_title"));
-					System.out.print("\t");
-					System.out.println(rs.getDate("reg_date"));
+//					System.out.print(rs.getInt("review_num"));
+//					System.out.print("\t");
+//					System.out.print(rs.getString("user_id"));
+//					System.out.print("\t");
+//					System.out.print(rs.getString("book_title"));
+//					System.out.print("\t");
+//					System.out.println(rs.getDate("reg_date"));
+					System.out.printf("%-10s %-20s %-20s %-10s%n", 
+							rs.getInt("review_num"), rs.getString("user_id"), rs.getString("book_title"), rs.getDate("reg_date"));
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 게시글이 없습니다.");
