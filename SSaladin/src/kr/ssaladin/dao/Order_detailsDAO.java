@@ -74,7 +74,7 @@ public class Order_detailsDAO {
 			} while (rs.next());
 		} else {
 			System.out.println("등록된 게시글이 없습니다.");
-		} // if 
+		} // if
     }
 
     // 주문 상세 수정
