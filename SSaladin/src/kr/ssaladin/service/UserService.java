@@ -1,6 +1,9 @@
 package kr.ssaladin.service;
 
+import java.util.List;
+
 import kr.ssaladin.dao.UserDAO;
+import kr.ssaladin.model.User;
 
 public class UserService {
 	private UserDAO userDAO;
@@ -28,9 +31,9 @@ public class UserService {
 				System.out.println("이미 존재하는 아이디입니다.");
 				return false;
 			}
-			if (userDAO.checkUserPhone(userPhone)) {
-				System.out.println("이미 존재하는 전화번호입니다.");
-				return false;
+			if (userDAO.checkUserPhone(userPhone, null)) {
+			    System.out.println("이미 존재하는 전화번호입니다.");
+			    return false;
 			}
 
 			// 회원가입 실행
@@ -44,24 +47,63 @@ public class UserService {
 
 	// 로그인
 	public int[] login(String userId, String userPw) {
-	    int[] result = new int[2]; // 결과 배열 선언: [0] - userAuth, [1] - userPoint
+		int[] result = new int[2]; // 결과 배열 선언: [0] - userAuth, [1] - userPoint
 
-	    try {
-	        if (userDAO.checkLogin(userId, userPw)) {
-	            result[0] = userDAO.getUserAuth(userId);  // userAuth 가져오기
-	            result[1] = userDAO.getUserPoint(userId); // userPoint 가져오기
-	            return result;
-	        }
-	        System.out.println("아이디 또는 비밀번호가 올바르지 않습니다.");
-	        result[0] = -1; // 로그인 실패
-	        return result;
-	    } catch (Exception e) {
-	        System.out.println("로그인 처리 중 오류 발생: " + e.getMessage());
-	        result[0] = -1; // 로그인 실패
-	        return result;
-	    }
+		try {
+			if (userDAO.checkLogin(userId, userPw)) {
+				result[0] = userDAO.getUserAuth(userId); // userAuth 가져오기
+				result[1] = userDAO.getUserPoint(userId); // userPoint 가져오기
+				return result;
+			}
+			System.out.println("아이디 또는 비밀번호가 올바르지 않습니다.");
+			result[0] = -1; // 로그인 실패
+			return result;
+		} catch (Exception e) {
+			System.out.println("로그인 처리 중 오류 발생: " + e.getMessage());
+			result[0] = -1; // 로그인 실패
+			return result;
+		}
 	}
 
+	// 회원정보 조회
+	public List<User> getAllUsers() {
+		return userDAO.getAllUsersInfo();
+	}
+
+	// 회원정보 수정 조회
+	public User getUserInfo(String userId) {
+		return userDAO.getUserInfo(userId);
+	}
+
+	// 회원정보 수정
+	public boolean updateUserInfo(String userId, String userPw, String userPhone, String userAddress) {
+		try {
+			// 현재 사용자 정보 조회
+			User currentUser = getUserInfo(userId);
+
+			// 비밀번호 유효성 검사
+			if (!isValidUserPw(userPw)) {
+				return false;
+			}
+
+			// 전화번호가 변경되었을 때만 유효성 검사 및 중복 체크 수행
+			if (!userPhone.equals(currentUser.getUserPhone())) {
+				if (!isValidUserPhone(userPhone)) {
+					return false;
+				}
+
+				if (userDAO.checkUserPhone(userPhone, userId)) {
+					System.out.println("이미 존재하는 전화번호입니다.");
+					return false;
+				}
+			}
+
+			return userDAO.updateUserInfo(userId, userPw, userPhone, userAddress);
+		} catch (Exception e) {
+			System.out.println("회원정보 수정 중 오류 발생: " + e.getMessage());
+			return false;
+		}
+	}
 
 	// 유효성 검사 - 아이디
 	private boolean isValidUserId(String userId) {

@@ -145,7 +145,7 @@ public class PointRequestDAO {
 				request.setUserId(rs.getString("user_id"));
 				request.setPointAmount(rs.getInt("point_amount"));
 				request.setRequestStatus(rs.getInt("request_status"));
-				request.setRequestDate(rs.getTimestamp("request_date"));
+				request.setRequestDate(rs.getDate("request_date"));
 				requests.add(request);
 			}
 		} catch (SQLException | ClassNotFoundException e) {
