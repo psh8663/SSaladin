@@ -359,13 +359,13 @@ public class SSaladinMain {
 	private void adminMenu() throws IOException {
 
 		while (flag) {
-			System.out.print("1. 사용자 목록, 2. 상품 관리, 3. 포인트 충전 요청 관리, 4. 로그아웃: ");
+			System.out.print("1. 사용자 목록, 2. 도서 상품 관리, 3. 포인트 충전 요청 관리, 4. 로그아웃: ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
 					System.out.println("사용자 목록을 보여줍니다.");
 				} else if (no == 2) {
-					System.out.println("상품 관리 화면");
+					System.out.println("도서 상품의 추가/수정/삭제");
 					new AdminBookService();
 				} else if (no == 3) {
 					managePointRequests();

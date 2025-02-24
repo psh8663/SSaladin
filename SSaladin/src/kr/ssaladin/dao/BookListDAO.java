@@ -144,7 +144,7 @@ public class BookListDAO {
 			while (rs.next()) {
 				System.out.println(rs.getInt("category_num") + ". " + rs.getString("category_name"));
 			}
-			System.out.println("===================");
+			System.out.println("-".repeat(50));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -175,7 +175,7 @@ public class BookListDAO {
 				System.out.println("도서명: " + rs.getString("book_title"));
 				System.out.println("저자명: " + rs.getString("book_author"));
 				System.out.println("가격: " + rs.getInt("book_price"));
-				System.out.println("----------------------------------");
+				System.out.println("-".repeat(50));
 			}
 
 			if (!found) {
@@ -192,20 +192,21 @@ public class BookListDAO {
 	public void selectBestSeller() throws SQLException, ClassNotFoundException {
 		try {
 			String sql = "SELECT * FROM ("
-					+ "    SELECT ROWNUM AS ranking, book_code, book_title, book_author, book_price, total_quantity"
-					+ "    FROM ("
-					+ "        SELECT b.book_code, b.book_title, b.book_author, b.book_price, SUM(od.order_quantity) AS total_quantity"
-					+ "        FROM order_details od"
-					+ "        JOIN books b ON od.book_code = b.book_code"
-					+ "        GROUP BY b.book_code, b.book_title, b.book_author, b.book_price"
-					+ "        ORDER BY total_quantity DESC"
-					+ "    )"
-					+ ")"
-					+ "WHERE ranking <= 5;";
+			           + "    SELECT ROWNUM AS ranking, t.*"
+			           + "    FROM ("
+			           + "        SELECT b.book_code, b.book_title, b.book_author, b.book_price, SUM(od.order_quantity) AS total_quantity"
+			           + "        FROM order_details od"
+			           + "        JOIN books b ON od.book_code = b.book_code"
+			           + "        GROUP BY b.book_code, b.book_title, b.book_author, b.book_price"
+			           + "        ORDER BY total_quantity DESC"
+			           + "    ) t"
+			           + "    WHERE ROWNUM <= 5"
+			           + ")";
 			conn = DBUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
-			
+			System.out.println("-".repeat(50));
+			System.out.println("=== 베스트셀러 도서 ===");
 			while (rs.next()) {
 			    System.out.println("순위: " + rs.getInt("ranking"));
 			    System.out.println("도서 코드: " + rs.getInt("book_code"));
@@ -213,7 +214,7 @@ public class BookListDAO {
 			    System.out.println("저자: " + rs.getString("book_author"));
 			    System.out.println("가격: " + rs.getInt("book_price"));
 			    System.out.println("총 판매량: " + rs.getInt("total_quantity"));
-			    System.out.println("----------------------------------");
+			    System.out.println("-".repeat(50));
 			}
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);

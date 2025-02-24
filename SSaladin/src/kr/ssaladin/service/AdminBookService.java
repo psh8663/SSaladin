@@ -25,7 +25,7 @@ public class AdminBookService {
 
 	private void adminBookManage() throws IOException, ClassNotFoundException {
 		while (true) {
-			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 3.도서 설명 변경   6.뒤로가기> ");
+			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 3.도서 재고 추가, 4.도서 설명 변경   6.뒤로가기> ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 
@@ -77,6 +77,21 @@ public class AdminBookService {
 					}
 
 				} else if (no == 3) {
+					// 재고 추가
+					blDao.selectBook();
+
+					System.out.print("수정할 도서 정보의 관리 번호:");
+					int num = Integer.parseInt(br.readLine());
+
+					blDao.selectDetailBook(num);
+
+					System.out.print("추가 재고:");
+					int book_stock = Integer.parseInt(br.readLine());
+
+					dao.adminUpdateStock(num, book_stock);
+					System.out.println("재고가 추가되었습니다.");
+
+				} else if (no == 4) {
 					// 정보수정
 					blDao.selectBook();
 

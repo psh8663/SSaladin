@@ -90,6 +90,29 @@ public class AdminBookDAO {
 			DBUtil.executeClose(null, pstmt, conn);
 		}
 	}
+	
+	public void adminUpdateStock(int book_code, int additionalStock) {
+	    try {
+	        conn = DBUtil.getConnection();
+	        sql = "UPDATE books SET book_stock = book_stock + ? WHERE book_code = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, additionalStock); // 기존 재고에 추가할 수량
+	        pstmt.setInt(2, book_code);
+	        int count = pstmt.executeUpdate();
+	        
+	        if (count > 0) {
+	            System.out.println("재고가 성공적으로 추가되었습니다.");
+	        } else {
+	            System.out.println("해당 도서가 존재하지 않습니다.");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        // 자원 정리
+	        DBUtil.executeClose(null, pstmt, conn);
+	    }
+	}
+
 
 	public boolean checkStock(int bookCode, int orderQuantity) throws SQLException, ClassNotFoundException {
 		String sql = "SELECT book_stock FROM books WHERE book_code = ?";
