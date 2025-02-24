@@ -22,7 +22,7 @@ public class AdminBookDAO {
 
 			System.out.println("-".repeat(100));
 			System.out.printf("%-10s %-30s %-20s %-10s %-10s %-10s%n", "도서코드", "도서명", "저자명", "가격", "상품상태", "재고");
-			System.out.println("-".repeat(50));
+			System.out.println("-".repeat(100));
 
 			if (rs.next()) {
 				do {
