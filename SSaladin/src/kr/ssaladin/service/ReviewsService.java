@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import kr.ssaladin.dao.BookListDAO;
 import kr.ssaladin.dao.Order_detailsDAO;
@@ -54,7 +55,9 @@ public class ReviewsService {
 						int rating = parseInputRating("평점 : ");
 						dao.insertReviews(userId, bookTitle, reviewsContent, rating, bookCode);
 						
-					} catch (Exception e) {
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					} catch (SQLException e) {
 						e.printStackTrace();
 					} // try_catch
 					
@@ -109,10 +112,11 @@ public class ReviewsService {
 		while (true) {
 			System.out.println(item);
 			try {
-				int num = Integer.parseInt(br.readLine());
-				if (num<0 || num>5) {
+				int rating = Integer.parseInt(br.readLine());
+				if (rating<0 || rating>5) {
 					throw new NotAcceptableValueException("0~5 숫자만 입력하세요");
 				} // if
+				return rating;
 			} catch (NumberFormatException e) {
 				System.out.println("0~5 숫자만 입력하세요");
 			} catch (NotAcceptableValueException e) {
