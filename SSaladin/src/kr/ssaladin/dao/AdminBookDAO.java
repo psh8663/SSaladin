@@ -20,7 +20,7 @@ public class AdminBookDAO {
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
-			System.out.println("-".repeat(100));
+			System.out.println("===전체 도서(판매중지도서 포함)===");
 			System.out.printf("%-10s %-30s %-20s %-10s %-10s %-10s%n", "도서코드", "도서명", "저자명", "가격", "상품상태", "재고");
 			System.out.println("-".repeat(100));
 
@@ -32,7 +32,8 @@ public class AdminBookDAO {
 					String bookPrice = rs.getString(4);
 					int bookStatus = rs.getInt(5);
 					int bookStock = rs.getInt(6);
-					System.out.printf("%-10d %-30s %-20s %-10s %-10s %-10s%n", bookCode, bookTitle, bookAuthor, bookPrice, bookStatus, bookStock);
+					System.out.printf("%-10d %-30s %-20s %-10s %-10s %-10s%n", bookCode, bookTitle, bookAuthor,
+							bookPrice, bookStatus, bookStock);
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 도서가 없습니다.");
@@ -44,6 +45,7 @@ public class AdminBookDAO {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
 	}
+
 	public int checkadminBCode(int num) {
 		int count = 0;
 		try {
@@ -63,8 +65,7 @@ public class AdminBookDAO {
 		}
 		return count;
 	}
-	
-	
+
 	public int insertBook(int categoryNum, String bookTitle, String bookAuthor, int bookPrice, String bookPublisher,
 			String bookDescription, int bookStock, int bookStatus) throws ClassNotFoundException {
 		String sql = "INSERT INTO books (book_code, category_num, book_title, book_author, book_price, "
@@ -99,7 +100,7 @@ public class AdminBookDAO {
 		try {
 			conn = DBUtil.getConnection();
 
-			// 1️ 중복 체크
+			// 중복 체크
 			pstmt = conn.prepareStatement(checkSql);
 			pstmt.setString(1, categoryName);
 			rs = pstmt.executeQuery();
@@ -108,7 +109,7 @@ public class AdminBookDAO {
 				return -1; // 중복 카테고리
 			}
 
-			// 2️ INSERT 실행
+			// INSERT 실행
 			pstmt.close(); // 기존 pstmt 닫기
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, categoryName);
@@ -200,18 +201,13 @@ public class AdminBookDAO {
 	}
 
 	public boolean updateBookStatus(int bookCode) throws SQLException, ClassNotFoundException {
-		String sql = "UPDATE books SET book_status = "
-				+ "CASE " 
-				+ "WHEN book_stock = 0 THEN 0 " +
-				"WHEN book_stock > 0 THEN 1 " + 
-				"ELSE book_status END " +
-				"WHERE book_code = ?";
+		String sql = "UPDATE books SET book_status = " + "CASE " + "WHEN book_stock = 0 THEN 0 "
+				+ "WHEN book_stock > 0 THEN 1 " + "ELSE book_status END " + "WHERE book_code = ?";
 
-		try (Connection conn = DBUtil.getConnection(); 
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setInt(1, bookCode);
-			return pstmt.executeUpdate() > 0; 
+			return pstmt.executeUpdate() > 0;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -223,8 +219,7 @@ public class AdminBookDAO {
 	public boolean updateOutOfPrintStatus(int bookCode) throws SQLException, ClassNotFoundException {
 		String sql = "UPDATE books SET book_status = 2 WHERE book_code = ?";
 
-		try (Connection conn = DBUtil.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setInt(1, bookCode);
 			return pstmt.executeUpdate() > 0;

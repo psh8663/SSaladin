@@ -24,7 +24,7 @@ public class BookListDAO {
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
-			System.out.println("-".repeat(100));
+			System.out.println("===전체 도서===");
 			System.out.printf("%-10s %-30s %-20s %-10s%n", "도서코드", "도서명", "저자명", "가격");
 			System.out.println("-".repeat(100));
 			if (rs.next()) {
@@ -81,6 +81,7 @@ public class BookListDAO {
 			rs = pstmt.executeQuery();
 
 			if (rs.next()) {
+				System.out.println("-".repeat(100));
 				System.out.println("도서코드 : " + rs.getInt("book_code"));
 				System.out.println("카테고리명 : " + rs.getString("category_name"));
 				System.out.println("도서명 : " + rs.getString("book_title"));
@@ -93,6 +94,7 @@ public class BookListDAO {
 				Float avgRating = rs.getObject("avg_rating", Float.class);
 				System.out.println("평균평점 : " + (avgRating != null ? avgRating : "평점 없음"));
 				System.out.println("등록일 : " + rs.getDate("book_reg_date"));
+				System.out.println("-".repeat(100));
 			} else {
 				System.out.println("검색된 정보가 없습니다.");
 			}
@@ -112,6 +114,7 @@ public class BookListDAO {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%" + title + "%"); // 부분 검색
 			rs = pstmt.executeQuery();
+			System.out.println("==="+title+"로 검색한 결과:"+"===");
 
 			boolean found = false;
 			while (rs.next()) {
@@ -121,7 +124,7 @@ public class BookListDAO {
 				System.out.println("도서명 : " + rs.getString("book_title"));
 				System.out.println("저자명 : " + rs.getString("book_author"));
 				System.out.println("가격 : " + rs.getInt("book_price"));
-				System.out.println("-".repeat(50));
+				System.out.println("-".repeat(100));
 			}
 
 			if (!found) {
@@ -146,7 +149,7 @@ public class BookListDAO {
 			while (rs.next()) {
 				System.out.println(rs.getInt("category_num") + ". " + rs.getString("category_name"));
 			}
-			System.out.println("-".repeat(50));
+			System.out.println("-".repeat(100));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -178,7 +181,7 @@ public class BookListDAO {
 				System.out.println("도서명: " + rs.getString("book_title"));
 				System.out.println("저자명: " + rs.getString("book_author"));
 				System.out.println("가격: " + rs.getInt("book_price"));
-				System.out.println("-".repeat(50));
+				System.out.println("-".repeat(100));
 			}
 
 			if (!found) {
@@ -210,16 +213,16 @@ public class BookListDAO {
 			conn = DBUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
-			System.out.println("-".repeat(50));
+			System.out.println("-".repeat(100));
 			System.out.println("=== 베스트셀러 도서 ===");
 			while (rs.next()) {
 			    System.out.println("순위: " + rs.getInt("ranking"));
 			    System.out.println("도서 코드: " + rs.getInt("book_code"));
-			    System.out.println("도서 제목: " + rs.getString("book_title"));
-			    System.out.println("저자: " + rs.getString("book_author"));
+			    System.out.println("도서명: " + rs.getString("book_title"));
+			    System.out.println("저자명: " + rs.getString("book_author"));
 			    System.out.println("가격: " + rs.getInt("book_price"));
 			    System.out.println("총 판매량: " + rs.getInt("total_quantity"));
-			    System.out.println("-".repeat(50));
+			    System.out.println("-".repeat(100));
 			}
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);
