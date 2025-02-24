@@ -53,7 +53,7 @@ public class AdminBookService {
 					System.out.print("재고 입력: ");
 					int bookStock = Integer.parseInt(br.readLine());
 
-					System.out.print("도서 상태 입력 (1: 판매중, 0: 품절, 2: 판매중지(비공개): ");
+					System.out.print("도서 상태 입력 (1: 판매중, 0: 품절, 2: 판매중지(비공개)): ");
 					int bookStatus = Integer.parseInt(br.readLine());
 
 					int result = dao.insertBook(categoryNum, bookTitle, bookAuthor, bookPrice, bookPublisher,
@@ -98,8 +98,9 @@ public class AdminBookService {
 
 						dao.adminUpdateStock(num, book_stock);
 						System.out.println("재고가 추가되었습니다.");
-						dao.selectAdminBook();
 						dao.updateBookStatus(num);
+						dao.selectAdminBook();
+						
 					} else if (count == 0) {
 						System.out.println("도서코드를 잘못 입력하셨습니다. 판매중지된 상품은");
 					} else {
