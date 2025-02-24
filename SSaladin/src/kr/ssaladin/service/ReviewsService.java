@@ -45,7 +45,6 @@ public class ReviewsService {
 						odDao.getOrderDetailsByUserId(userId);
 						System.out.println("리뷰 작성 할 책의 번호 : ");
 						bookCode = Integer.parseInt(br.readLine());
-						
 						System.out.print("제목 : ");
 						String bookTitle = br.readLine();
 						
@@ -54,6 +53,7 @@ public class ReviewsService {
 						
 						int rating = parseInputRating("평점 : ");
 						dao.insertReviews(userId, bookTitle, reviewsContent, rating, bookCode);
+						
 					} catch (Exception e) {
 						e.printStackTrace();
 					} // try_catch
