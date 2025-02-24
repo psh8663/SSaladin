@@ -26,7 +26,7 @@ public class AdminBookService {
 
 	private void adminBookManage() throws IOException, ClassNotFoundException, SQLException {
 		while (true) {
-			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 3.도서 재고 추가, 4.도서 설명 변경   6.뒤로가기> ");
+			System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 3.도서 재고 추가, 4.도서 설명 변경, 5.도서 판매중지 처리, 6.뒤로가기> ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 
@@ -53,7 +53,7 @@ public class AdminBookService {
 					System.out.print("재고 입력: ");
 					int bookStock = Integer.parseInt(br.readLine());
 
-					System.out.print("도서 상태 입력 (1: 판매중, 0: 품절): ");
+					System.out.print("도서 상태 입력 (1: 판매중, 0: 품절, 2: 판매중지(비공개): ");
 					int bookStatus = Integer.parseInt(br.readLine());
 
 					int result = dao.insertBook(categoryNum, bookTitle, bookAuthor, bookPrice, bookPublisher,
@@ -61,7 +61,7 @@ public class AdminBookService {
 
 					if (result == 1) {
 						System.out.println("도서가 정상적으로 추가되었습니다.");
-						blDao.selectBook();
+						dao.selectAdminBook();
 					} else {
 						System.out.println("도서 추가 실패!");
 					}
@@ -79,27 +79,37 @@ public class AdminBookService {
 
 				} else if (no == 3) {
 					// 재고 추가
-					blDao.selectBook();
+					dao.selectAdminBook();
 
-					System.out.print("수정할 도서 정보의 관리 번호:");
+					System.out.print("재고 추가할 도서 정보의 관리 번호:");
 					int num = Integer.parseInt(br.readLine());
 
 					blDao.selectDetailBook(num);
+					int count = blDao.checkBCode(num);
 
-					System.out.print("추가 재고:");
-					int book_stock = Integer.parseInt(br.readLine());
+					if (count == 1) {
 
-					dao.adminUpdateStock(num, book_stock);
-					System.out.println("재고가 추가되었습니다.");
-					dao.updateBookStatus(num);
+						blDao.selectDetailBook(num);
+
+						System.out.print("추가 재고:");
+						int book_stock = Integer.parseInt(br.readLine());
+
+						dao.adminUpdateStock(num, book_stock);
+						System.out.println("재고가 추가되었습니다.");
+						dao.updateBookStatus(num);
+					} else if (count == 0) {
+						System.out.println("도서코드를 잘못 입력하셨습니다.");
+					} else {
+						System.out.println("정보 처리 중 오류 발생");
+					}
 
 				} else if (no == 4) {
 					// 정보수정
-					blDao.selectBook();
+					dao.selectAdminBook();
 
 					System.out.print("수정할 도서 정보의 관리 번호:");
 					int num = Integer.parseInt(br.readLine());
-					int count = blDao.checkBCode(num);
+					int count = dao.checkadminBCode(num);
 					if (count == 1) {
 
 						blDao.selectDetailBook(num);
@@ -110,7 +120,22 @@ public class AdminBookService {
 						dao.updateBookDescription(num, book_description);
 						System.out.println("도서 설명이 변경됐습니다.");
 					} else if (count == 0) {
-						System.out.println("번호를 잘못 입력하셨습니다.");
+						System.out.println("도서코드를 잘못 입력하셨습니다.");
+					} else {
+						System.out.println("정보 처리 중 오류 발생");
+					}
+
+				} else if (no == 5) {
+					// 정보수정
+					blDao.selectBook();
+					System.out.print("판매중지할 도서 정보의 관리 번호:");
+					int num = Integer.parseInt(br.readLine());
+					int count = blDao.checkBCode(num);
+					if (count == 1) {
+						dao.updateOutOfPrintStatus(num);
+						System.out.println("판매중지 처리가 완료되었습니다.");
+					} else if (count == 0) {
+						System.out.println("도서코드를 잘못 입력하셨습니다.");
 					} else {
 						System.out.println("정보 처리 중 오류 발생");
 					}

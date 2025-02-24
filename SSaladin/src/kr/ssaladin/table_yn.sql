@@ -98,3 +98,47 @@ VALUES (books_seq.NEXTVAL, (SELECT category_num FROM categories WHERE category_n
 INSERT INTO books (book_code, category_num, book_title, book_author, book_price, book_publisher, book_description, book_stock, book_status, rating_avg, book_reg_date)
 VALUES (books_seq.NEXTVAL, (SELECT category_num FROM categories WHERE category_name = '예술'), 
         '모나리자 미스터리', '장 피에르 트루아', 23000, '아트북스', '모나리자의 숨겨진 이야기', 25, 1, 4.8, SYSDATE);
+
+                       -- orders 테이블 INSERT (order_num: 200~209)
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (200, 'yena', 36000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (201, 'yena', 25000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (202, 'yena', 47000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (203, 'yena', 18000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (204, 'yena', 54000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (205, 'yena', 29000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (206, 'yena', 31000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (207, 'yena', 46000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (208, 'yena', 20000, 1, SYSDATE);
+INSERT INTO orders (order_num, user_id, order_total, order_status, order_date)
+VALUES (209, 'yena', 38000, 1, SYSDATE);
+
+-- order_details 테이블 INSERT (detail_num: 200~209, book_code: 1~5)
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (200, 200, 1, 2, 36000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (201, 201, 2, 1, 25000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (202, 202, 3, 3, 47000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (203, 203, 4, 1, 18000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (204, 204, 5, 3, 54000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (205, 205, 1, 2, 29000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (206, 206, 2, 2, 31000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (207, 207, 3, 4, 46000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (208, 208, 4, 1, 20000);
+INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price)
+VALUES (209, 209, 5, 2, 38000);

@@ -40,13 +40,27 @@ public class Order_detailsDAO {
     }
 
     // 주문별 상세 목록 조회
+
     public ResultSet getOrderDetails(int orderNum) throws SQLException {
-        sql = "SELECT od.*, b.book_name, b.book_price " +
+        sql = "SELECT od.*, b.book_title, b.book_price " +
              "FROM order_details od " +
              "JOIN books b ON od.book_code = b.book_code " +
-             "WHERE od.order_num = ?";
+             "WHERE o.order_num = ?";
         pstmt = conn.prepareStatement(sql);
         pstmt.setInt(1, orderNum);
+        return pstmt.executeQuery();
+    }
+   
+    
+    // 사용자의 id별로 주문 목록 조회
+    public ResultSet getOrderDetailsByUserId(String userId) throws SQLException {
+        sql = "SELECT od.*, b.book_title, b.book_price " +
+             "FROM order_details od " +
+             "JOIN books b ON od.book_code = b.book_code " +
+             "JOIN orders o ON od.order_num = o.order_num " +
+             "WHERE o.user_id = ?";  // userId에 해당하는 주문 상세 정보 조회
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, userId);  //userId 를 매개변수로 전달
         return pstmt.executeQuery();
     }
 

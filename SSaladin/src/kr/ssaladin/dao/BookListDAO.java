@@ -19,14 +19,14 @@ public class BookListDAO {
 	public void selectBook() {
 		try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT book_code, book_title, '(' || book_author || ')', CONCAT(book_price, '원') AS book_price FROM BOOKS";
+			sql = "SELECT book_code, book_title, '(' || book_author || ')', CONCAT(book_price, '원') AS book_price FROM BOOKS "
+					+ "WHERE book_status IN (0, 1)";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
-			System.out.println("------------------------------------------------------");
+			System.out.println("-".repeat(50));
 			System.out.printf("%-10s %-30s %-20s %-10s%n", "도서코드", "도서명", "저자명", "가격");
-			System.out.println("------------------------------------------------------");
-
+			System.out.println("-".repeat(50));
 			if (rs.next()) {
 				do {
 					int bookCode = rs.getInt(1);
@@ -39,7 +39,7 @@ public class BookListDAO {
 			} else {
 				System.out.println("등록된 도서가 없습니다.");
 			}
-			System.out.println("------------------------------------------------------");
+			System.out.println("-".repeat(50));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -47,12 +47,12 @@ public class BookListDAO {
 		}
 	}
 
-	// 조회하는 도서코드가 존재하는지 여부 체크
+	// 조회하는 도서코드가 유효한지 여부 체크
 	public int checkBCode(int num) {
 		int count = 0;
 		try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT * FROM books WHERE book_code=?";
+			sql = "SELECT * FROM books WHERE book_code=? and book_status IN (0, 1)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, num);
 			rs = pstmt.executeQuery();
@@ -89,6 +89,7 @@ public class BookListDAO {
 				System.out.println("출판사 : " + rs.getString("book_publisher"));
 				System.out.println("설명 : " + rs.getString("book_description"));
 				System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
+				System.out.println("재고 :"+ rs.getInt("book_status"));
 				Float avgRating = rs.getObject("avg_rating", Float.class);
 				System.out.println("평균평점 : " + (avgRating != null ? avgRating : "평점 없음"));
 				System.out.println("등록일 : " + rs.getDate("book_reg_date"));
@@ -106,7 +107,8 @@ public class BookListDAO {
 	public void selectBookByTitle(String title) {
 		try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT * FROM books b JOIN categories c ON b.category_num = c.category_num WHERE b.book_title LIKE ?";
+			sql = "SELECT * FROM books b JOIN categories c ON b.category_num = c.category_num "
+					+ "WHERE b.book_title LIKE ? and b.book_status IN (0, 1)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%" + title + "%"); // 부분 검색
 			rs = pstmt.executeQuery();
@@ -119,7 +121,7 @@ public class BookListDAO {
 				System.out.println("도서명 : " + rs.getString("book_title"));
 				System.out.println("저자명 : " + rs.getString("book_author"));
 				System.out.println("가격 : " + rs.getInt("book_price"));
-				System.out.println("------------------------------------------------");
+				System.out.println("-".repeat(50));
 			}
 
 			if (!found) {
@@ -157,7 +159,8 @@ public class BookListDAO {
 		try {
 			conn = DBUtil.getConnection();
 			sql = "SELECT c.category_name, b.book_code, b.book_title, b.book_author, b.book_price "
-					+ "FROM books b JOIN categories c ON b.category_num = c.category_num " + "WHERE b.category_num = ?";
+					+ "FROM books b JOIN categories c ON b.category_num = c.category_num " 
+					+ "WHERE b.category_num = ? and b.book_status IN (0, 1)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, categoryNum);
 			rs = pstmt.executeQuery();
@@ -197,11 +200,13 @@ public class BookListDAO {
 			           + "        SELECT b.book_code, b.book_title, b.book_author, b.book_price, SUM(od.order_quantity) AS total_quantity"
 			           + "        FROM order_details od"
 			           + "        JOIN books b ON od.book_code = b.book_code"
+			           + "        WHERE b.book_status IN (0,1)" 
 			           + "        GROUP BY b.book_code, b.book_title, b.book_author, b.book_price"
 			           + "        ORDER BY total_quantity DESC"
 			           + "    ) t"
 			           + "    WHERE ROWNUM <= 5"
 			           + ")";
+
 			conn = DBUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
