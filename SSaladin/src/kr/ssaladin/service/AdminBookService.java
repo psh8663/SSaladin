@@ -82,11 +82,7 @@ public class AdminBookService {
 					dao.selectAdminBook();
 
 					System.out.print("재고 추가할 도서 정보의 관리 번호:");
-					int num = 
-							
-							Integer.parseInt(br.readLine());
-
-					blDao.selectDetailBook(num);
+					int num =Integer.parseInt(br.readLine());
 					int count = blDao.checkBCode(num);
 
 					if (count == 1) {
