@@ -82,7 +82,9 @@ public class AdminBookService {
 					dao.selectAdminBook();
 
 					System.out.print("재고 추가할 도서 정보의 관리 번호:");
-					int num = Integer.parseInt(br.readLine());
+					int num = 
+							
+							Integer.parseInt(br.readLine());
 
 					blDao.selectDetailBook(num);
 					int count = blDao.checkBCode(num);
@@ -96,9 +98,10 @@ public class AdminBookService {
 
 						dao.adminUpdateStock(num, book_stock);
 						System.out.println("재고가 추가되었습니다.");
+						dao.selectAdminBook();
 						dao.updateBookStatus(num);
 					} else if (count == 0) {
-						System.out.println("도서코드를 잘못 입력하셨습니다.");
+						System.out.println("도서코드를 잘못 입력하셨습니다. 판매중지된 상품은");
 					} else {
 						System.out.println("정보 처리 중 오류 발생");
 					}
