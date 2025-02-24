@@ -42,7 +42,6 @@ public class OrdersDAO {
     public ResultSet getOrder(int orderNum) throws SQLException {
         sql = "SELECT * FROM orders WHERE order_num = ?";
         pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, orderNum);
         return pstmt.executeQuery();
     }
 

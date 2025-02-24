@@ -83,12 +83,25 @@ public class BookListService {
                 System.out.print("1. 장바구니에 담기 2. 리뷰 보기 3.메뉴로 돌아가기 > ");
                 int option = Integer.parseInt(br.readLine());
                 if (option == 1) {
-                    // 로그인한 사용자 ID를 활용하여 장바구니 추가
-                    System.out.println(userId + "님의 장바구니에 도서를 담았습니다.");
+                	
+                	try {
+						// Cartservice 객체 생성
+                		CartService cartservice = new CartService();
+                		
+                		// 장바구니에 해당 도서 추가 ( 도서 담는 초기 수량은 1로 설정 )
+                		boolean result = cartservice.addToCart(userId, null, num, 1);
+                		
+                		if(result) {
+                		       // 로그인한 사용자 ID를 활용하여 장바구니 추가
+                            System.out.println(userId + "님의 장바구니에 도서를 담았습니다.");
+                		}else {System.out.println("상품 담기에 실패했습니다.");}
+					} catch (Exception e) {
+						System.out.println("장바구니 담기 중 오류가 발생했습니다." + e.getMessage());
+						e.printStackTrace();
+					}
                 } else if (option == 2) {
                     // 리뷰 보기
                     System.out.println("리뷰를 확인합니다.");
-                    
                     rDAO.detailSelectRivews(num);
                 } else if (option == 3) {
                     break; // 메뉴로 돌아가기

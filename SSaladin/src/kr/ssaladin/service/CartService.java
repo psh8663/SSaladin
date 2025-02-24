@@ -15,8 +15,8 @@ public class CartService {
     private UserDAO userDAO;
 
     public CartService() throws ClassNotFoundException, SQLException {
-        Connection conn = DBUtil.getConnection();  // DB 연결 생성
-        cartDAO = this.cartDAO;  // CartDAO에 Connection 전달
+//        Connection conn = DBUtil.getConnection();  // DB 연결 생성
+        this.cartDAO = new CartDAO();  
         this.userDAO = new UserDAO();
     }
 
@@ -57,22 +57,18 @@ public class CartService {
         }
     }
 
-    // 장바구니 추가 (로그인 체크 포함)
+    // 장바구니에 상품 추가
     public boolean addToCart(String userId, String userPw, int book_code, int quantity) {
         Connection conn = null;
         boolean result = false;
+        
 
         try {
-            if (!checkLoginStatus(userId, userPw)) {
-                return false;  // 로그인 실패
-            }
-
             conn = DBUtil.getConnection();
-            cartDAO = new CartDAO(conn);
             result = cartDAO.insertCart(userId, book_code, quantity);
 
         } catch (Exception e) {
-            System.out.println("장바구니 추가 중 오류 발생");
+            System.out.println("장바구니 추가 중 오류가 발생했습니다.");
             e.printStackTrace();
         } finally {
             DBUtil.executeClose(null, null, conn);
@@ -126,15 +122,15 @@ public class CartService {
         return result;
     }
 
-    // 사용자의 장바구니 목록 조회 (로그인 체크 포함)
+    
+    // 사용자의 장바구니 목록 조회 
     public List<CartItem> getUserCartItems(String userId) {
         Connection conn = null;
         ResultSet rs = null;
-        List<CartItem> cartItems = new ArrayList<>();
+        List<CartItem> cartItems = new ArrayList<>();	
 
         try {
             conn = DBUtil.getConnection();
-            cartDAO = new CartDAO(conn);
             rs = cartDAO.getUserCart(userId);
 
             while (rs.next()) {
