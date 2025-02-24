@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import kr.ssaladin.dao.BookListDAO;
 import kr.ssaladin.dao.Order_detailsDAO;
@@ -38,14 +40,7 @@ public class ReviewsService {
 
 				} else if (no == 2) { // 리뷰 작성
 					
-					Connection conn = null;
 					
-					try {
-						conn = DBUtil.getConnection();
-						odDao = new Order_detailsDAO(conn);
-					} catch (Exception e) {
-						e.printStackTrace();
-					} // try_catch
 					
 					
 					
@@ -120,6 +115,8 @@ public class ReviewsService {
 			}// try_catch
 		} // while
 	}
+	
+
 
 
 }
