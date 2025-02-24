@@ -53,15 +53,28 @@ public class Order_detailsDAO {
    
     
     // 사용자의 id별로 주문 목록 조회
-    public ResultSet getOrderDetailsByUserId(String userId) throws SQLException {
-        sql = "SELECT od.*, b.book_title, b.book_price " +
-             "FROM order_details od " +
-             "JOIN books b ON od.book_code = b.book_code " +
-             "JOIN orders o ON od.order_num = o.order_num " +
-             "WHERE o.user_id = ?";  // userId에 해당하는 주문 상세 정보 조회
+    public void getOrderDetailsByUserId(String userId) throws SQLException {
+        sql = "SELECT DISTINCT od.book_code, b.book_title, b.book_price "
+        		+ "FROM order_details od "
+        		+ "JOIN books b ON od.book_code = b.book_code "
+        		+ "JOIN orders o ON od.order_num = o.order_num "
+        		+ "WHERE o.user_id = ? "
+        		+ "ORDER BY od.book_code";  // userId에 해당하는 주문 상세 정보 조회
         pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, userId);  //userId 를 매개변수로 전달
-        return pstmt.executeQuery();
+        rs = pstmt.executeQuery();
+        
+        System.out.println("-".repeat(50));
+
+		if (rs.next()) {
+			do {
+				System.out.println("도서 번호 : " + rs.getInt("book_code"));
+				System.out.println("제목 : " + rs.getString("book_title"));
+				System.out.println("-".repeat(50));
+			} while (rs.next());
+		} else {
+			System.out.println("등록된 게시글이 없습니다.");
+		} // if
     }
 
     // 주문 상세 수정
