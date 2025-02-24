@@ -22,17 +22,17 @@ public class RequestService {
 			try {
 				int no = Integer.parseInt(br.readLine());
 				
-				if (no == 1) {
+				if (no == 1) { // 요청 목록
 					
 					dao.selectRequest();
 					
-				} else if (no == 2) {
+				} else if (no == 2) { // 요청 작성
 					
 					System.out.print("내용 : ");
 					String requestContent = br.readLine();
 					dao.insertRequest(userId, requestContent);
 					
-				} else if (no == 3) {
+				} else if (no == 3) { // 요청 수정
 					
 					dao.selectRequest();
 					System.out.print("수정할 요청글의 번호 : ");
@@ -51,7 +51,7 @@ public class RequestService {
 						System.out.println("정보 처리 중 오류 발생");
 					}
 					
-				} else if (no == 4) {
+				} else if (no == 4) { // 요청 삭제
 					dao.selectRequest();
 					System.out.print("삭제할 요청글 번호 : ");
 					requestNum = Integer.parseInt(br.readLine());
@@ -64,7 +64,7 @@ public class RequestService {
 					} else {
 						System.out.println("정보 처리 중 오류 발생");
 					} // if
-				} else if (no == 5) {
+				} else if (no == 5) { // 이전으로
 					break;
 				} // if
 			} catch (NumberFormatException e) {
