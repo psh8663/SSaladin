@@ -28,3 +28,9 @@ CREATE TABLE cart (
   CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) on delete cascade,
   CONSTRAINT fk_book_code FOREIGN KEY (book_code) REFERENCES books(book_code)
 );
+
+--cartnum 관련 시퀀스 생성
+
+CREATE SEQUENCE cart_num_seq
+START WITH 1
+INCREMENT BY 1;

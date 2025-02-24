@@ -1,4 +1,4 @@
-package kr.ssaladin.service;
+package kr.ssaladin.service;	
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,7 +17,7 @@ public class CartService {
     public CartService() throws ClassNotFoundException, SQLException {
 //        Connection conn = DBUtil.getConnection();  // DB 연결 생성
         this.cartDAO = new CartDAO();  
-        this.userDAO = new UserDAO();
+//        this.userDAO = new UserDAO();
     }
 
     // CartItem 내부 클래스 선언
@@ -125,11 +125,13 @@ public class CartService {
     
     // 사용자의 장바구니 목록 조회 
     public List<CartItem> getUserCartItems(String userId) {
+    	
         Connection conn = null;
         ResultSet rs = null;
         List<CartItem> cartItems = new ArrayList<>();	
 
         try {
+        	// DBUtil 이용해서 connection 수행
             conn = DBUtil.getConnection();
             rs = cartDAO.getUserCart(userId);
 
@@ -153,6 +155,7 @@ public class CartService {
         return cartItems;
     }
 
+    
     
     // 장바구니 개별 항목 조회 (로그인 체크 포함)
     public CartItem getCartItem(String userId, String userPw, int cartNum) {
