@@ -15,7 +15,7 @@ CREATE TABLE order_details (
   book_code NUMBER NOT NULL,
   order_quantity NUMBER DEFAULT 0,
   order_price NUMBER DEFAULT 0,
-  CONSTRAINT fk_order_num FOREIGN KEY (detail_num) REFERENCES orders(order_num) on delete cascade
+  CONSTRAINT fk_order_num FOREIGN KEY (order_num) REFERENCES orders(order_num) on delete cascade
 );
     
 

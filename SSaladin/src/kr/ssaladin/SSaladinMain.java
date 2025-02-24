@@ -251,7 +251,49 @@ public class SSaladinMain {
 	}
 
 	// ======================================//
+	private void purchaseCartItems() throws IOException {
+	    try {
+	        // 1. 장바구니 목록과 총 금액 조회
+	        List<CartItem> cartItems = cartService.getUserCartItems(me_id);
+	        if (cartItems.isEmpty()) {
+	            System.out.println("장바구니가 비어있습니다.");
+	            return;
+	        }
 
+	        // 2. 총 결제 금액 계산
+	        int totalAmount = cartItems.stream()
+	            .mapToInt(item -> item.getBookPrice() * item.getCartQuantity())
+	            .sum();
+
+	        // 3. 사용자의 포인트 잔액 확인
+	        if (userPoint < totalAmount) {
+	            System.out.println("포인트가 부족합니다. 현재 포인트: " + userPoint + "원, 필요 금액: " + totalAmount + "원");
+	            return;
+	        }
+
+	        // 4. 구매 확인
+	        System.out.println("총 결제 금액: " + totalAmount + "원");
+	        System.out.print("구매하시겠습니까? (Y/N): ");
+	        String confirm = br.readLine();
+
+	        if (confirm.equalsIgnoreCase("Y")) {
+	            // 5. 트랜잭션 처리
+	            boolean success = cartService.processPurchase(me_id, cartItems, totalAmount);
+	            
+	            if (success) {
+	                // 6. 포인트 차감
+	                userPoint -= totalAmount;
+	                System.out.println("구매가 완료되었습니다. 남은 포인트: " + userPoint + "원");
+	            } else {
+	                System.out.println("구매 처리 중 오류가 발생했습니다.");
+	            }
+	        } else {
+	            System.out.println("구매가 취소되었습니다.");
+	        }
+	    } catch (Exception e) {
+	        System.out.println("구매 처리 중 오류가 발생했습니다: " + e.getMessage());
+	    }
+	}
 	// + 구매기능 (장바구니에서 최종 구매) 추가구현 필요
 	// 도서 목록에서 장바구니에 책을 담고, 장바구니에서 최종 구매
 
@@ -261,7 +303,7 @@ public class SSaladinMain {
 		      boolean cartMenu = true;
 		      while (cartMenu) {
 		         System.out.println("\n========================== 장바구니 관리 ==========================");
-		         System.out.print("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 뒤로가기: ");
+		         System.out.print("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 장바구니 상품 구매 5. 뒤로가기: ");
 		         try {
 		            int no = Integer.parseInt(br.readLine());
 		            if (no == 1) {
@@ -275,7 +317,7 @@ public class SSaladinMain {
 		               deleteCartItem();
 		            } else if (no == 4) {
 		            	// 장바구니의 상품 구매
-//		            	purchaseCartItem();
+		            	purchaseCartItems();
 		            } else if (no == 5) {
 		               cartMenu = false;
 		            } else {
@@ -343,24 +385,31 @@ public class SSaladinMain {
 		      }
 		   }
 
-	private void deleteCartItem() throws IOException {
-		try {
-			System.out.print("삭제할 상품 ID를 입력하세요: ");
-			int productId = Integer.parseInt(br.readLine());
+	   private void deleteCartItem() throws IOException {
+		    try {
+		        // 로그인 상태 체크
+		        if (me_id == null || me_id.isEmpty()) {
+		            System.out.println("로그인이 필요합니다.");
+		            return;  // 로그인되지 않은 경우
+		        }
 
-			// 수정: 로그인 후 장바구니에서 상품 삭제
-			boolean success = cartService.removeFromCart(me_id, null, productId);
-			if (success) {
-				System.out.println("상품이 장바구니에서 삭제되었습니다.");
-			} else {
-				System.out.println("상품 삭제에 실패했습니다.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("올바른 숫자를 입력해주세요.");
-		} catch (Exception e) {
-			System.out.println("상품 삭제 중 오류가 발생했습니다: " + e.getMessage());
+		        System.out.print("삭제할 상품 ID를 입력하세요: ");
+		        int productId = Integer.parseInt(br.readLine());
+
+		        // 로그인된 상태에서 장바구니에서 상품 삭제
+		        boolean success = cartService.removeFromCart(productId);
+		        if (success) {
+		            System.out.println("상품이 장바구니에서 삭제되었습니다.");
+		        } else {
+		            System.out.println("상품 삭제에 실패했습니다.");
+		        }
+		    } catch (NumberFormatException e) {
+		        System.out.println("올바른 숫자를 입력해주세요.");
+		    } catch (Exception e) {
+		        System.out.println("상품 삭제 중 오류가 발생했습니다: " + e.getMessage());
+		    }
 		}
-	}
+
 
 	private void adminMenu() throws IOException {
 

@@ -59,7 +59,7 @@ public class CartDAO {
             return pstmt.executeUpdate() > 0;
         }
     }
-
+/*
     // 장바구니 삭제
     public boolean deleteCart(int cartNum) throws SQLException {
     	checkConnection();
@@ -67,6 +67,25 @@ public class CartDAO {
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, cartNum);
             return pstmt.executeUpdate() > 0;
+        }
+    }
+    
+    */
+    
+    public boolean deleteCart(int cartNum) throws SQLException {
+        checkConnection();
+        String sql = "DELETE FROM cart WHERE cart_num = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, cartNum);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("삭제할 항목이 존재하지 않습니다. cart_num: " + cartNum);
+            }
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("SQL 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            throw e;  // 예외 재던지기 (혹은 다른 처리를 할 수 있음)
         }
     }
     
