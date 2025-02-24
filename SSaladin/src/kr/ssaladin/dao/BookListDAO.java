@@ -20,7 +20,7 @@ public class BookListDAO {
 		try {
 			conn = DBUtil.getConnection();
 			sql = "SELECT book_code, book_title, '(' || book_author || ')', CONCAT(book_price, '원') AS book_price FROM BOOKS "
-					+ "book_status IN (0, 1)";
+					+ "WHERE book_status IN (0, 1)";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
@@ -89,6 +89,7 @@ public class BookListDAO {
 				System.out.println("출판사 : " + rs.getString("book_publisher"));
 				System.out.println("설명 : " + rs.getString("book_description"));
 				System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
+				System.out.println("재고 :"+rs.getInt("book_status"));
 				Float avgRating = rs.getObject("avg_rating", Float.class);
 				System.out.println("평균평점 : " + (avgRating != null ? avgRating : "평점 없음"));
 				System.out.println("등록일 : " + rs.getDate("book_reg_date"));
@@ -158,7 +159,8 @@ public class BookListDAO {
 		try {
 			conn = DBUtil.getConnection();
 			sql = "SELECT c.category_name, b.book_code, b.book_title, b.book_author, b.book_price "
-					+ "FROM books b JOIN categories c ON b.category_num = c.category_num " + "WHERE b.category_num = ? and b.book_status IN (0, 1)";
+					+ "FROM books b JOIN categories c ON b.category_num = c.category_num " 
+					+ "WHERE b.category_num = ? and b.book_status IN (0, 1)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, categoryNum);
 			rs = pstmt.executeQuery();

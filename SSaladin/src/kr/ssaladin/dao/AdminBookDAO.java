@@ -16,12 +16,12 @@ public class AdminBookDAO {
 	public void selectAdminBook() {
 		try {
 			conn = DBUtil.getConnection();
-			sql = "SELECT book_code, book_title, '(' || book_author || ')', CONCAT(book_price, '원') AS book_price, book_status FROM BOOKS";
+			sql = "SELECT book_code, book_title, '(' || book_author || ')', CONCAT(book_price, '원') AS book_price, book_status, book_stock FROM BOOKS";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
-			System.out.println("-".repeat(50));
-			System.out.printf("%-10s %-30s %-20s %-10s %-10s%n", "도서코드", "도서명", "저자명", "가격", "상품상태");
+			System.out.println("-".repeat(100));
+			System.out.printf("%-10s %-30s %-20s %-10s %-10s %-10s%n", "도서코드", "도서명", "저자명", "가격", "상품상태", "재고");
 			System.out.println("-".repeat(50));
 
 			if (rs.next()) {
@@ -31,12 +31,13 @@ public class AdminBookDAO {
 					String bookAuthor = rs.getString(3);
 					String bookPrice = rs.getString(4);
 					int bookStatus = rs.getInt(5);
-					System.out.printf("%-10d %-30s %-20s %-10s %-10s%n", bookCode, bookTitle, bookAuthor, bookPrice, bookStatus);
+					int bookStock = rs.getInt(6);
+					System.out.printf("%-10d %-30s %-20s %-10s %-10s %-10s%n", bookCode, bookTitle, bookAuthor, bookPrice, bookStatus, bookStock);
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 도서가 없습니다.");
 			}
-			System.out.println("-".repeat(50));
+			System.out.println("-".repeat(100));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -62,6 +63,41 @@ public class AdminBookDAO {
 		}
 		return count;
 	}
+	
+	// 도서 상세보기
+		public void selectAdminDetailBook(int num) {
+			try {
+				conn = DBUtil.getConnection();
+				sql = "SELECT b.*, c.category_name, "
+						+ "(SELECT AVG(rating) FROM reviews r WHERE r.book_code = b.book_code) AS avg_rating "
+						+ "FROM books b " + "JOIN categories c ON b.category_num = c.category_num "
+						+ "WHERE b.book_code = ?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, num);
+				rs = pstmt.executeQuery();
+
+				if (rs.next()) {
+					System.out.println("도서코드 : " + rs.getInt("book_code"));
+					System.out.println("카테고리명 : " + rs.getString("category_name"));
+					System.out.println("도서명 : " + rs.getString("book_title"));
+					System.out.println("저자명 : " + rs.getString("book_author"));
+					System.out.println("가격 : " + rs.getInt("book_price"));
+					System.out.println("출판사 : " + rs.getString("book_publisher"));
+					System.out.println("설명 : " + rs.getString("book_description"));
+					System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
+					Float avgRating = rs.getObject("avg_rating", Float.class);
+					System.out.println("평균평점 : " + (avgRating != null ? avgRating : "평점 없음"));
+					System.out.println("등록일 : " + rs.getDate("book_reg_date"));
+				} else {
+					System.out.println("검색된 정보가 없습니다.");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				DBUtil.executeClose(rs, pstmt, conn);
+			}
+		}
+	
 	public int insertBook(int categoryNum, String bookTitle, String bookAuthor, int bookPrice, String bookPublisher,
 			String bookDescription, int bookStock, int bookStatus) throws ClassNotFoundException {
 		String sql = "INSERT INTO books (book_code, category_num, book_title, book_author, book_price, "
@@ -220,7 +256,7 @@ public class AdminBookDAO {
 	public boolean updateOutOfPrintStatus(int bookCode) throws SQLException, ClassNotFoundException {
 		String sql = "UPDATE books SET book_status = 2 WHERE book_code = ?";
 
-		try (Connection conn = DBUtil.getConnection(); // 🔹 DB 연결 초기화
+		try (Connection conn = DBUtil.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setInt(1, bookCode);
