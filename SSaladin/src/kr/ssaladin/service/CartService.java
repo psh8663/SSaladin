@@ -1,6 +1,7 @@
 package kr.ssaladin.service;	
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class CartService {
     public CartService() throws ClassNotFoundException, SQLException {
 //        Connection conn = DBUtil.getConnection();  // DB 연결 생성
         this.cartDAO = new CartDAO();  
-//        this.userDAO = new UserDAO();
+        this.userDAO = new UserDAO();
     }
 
     // CartItem 내부 클래스 선언
@@ -99,28 +100,28 @@ public class CartService {
         return result;
     }
 
-    // 장바구니 항목 삭제 (로그인 체크 포함)
-    public boolean removeFromCart(String userId, String userPw, int cartNum) {
+ // 장바구니 항목 삭제
+    public boolean removeFromCart(int cartNum) {
         Connection conn = null;
         boolean result = false;
 
         try {
-            if (!checkLoginStatus(userId, userPw)) {
-                return false;  // 로그인 실패
-            }
-
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
             result = cartDAO.deleteCart(cartNum);
 
+            if (!result) {
+                System.out.println("장바구니 항목 삭제에 실패했습니다." );
+            }
         } catch (Exception e) {
-            System.out.println("장바구니 항목 삭제 중 오류 발생");
+            System.out.println("장바구니 항목 삭제 중 오류 발생" + e.getMessage());
             e.printStackTrace();
         } finally {
             DBUtil.executeClose(null, null, conn);
         }
         return result;
     }
+
 
     
     // 사용자의 장바구니 목록 조회 
@@ -198,5 +199,78 @@ public class CartService {
         return items.stream()
             .mapToInt(item -> item.getBookPrice() * item.getCartQuantity())
             .sum();
+    }
+    
+    // 장바구니 상품 구매
+    public boolean processPurchase(String userId, List<CartItem> items, int totalAmount) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean success = false;
+        
+        try {
+            conn = DBUtil.getConnection();
+            conn.setAutoCommit(false);  // 트랜잭션 시작
+
+            // 1. orders 테이블에 주문 생성
+            String orderSql = "INSERT INTO orders (order_num, user_id, order_total, order_status) " +
+                    "VALUES (order_num_seq.NEXTVAL, ?, ?, 1)";
+            pstmt = conn.prepareStatement(orderSql);
+            pstmt.setString(1, userId);
+            pstmt.setInt(2, totalAmount);   
+            pstmt.executeUpdate();
+
+            // 2. order_details 테이블에 주문 상세 정보 추가
+            String detailSql = "INSERT INTO order_details (detail_num, order_num, book_code, order_quantity, order_price) " +
+            		"VALUES (detail_num_seq.NEXTVAL, order_num_seq.CURRVAL, ?, ?, ?)";
+            for (CartItem item : items) {
+            	pstmt = conn.prepareStatement(detailSql);
+            	pstmt.setInt(1, item.getBookCode());
+            	pstmt.setInt(2, item.getCartQuantity());
+            	pstmt.setInt(3, item.getBookPrice());
+            	pstmt.executeUpdate();
+            }
+
+            // 3. 사용자 포인트 차감
+            String pointSql = "UPDATE users SET user_point = user_point - ? WHERE user_id = ?";
+            pstmt = conn.prepareStatement(pointSql);
+            pstmt.setInt(1, totalAmount);
+            pstmt.setString(2, userId);
+            int pointUpdateResult = pstmt.executeUpdate();
+
+            if (pointUpdateResult == 0) {
+                throw new SQLException("포인트 차감에 실패했습니다.");
+            }
+
+            // 4. 장바구니 비우기
+            String cartSql = "DELETE FROM cart WHERE user_id = ?";
+            pstmt = conn.prepareStatement(cartSql);
+            pstmt.setString(1, userId);
+            pstmt.executeUpdate();
+
+            conn.commit();  // 트랜잭션 커밋
+            success = true;
+            
+        } catch (Exception e) {
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("주문 처리 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) {
+                    conn.setAutoCommit(true);  // autoCommit 설정 복구
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return success;
     }
 }
