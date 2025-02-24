@@ -199,7 +199,8 @@ public class ReviewsDAO {
 
 		try {
 			conn =DBUtil.getConnection();
-			sql = "UDATE reivews SET reviews_content=?, rating=? WHERE review_num=?";
+			sql = "UPDATE reviews SET reviews_content=?, rating=? WHERE review_num=?";
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, reviewsContent);
 			pstmt.setInt(2, rating);
 			pstmt.setInt(3, reviewNum);
@@ -214,17 +215,17 @@ public class ReviewsDAO {
 	}
 
 	// 게시글 삭제
-	public void deleteReviews(String userId, int reiviewNum) {
-		if (!checkPermission(userId, reiviewNum)) {
+	public void deleteReviews(String userId, int reviewNum) {
+		if (!checkPermission(userId, reviewNum)) {
 			System.out.println("권한이 없습니다.");
 			return;
 		}
 
 		try {
 			conn = DBUtil.getConnection();
-			sql = "DELETE FROM reivews WHERE review_num=?";
+			sql = "DELETE FROM reviews WHERE review_num=?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, reiviewNum);
+			pstmt.setInt(1, reviewNum);
 			int count = pstmt.executeUpdate();
 			System.out.println(count + "개의 글을 삭제했습니다.");
 		} catch (Exception e) {
@@ -237,7 +238,8 @@ public class ReviewsDAO {
 	// 작성자 및 관리자 유효성 검사
 	private boolean checkPermission(String userId, int reviewNum) {
 		try (Connection conn = DBUtil.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement("SELECT user_id FROM reviews WHERE review_num=?")) {
+				PreparedStatement pstmt = conn.prepareStatement("SELECT u.user_id FROM reviews r, users u "
+						+ "WHERE r.user_id=u.user_id AND r.review_num=?")) {
 
 			pstmt.setInt(1, reviewNum);
 			ResultSet rs = pstmt.executeQuery();
