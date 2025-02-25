@@ -109,7 +109,7 @@ public class BookListService {
 							int cartOption = Integer.parseInt(br.readLine());
 
 							if (cartOption == 1) {
-								sSaladinMain.manageCart();
+								cartservice.manageCart(userId, 0);
 							} else if (cartOption == 2) {
 								System.out.println("상품 조회 메뉴로 돌아갑니다.");
 								break;

@@ -1,5 +1,8 @@
 package kr.ssaladin.service;	
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +19,7 @@ public class CartService {
     private CartDAO cartDAO;
     private UserDAO userDAO;
     private AdminBookDAO adminBookDAO;
+    private BufferedReader br;
 
     public CartService() throws ClassNotFoundException, SQLException {
 //        Connection conn = DBUtil.getConnection();  // DB 연결 생성
@@ -306,4 +310,163 @@ public class CartService {
         
         return success;
     }
+    
+    // ======================== 추가된 메서드들 ========================
+    
+    // 장바구니 관리 메뉴
+    public void manageCart(String userId, int userPoint) throws IOException {
+        // 장바구니 관리
+        boolean cartMenu = true;
+        while (cartMenu) {
+            System.out.println("\n==================================== 장바구니 관리 ======================================");
+            System.out.println();
+            System.out.println("1. 장바구니 목록, 2. 장바구니 상품 수량 변경, 3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
+            try {
+                int no = Integer.parseInt(br.readLine());
+                if (no == 1) {
+                    // 장바구니 상품 목록 조회
+                    showCartItems(userId);
+                } else if (no == 2) {
+                    // 장바구니에 있는 상품의 수량 변경
+                    updateCartItemQuantity(userId);
+                } else if (no == 3) {
+                    // 장바구니 내의 상품 삭제
+                    deleteCartItem();
+                } else if (no == 4) {
+                    // 장바구니의 상품 구매
+                    purchaseCartItem(userId, userPoint);
+                } else if (no == 5) {
+                    cartMenu = false;
+                } else {
+                    System.out.println("잘못된 입력입니다.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("[ 숫자만 입력 가능합니다. ]");
+            }
+        }
+    }
+    
+ // 장바구니 목록 보기
+    public void showCartItems(String userId) throws IOException {
+        if (userId == null || userId.isEmpty()) {
+            System.out.println("로그인 후 장바구니 목록을 조회할 수 있습니다.");
+            return;
+        }
+
+        // 로그인 상태일 때만 장바구니 목록 조회
+        try {
+            System.out.println("==================================== 내 장바구니 목록 ====================================");
+            System.out.println();
+
+            // 장바구니 항목을 가져오기
+            List<CartItem> cartItems = getUserCartItems(userId);
+
+            // 장바구니가 비어있는지 확인
+            if (cartItems.isEmpty()) {
+                System.out.println("장바구니에 담긴 상품이 없습니다.");
+            } else {
+                // 장바구니 목록 출력
+                cartItems.forEach(item -> System.out.println(
+                        "주문번호: " + item.getCartNum() + ", 도서코드: " + item.getBookCode() + ", 도서명: " + item.getBookTitle()
+                                + ", 수량: " + item.getCartQuantity() + ", 가격: " + item.getBookPrice()));
+            }
+        } catch (Exception e) {
+            System.out.println("장바구니 목록 조회 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+    
+
+    // 장바구니 상품 수량 변경
+    public void updateCartItemQuantity(String userId) throws IOException {
+        // 장바구니에 담긴 상품의 수량 수정
+        showCartItems(userId);
+        System.out.println();
+        System.out.println("-".repeat(86));
+
+        try {
+            System.out.print("수량을 수정할 상품의 도서 코드를 입력하세요: ");
+            int bookCode = Integer.parseInt(br.readLine());
+            System.out.print("새로운 수량을 입력하세요: ");
+            int newQuantity = Integer.parseInt(br.readLine());
+
+            // 상품 수량 수정
+            boolean success = updateQuantity(userId, bookCode, newQuantity);
+            if (success) {
+                System.out.println("상품 수량이 성공적으로 수정되었습니다.");
+            } else {
+                System.out.println("상품 수량 수정에 실패했습니다.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("올바른 숫자를 입력해주세요.");
+        } catch (Exception e) {
+            System.out.println("수량 수정 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+    
+    // 장바구니 상품 삭제
+    public void deleteCartItem() throws IOException {
+        // 장바구니 상품 삭제
+        System.out.println();
+        System.out.println("-".repeat(66));
+        System.out.println();
+        try {
+            System.out.print("장바구니에서 삭제할 주문 번호를 입력하세요: ");
+            int productId = Integer.parseInt(br.readLine());
+
+            // 장바구니에서 상품 삭제
+            boolean success = removeFromCart(productId);
+            if (success) {
+                System.out.println("상품이 장바구니에서 삭제되었습니다.");
+            } else {
+                System.out.println("상품 삭제에 실패했습니다.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("올바른 숫자를 입력해주세요.");
+        } catch (Exception e) {
+            System.out.println("상품 삭제 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+    
+    public void purchaseCartItem(String userId, int userPoint) throws IOException {
+        try {
+            // 장바구니 항목 조회
+            List<CartItem> cartItems = getUserCartItems(userId);
+
+            if (cartItems == null || cartItems.isEmpty()) {
+                System.out.println("장바구니가 비어있습니다.");
+                return;
+            }
+
+            // 총액 계산
+            int totalAmount = calculateTotal(userId);
+
+            // 현재 포인트 확인
+            if (totalAmount > userPoint) {
+                System.out.println("포인트가 부족합니다. 현재 포인트: " + userPoint + "원, 필요 포인트: " + totalAmount + "원");
+                System.out.println("포인트를 충전해주세요.");
+                return;
+            }
+
+            // 구매 확인
+            System.out.println("총 구매 금액: " + totalAmount + "원");
+            System.out.println("구매하시겠습니까? (1: 예, 2: 아니오)");
+            int confirm = Integer.parseInt(br.readLine());
+
+            if (confirm == 1) {
+                boolean success = processPurchase(userId, cartItems, totalAmount);
+
+                if (success) {
+                    System.out.println("구매가 완료되었습니다.");
+                    System.out.println("잔여 포인트: " + (userPoint - totalAmount) + "원");
+                } else {
+                    System.out.println("구매 처리 중 오류가 발생했습니다.");
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("올바른 숫자를 입력해주세요.");
+        } catch (Exception e) {
+            System.out.println("구매 처리 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+    
 }
