@@ -25,19 +25,20 @@ public class ReviewsDAO {
 			pstmt.executeUpdate();
 			rs = pstmt.executeQuery();
 			
-			System.out.println("-".repeat(30));
+			System.out.println("=".repeat(100));
 
 			if (rs.next()) {
-				System.out.printf("%-10s %-20s %-20s %-10s%n", "번호", "닉네임", "도서명", "등록일");
+				System.out.printf("%-9s %-18s %-19s %-10s%n", "번호", "등록일", "닉네임", "도서명");
+				System.out.println("-".repeat(100));
 				do {
 					System.out.printf("%-10s %-20s %-20s %-10s%n", 
-							rs.getInt("review_num"), rs.getString("user_id"), rs.getString("book_title"), rs.getDate("reg_date"));
+							rs.getInt("review_num"), rs.getDate("reg_date"), rs.getString("user_id"), rs.getString("book_title"), rs.getDate("reg_date"));
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 게시글이 없습니다.");
 			} // if
 
-			System.out.println("-".repeat(30));
+			System.out.println("=".repeat(100));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -57,10 +58,11 @@ public class ReviewsDAO {
 			pstmt.executeUpdate();
 			rs = pstmt.executeQuery();
 
-			System.out.println("-".repeat(30));
+			System.out.println("=".repeat(100));
 
 			if (rs.next()) {
-				System.out.printf("%-10s %-20s %-20s %-10s%n", "번호", "닉네임", "도서명", "등록일");
+				System.out.printf("%-9s %-18s %-19s %-10s%n", "번호", "등록일", "닉네임", "도서명");
+				System.out.println("-".repeat(100));
 				do {
 //					System.out.print(rs.getInt("review_num"));
 //					System.out.print("\t");
@@ -70,7 +72,7 @@ public class ReviewsDAO {
 //					System.out.print("\t");
 //					System.out.println(rs.getDate("reg_date"));
 					System.out.printf("%-10s %-20s %-20s %-10s%n", 
-							rs.getInt("review_num"), rs.getString("user_id"), rs.getString("book_title"), rs.getDate("reg_date"));
+							rs.getInt("review_num"), rs.getDate("reg_date"), rs.getString("user_id"), rs.getString("book_title"));
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 게시글이 없습니다.");
@@ -102,7 +104,8 @@ public class ReviewsDAO {
 			System.out.println("-".repeat(30));
 
 			if (rs.next()) {
-				System.out.printf("%-10s %-20s %-20s %-10s%n", "번호", "닉네임", "도서명", "등록일");
+				System.out.printf("%-9s %-18s %-19s %-10s%n", "번호", "등록일", "닉네임", "도서명");
+				System.out.println("-".repeat(100));
 				do {
 //					System.out.print(rs.getInt("review_num"));
 //					System.out.print("\t");
@@ -112,7 +115,7 @@ public class ReviewsDAO {
 //					System.out.print("\t");
 //					System.out.println(rs.getDate("reg_date"));
 					System.out.printf("%-10s %-20s %-20s %-10s%n", 
-							rs.getInt("review_num"), rs.getString("user_id"), rs.getString("book_title"), rs.getDate("reg_date"));
+							rs.getInt("review_num"), rs.getDate("reg_date"), rs.getString("user_id"), rs.getString("book_title"));
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 게시글이 없습니다.");
@@ -177,7 +180,7 @@ public class ReviewsDAO {
 			pstmt.executeUpdate();
 			rs = pstmt.executeQuery();
 
-			System.out.println("-".repeat(50));
+			System.out.println("=".repeat(100));
 
 			if (rs.next()) {
 				do {
@@ -186,8 +189,8 @@ public class ReviewsDAO {
 					System.out.println("제목 : " + rs.getString("book_title"));
 					System.out.println("내용 : " + rs.getString("reviews_content"));
 					System.out.println("평점 : " + rs.getInt("rating"));
-					System.out.println("등록일" + rs.getDate("reg_date"));
-					System.out.println("-".repeat(50));
+					System.out.println("등록일 : " + rs.getDate("reg_date"));
+					System.out.println("=".repeat(100));
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 게시글이 없습니다.");
