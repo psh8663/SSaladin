@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ssaladin.dao.AdminBookDAO;
 import kr.ssaladin.dao.CartDAO;
 import kr.ssaladin.dao.UserDAO;
 import kr.util.DBUtil;
@@ -14,11 +15,13 @@ import kr.util.DBUtil;
 public class CartService {
     private CartDAO cartDAO;
     private UserDAO userDAO;
+    private AdminBookDAO adminBookDAO;
 
     public CartService() throws ClassNotFoundException, SQLException {
 //        Connection conn = DBUtil.getConnection();  // DB 연결 생성
         this.cartDAO = new CartDAO();  
         this.userDAO = new UserDAO();
+        this.adminBookDAO = new AdminBookDAO();
     }
 
     // CartItem 내부 클래스 선언
@@ -214,6 +217,15 @@ public class CartService {
         try {
             conn = DBUtil.getConnection();
             conn.setAutoCommit(false);  // 트랜잭션 시작
+            
+            //0.재고확인
+			for (CartItem item : items) {
+	            boolean stockAvailable = adminBookDAO.checkStock(item.getBookCode(), item.getCartQuantity());
+	            if (!stockAvailable) {
+	                conn.rollback();
+	                return false;  // 재고 부족 시 주문 진행 불가
+	            }
+	        }
 
             // 1. orders 테이블에 주문 생성
             String orderSql = "INSERT INTO orders (order_num, user_id, order_total, order_status) " +
@@ -232,6 +244,19 @@ public class CartService {
             	pstmt.setInt(2, item.getCartQuantity());
             	pstmt.setInt(3, item.getBookPrice());
             	pstmt.executeUpdate();
+            	
+            	// 재고 차감
+				boolean stockUpdated = adminBookDAO.updateOrderStock(item.getBookCode(), item.getCartQuantity());
+				if (!stockUpdated) {
+					conn.rollback();
+					return false;
+				}
+				//재고가 0일 경우 품절 상태로 변경
+			    boolean statusUpdated = adminBookDAO.updateBookStatus(item.getBookCode());
+			    if (!statusUpdated) {
+			        conn.rollback();
+			        return false;
+			    } 
             }
 
             // 3. 사용자 포인트 차감

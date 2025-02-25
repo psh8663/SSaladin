@@ -191,13 +191,18 @@ public class AdminBookDAO {
 		return true; // 재고가 충분한 경우
 	}
 
-	public boolean updateOrderStock(int bookCode, int quantity) throws SQLException {
+	public boolean updateOrderStock(int bookCode, int quantity) throws SQLException, ClassNotFoundException {
 		String sql = "UPDATE books SET book_stock = book_stock - ? WHERE book_code = ?";
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try {			
+			conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			
 			pstmt.setInt(1, quantity);
 			pstmt.setInt(2, bookCode);
 
 			return pstmt.executeUpdate() > 0;
+		}finally {
+			DBUtil.executeClose(null, pstmt, conn);
 		}
 	}
 
@@ -205,14 +210,17 @@ public class AdminBookDAO {
 		String sql = "UPDATE books SET book_status = " + "CASE " + "WHEN book_stock = 0 THEN 0 "
 				+ "WHEN book_stock > 0 THEN 1 " + "ELSE book_status END " + "WHERE book_code = ?";
 
-		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+		try {
+			conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, bookCode);
 			return pstmt.executeUpdate() > 0;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}finally {
+			DBUtil.executeClose(null, pstmt, conn);
 		}
 
 	}
@@ -220,14 +228,17 @@ public class AdminBookDAO {
 	public boolean updateOutOfPrintStatus(int bookCode) throws SQLException, ClassNotFoundException {
 		String sql = "UPDATE books SET book_status = 2 WHERE book_code = ?";
 
-		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+		try {
+			conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, bookCode);
 			return pstmt.executeUpdate() > 0;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}finally {
+			DBUtil.executeClose(null, pstmt, conn);
 		}
 	}
 
