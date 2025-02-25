@@ -266,8 +266,9 @@ public class SSaladinMain {
 		// 장바구니 관리
 		boolean cartMenu = true;
 		while (cartMenu) {
-			System.out.println("\n========================== 장바구니 관리 ==========================");
-			System.out.print("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
+			System.out.println("\n==================================== 장바구니 관리 ======================================");
+			System.out.println();
+			System.out.println("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
@@ -304,7 +305,8 @@ public class SSaladinMain {
 
 		// 로그인 상태일 때만 장바구니 목록 조회
 		try {
-			System.out.println("-------------------------- 내 장바구니 목록 --------------------------");
+			System.out.println("==================================== 내 장바구니 목록 ====================================");
+			System.out.println();
 
 			// 장바구니 항목을 가져오기
 			List<CartItem> cartItems = cartService.getUserCartItems(me_id);
@@ -314,7 +316,7 @@ public class SSaladinMain {
 				System.out.println("장바구니에 담긴 상품이 없습니다.");
 			} else {
 				// 장바구니 목록 출력
-				cartItems.forEach(item -> System.out.println("도서코드: " + item.getBookCode() + ", 도서명: "
+				cartItems.forEach(item -> System.out.println("주문번호: "+ item.getCartNum() + ", 도서코드: " + item.getBookCode() + ", 도서명: "
 						+ item.getBookTitle() + ", 수량: " + item.getCartQuantity() + ", 가격: " + item.getBookPrice()));
 			}
 		} catch (Exception e) {
@@ -324,14 +326,18 @@ public class SSaladinMain {
 
 	private void updateCartItemQuantity() throws IOException {
 		// 장바구니에 담긴 상품의 수량 수정
+		showCartItems();
+		System.out.println();
+		System.out.println("-".repeat(86));
+
 		try {
-			System.out.print("수정할 상품 ID를 입력하세요: ");
-			int productId = Integer.parseInt(br.readLine());
+			System.out.print("수량을 수정할 상품의 도서 코드를 입력하세요: ");
+			int bookCode = Integer.parseInt(br.readLine());
 			System.out.print("새로운 수량을 입력하세요: ");
 			int newQuantity = Integer.parseInt(br.readLine());
 
 			// 로그인 후 상품 수량 수정
-			boolean success = cartService.updateQuantity(me_id, null, productId, newQuantity);
+			boolean success = cartService.updateQuantity(me_id, bookCode, newQuantity);
 			if (success) {
 				System.out.println("상품 수량이 성공적으로 수정되었습니다.");
 			} else {
@@ -345,8 +351,13 @@ public class SSaladinMain {
 	}
 
 	private void deleteCartItem() throws IOException {
+	//장바구니 상품 삭제
+		showCartItems();
+		System.out.println();
+		System.out.println("-".repeat(66));
+		System.out.println();
 		try {
-			System.out.print("삭제할 상품 ID를 입력하세요: ");
+			System.out.print("장바구니에서 삭제 할 주문 번호를 입력하세요: ");
 			int productId = Integer.parseInt(br.readLine());
 			
 			
@@ -393,6 +404,7 @@ public class SSaladinMain {
 	}
 	
 	private void purchaseCartItem() throws IOException {
+	//장바구니 상품 구매
 		try {
 			// 장바구니 항목 조회
 			List<CartItem> cartItems = cartService.getUserCartItems(me_id);
