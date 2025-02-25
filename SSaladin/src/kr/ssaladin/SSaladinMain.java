@@ -448,7 +448,7 @@ public class SSaladinMain {
 		}
 	}
 	
-	private void purchaseCartItem() throws IOException {
+	public void purchaseCartItem() throws IOException {
 	//장바구니 상품 구매
 		try {
 			// 장바구니 항목 조회
