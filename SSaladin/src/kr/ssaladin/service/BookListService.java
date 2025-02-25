@@ -128,13 +128,12 @@ public class BookListService {
 					// 구매하기 처리 (장바구니를 거치지 않고 바로 구매)
 					System.out.println("구매하시겠습니까? (1: 예, 2: 아니오)");
 					int confirm = Integer.parseInt(br.readLine());
-
 					if (confirm == 1) {
 						boolean success = purchaseBook(userId, num);
 
 						if (success) {
 							System.out.println("구매가 완료되었습니다.");
-							// 포인트 차감 후 업데이트
+							break;
 						} else {
 							System.out.println("구매 처리 중 오류가 발생했습니다.");
 						}
