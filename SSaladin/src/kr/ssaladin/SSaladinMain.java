@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 import kr.ssaladin.model.PointRequest;
 import kr.ssaladin.model.User;
+import kr.ssaladin.dao.UserDAO;
 import kr.ssaladin.dao.PointRequestDAO;
 import kr.ssaladin.service.AdminBookService;
 import kr.ssaladin.service.AdminRequestService;
@@ -71,7 +72,7 @@ public class SSaladinMain {
 		while (true) {
 			System.out.print("1. 로그인, 2. 회원가입, 3. 종료: ");
 			try {
-				int no = Integer.parseInt(br.readLine());
+				int no = Integer.parseInt(br.readLine().trim());
 				if (no == 1) {
 					// 로그인
 					login();
@@ -94,9 +95,9 @@ public class SSaladinMain {
 	// 로그인 페이지
 	private void login() throws IOException {
 		System.out.print("아이디: ");
-		String userId = br.readLine();
+		String userId = br.readLine().trim();
 		System.out.print("비밀번호: ");
-		String userPw = br.readLine();
+		String userPw = br.readLine().trim();
 
 		// 로그인 성공 여부와 user_auth 값 받기
 		int[] loginResult = userService.login(userId, userPw);
@@ -140,15 +141,15 @@ public class SSaladinMain {
 	// 회원가입 페이지
 	private void join() throws IOException {
 		System.out.print("아이디: ");
-		String userId = br.readLine();
+		String userId = br.readLine().trim();
 		System.out.print("비밀번호: ");
-		String userPw = br.readLine();
+		String userPw = br.readLine().trim();
 		System.out.print("이름: ");
-		String userName = br.readLine();
+		String userName = br.readLine().trim();
 		System.out.print("전화번호 (예: 010-1234-5678): ");
-		String userPhone = br.readLine();
+		String userPhone = br.readLine().trim();
 		System.out.print("주소: ");
-		String userAddress = br.readLine();
+		String userAddress = br.readLine().trim();
 
 		try {
 			boolean isJoined = userService.join(userId, userPw, userName, userPhone, userAddress);
@@ -203,9 +204,7 @@ public class SSaladinMain {
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
-					// 회원정보 수정
-					System.out.println("회원정보 수정 페이지");
-					// 회원정보 수정 기능 구현 필요
+					updateUserInfo();
 				} else if (no == 2) {
 					// 포인트 충전
 					chargePoint();
@@ -229,6 +228,52 @@ public class SSaladinMain {
 				System.out.println("[ 숫자만 입력 가능합니다. ]");
 			}
 		}
+	}
+	
+	private void updateUserInfo() {
+	    System.out.println("\n=== 회원정보 수정 ===");
+	    
+	    try {
+	        // 현재 로그인한 사용자 정보 조회
+	        User currentUser = userService.getUserInfo(me_id);
+	        if (currentUser == null) {
+	            System.out.println("사용자 정보를 찾을 수 없습니다.");
+	            return;
+	        }
+
+	        // 새로운 정보 입력 받기
+	        System.out.print("새로운 비밀번호 (변경하지 않으려면 엔터): ");
+	        String newPw = br.readLine().trim();
+	        if (newPw.isEmpty()) {
+	            newPw = currentUser.getUserPw();
+	        }
+
+	        System.out.print("새로운 전화번호 (예: 010-1234-5678, 변경하지 않으려면 엔터): ");
+	        String newPhone = br.readLine().trim();
+	        if (newPhone.isEmpty()) {
+	            newPhone = currentUser.getUserPhone();
+	        }
+
+	        System.out.print("새로운 주소 (변경하지 않으려면 엔터): ");
+	        String newAddress = br.readLine().trim();
+	        if (newAddress.isEmpty()) {
+	            newAddress = currentUser.getUserAddress();
+	        }
+
+	        // 회원정보 업데이트 시도
+	        boolean updateSuccess = userService.updateUserInfo(me_id, newPw, newPhone, newAddress);
+
+	        if (updateSuccess) {
+	            System.out.println("회원정보가 성공적으로 수정되었습니다.");
+	        } else {
+	            System.out.println("회원정보 수정에 실패했습니다. 입력하신 정보를 확인해주세요.");
+	        }
+
+	    } catch (IOException e) {
+	        System.out.println("입력 오류가 발생했습니다: " + e.getMessage());
+	    } catch (Exception e) {
+	        System.out.println("처리 중 오류가 발생했습니다: " + e.getMessage());
+	    }
 	}
 
 	// 포인트 충전 페이지
