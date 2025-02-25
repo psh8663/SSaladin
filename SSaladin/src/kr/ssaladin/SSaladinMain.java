@@ -327,7 +327,7 @@ public class SSaladinMain {
 					deleteCartItem();
 				} else if (no == 4) {
 					// 장바구니의 상품 구매
-                     purchaseCartItem();
+                     purchaseCartItem(me_id);
 				} else if (no == 5) {
 					// 
 					cartMenu = false;
@@ -448,7 +448,7 @@ public class SSaladinMain {
 		}
 	}
 	
-	public void purchaseCartItem() throws IOException {
+	public void purchaseCartItem(String me_id) throws IOException {
 	//장바구니 상품 구매
 		try {
 			// 장바구니 항목 조회

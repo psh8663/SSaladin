@@ -14,10 +14,12 @@ public class BookListService {
 	private BookListDAO dao;
 	private String userId; // 현재 로그인한 사용자 ID 저장
 	private ReviewsDAO rDAO;
+	private SSaladinMain sSaladinMain;
 
 	public BookListService(SSaladinMain sSaladinMain) {
 		try {
 			this.userId = sSaladinMain.getUserId(); // 로그인한 사용자 ID 가져오기
+			this.sSaladinMain =sSaladinMain;
 			br = new BufferedReader(new InputStreamReader(System.in));
 			dao = new BookListDAO();
 			rDAO = new ReviewsDAO();
@@ -97,9 +99,7 @@ public class BookListService {
 							int cartOption = Integer.parseInt(br.readLine());
 
 							if (cartOption == 1) {
-								SSaladinMain sSaladinMain = new SSaladinMain();
-								// 장바구니 확인 메서드 호출
-								sSaladinMain.purchaseCartItem();
+								sSaladinMain.purchaseCartItem(userId);
 							} else {
 								System.out.println("메뉴로 돌아갑니다.");
 							}
