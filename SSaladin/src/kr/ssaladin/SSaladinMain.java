@@ -163,9 +163,9 @@ public class SSaladinMain {
 	            break;
 	        }
 	        
-	        System.out.println("\n====================================================");
+	        System.out.println("\n=====================================================");
 	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-	        System.out.println("====================================================");
+	        System.out.println("=====================================================");
 	        
 	        System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: ");
 	        try {
@@ -217,9 +217,9 @@ public class SSaladinMain {
 	            break;
 	        }
 	        
-	        System.out.println("\n====================================================");
+	        System.out.println("\n=====================================================");
 	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-	        System.out.println("====================================================");
+	        System.out.println("=====================================================");
 	        
 	        System.out.println("\n=== 마이페이지 ===");
 	        System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 구매내역, 5. 리뷰 관리, 6. 회원 탈퇴, 7. 뒤로가기: ");
@@ -493,9 +493,9 @@ public class SSaladinMain {
 	            break;
 	        }
 	        
-	        System.out.println("\n====================================================");
+	        System.out.println("\n=====================================================");
 	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-	        System.out.println("====================================================");
+	        System.out.println("=====================================================");
 	        
 			System.out.print("1. 사용자 목록, 2. 도서 상품 관리, 3. 포인트 충전 요청 관리, 4. 리뷰/요청 관리 5. 로그아웃: ");
 			try {
