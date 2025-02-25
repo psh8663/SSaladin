@@ -77,19 +77,16 @@ public class CartService {
         return result;
     }
 
-    // 장바구니 수량 수정 (로그인 체크 포함)
-    public boolean updateQuantity(String userId, String userPw, int cartNum, int quantity) {
+    // 장바구니 수량 수정 
+    public boolean updateQuantity(String userId, int book_code, int quantity) {
         Connection conn = null;
         boolean result = false;
 
         try {
-            if (!checkLoginStatus(userId, userPw)) {
-                return false;  // 로그인 실패
-            }
-
+           
             conn = DBUtil.getConnection();
             cartDAO = new CartDAO(conn);
-            result = cartDAO.updateCartQuantity(cartNum, quantity);
+            result = cartDAO.updateCartQuantity(userId, book_code, quantity);
 
         } catch (Exception e) {
             System.out.println("수량 수정 중 오류 발생");
@@ -134,6 +131,12 @@ public class CartService {
         try {
         	// DBUtil 이용해서 connection 수행
             conn = DBUtil.getConnection();
+            
+            // 장바구니 목록을 다시 조회 (ex. 장바구니 변경or 삭제 후 장바구니를 조회할 때) 시
+            //  Connection 을 다시 연결
+            if(conn == null || conn.isClosed() ) {
+            	conn = DBUtil.getConnection();
+            }
             rs = cartDAO.getUserCart(userId);
 
             while (rs.next()) {
@@ -149,7 +152,7 @@ public class CartService {
         } catch (Exception e) {
             System.out.println("장바구니 목록 조회 중 오류 발생");
             e.printStackTrace();
-            return null;
+            return cartItems;
         } finally {
             DBUtil.executeClose(rs, null, conn);
         }

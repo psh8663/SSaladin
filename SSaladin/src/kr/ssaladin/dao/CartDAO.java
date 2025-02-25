@@ -1,6 +1,7 @@
 package kr.ssaladin.dao;
 
 import java.io.IOException;
+import java.nio.channels.SelectableChannel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,12 +32,15 @@ public class CartDAO {
     }
     
     // connection이 null인지 확인하는 예외처리
-    private void checkConnection() throws SQLException{
-    	if (conn==null) {
-    		throw new SQLException("데이터베이스와의 커넥션이 정상적으로 이뤄지지 않았습니다.");
-    	}
+    private void checkConnection() throws SQLException {
+        if (conn == null || conn.isClosed()) {
+            try {
+                this.conn = DBUtil.getConnection(); // 연결이 닫혔거나 null이면 다시 연결 시도
+            } catch (ClassNotFoundException e) {
+                throw new SQLException("데이터베이스 커넥션 실패.", e);
+            }
+        }
     }
-
     // 장바구니 추가
     public boolean insertCart(String userId, int bookCode, int cartQuantity) throws SQLException {
     	checkConnection();
@@ -50,13 +54,38 @@ public class CartDAO {
     }
 
     // 장바구니 수량 수정
-    public boolean updateCartQuantity(int cartNum, int cartQuantity) throws SQLException {
-    	checkConnection();
-        sql = "UPDATE cart SET cart_quantity = ? WHERE cart_num = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, cartQuantity);
-            pstmt.setInt(2, cartNum);
-            return pstmt.executeUpdate() > 0;
+    public boolean updateCartQuantity(String userId, int book_code, int cartQuantity) throws SQLException {
+        checkConnection();
+
+        // 장바구니의 book_code에 해당하는 cart_num 찾기 
+        String selectCartNumSql = "SELECT cart_num FROM cart WHERE user_id = ? AND book_code = ?";
+        int cartNum = -1;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(selectCartNumSql)) {
+            pstmt.setString(1, userId);
+            pstmt.setInt(2, book_code);
+
+            // cart_num 조회
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    cartNum = rs.getInt("cart_num");
+                }
+            }
+
+            
+            if (cartNum == -1) {
+                System.out.println("장바구니에 해당 도서가 없습니다.");
+                return false;
+            }
+
+            // cart_num을 찾았으면, 해당 cart_num에 대해 수량 수정
+            String updateSql = "UPDATE cart SET cart_quantity = ? WHERE cart_num = ?";
+            try (PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
+                updatePstmt.setInt(1, cartQuantity);
+                updatePstmt.setInt(2, cartNum);
+
+                return updatePstmt.executeUpdate() > 0;  // 수정 성공 시 true 반환
+            }
         }
     }
 /*
@@ -124,5 +153,7 @@ public class CartDAO {
             return pstmt.executeUpdate() > 0;
         }
     }
+    
+  
 
 }
