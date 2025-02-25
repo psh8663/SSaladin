@@ -91,7 +91,7 @@ public class SSaladinMain {
 			}
 		}
 	}
-
+//
 	// 로그인 페이지
 	private void login() throws IOException {
 		System.out.print("아이디: ");
