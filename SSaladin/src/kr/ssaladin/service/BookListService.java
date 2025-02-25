@@ -14,6 +14,8 @@ import kr.ssaladin.dao.BookListDAO;
 import kr.ssaladin.dao.ReviewsDAO;
 import kr.ssaladin.service.CartService.CartItem;
 import kr.ssaladin.service.OrderService.OrderStatus;
+import kr.ssaladin.service.OrderItem;
+import kr.ssaladin.service.OrderService;
 
 public class BookListService {
 	private Connection conn;
@@ -100,7 +102,7 @@ public class BookListService {
 						CartService cartservice = new CartService();
 
 						// 장바구니에 해당 도서 추가 ( 도서 담는 초기 수량은 1로 설정 )
-						boolean result = cartservice.addToCart(userId, null, num, 1);
+						boolean result = cartservice.addToCart(userId,  num, 1);
 
 						if (result) {
 							System.out.println(userId + "님의 장바구니에 도서를 담았습니다.");
@@ -156,17 +158,20 @@ public class BookListService {
 			System.out.println("정보 처리 중 오류 발생");
 		}
 	}
-	public boolean purchaseBook(String userId, int bookCode) throws ClassNotFoundException, SQLException {
+	public boolean purchaseBook(String userId, int bookCode) throws Exception {
 	    int quantity = 1;
 	    int price = dao.getBookPrice(bookCode);
 	    if (price == -1) {
 	        return false;
 	    }
 
-	    List<CartItem> orderItems = new ArrayList<>();
-	    orderItems.add(new CartItem(bookCode, quantity, price));
+	    // OrderService의 OrderItem 객체 생성 (올바른 import 사용)
+	    List<kr.ssaladin.service.OrderItem> orderItems = new ArrayList<>();
+	    orderItems.add(new kr.ssaladin.service.OrderItem(bookCode, quantity, price));
 
-	    return cartService.processPurchase(userId, orderItems, price);
+	    // OrderService 객체 생성 및 createOrder 메서드 호출
+	    OrderService orderService = new OrderService();
+	    return orderService.createOrder(userId, price, OrderService.OrderStatus.PROCESSING, orderItems);
 	}
 
 
