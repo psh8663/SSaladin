@@ -9,12 +9,11 @@ CREATE TABLE users (
     user_date DATE DEFAULT SYSDATE NOT NULL
 );
 
-
 CREATE SEQUENCE seq_request_num
-    START WITH 1
-    INCREMENT BY 1
-    NOCACHE
-    NOCYCLE;
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
 
 CREATE TABLE point_requests (
     request_num NUMBER PRIMARY KEY,
@@ -22,20 +21,20 @@ CREATE TABLE point_requests (
     point_amount NUMBER(9) NOT NULL,
     request_status NUMBER(1) NOT NULL,
     request_date DATE DEFAULT SYSDATE NOT NULL,
-    CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT fk_point_req_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT chk_request_status CHECK (request_status IN (1, 2, 3))
 );
 
 CREATE SEQUENCE seq_pointuse_num
-    START WITH 1
-    INCREMENT BY 1
-    NOCACHE
-    NOCYCLE;
-    
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
 CREATE TABLE point_uses (
-    pointuse_num NUMBER PRIMARY KEY,          
-    user_id VARCHAR2(12) NOT NULL,            
-    point_used NUMBER(9) NOT NULL,            
-    used_date DATE DEFAULT SYSDATE NOT NULL,  
-    CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
+    pointuse_num NUMBER PRIMARY KEY,
+    user_id VARCHAR2(12) NOT NULL,
+    point_used NUMBER(9) NOT NULL,
+    used_date DATE DEFAULT SYSDATE NOT NULL,
+    CONSTRAINT fk_point_uses_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
