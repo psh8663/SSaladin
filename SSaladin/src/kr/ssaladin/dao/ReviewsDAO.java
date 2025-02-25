@@ -88,6 +88,7 @@ public class ReviewsDAO {
 		}
 	}
 
+	/* 안쓰는 함수
 	// bookCode에 따른 리뷰 글 보기
 	public void selectReviewsByBookCod(int bookCode) {
 
@@ -129,7 +130,8 @@ public class ReviewsDAO {
 			DBUtil.executeClose(rs, pstmt, conn);
 		} // try_finally
 	}
-
+	 */
+	
 	// review_num에 따른 셀렉트 디테일
 	public void detailSelectRivews_reviewNum(int reviewNum) {
 
