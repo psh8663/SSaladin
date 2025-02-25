@@ -341,7 +341,7 @@ public class SSaladinMain {
 		while (cartMenu) {
 			System.out.println("\n==================================== 장바구니 관리 ======================================");
 			System.out.println();
-			System.out.println("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
+			System.out.println("1. 장바구니 목록 , 2. 장바구니 상품 수량 변경, 3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
@@ -355,7 +355,10 @@ public class SSaladinMain {
 					deleteCartItem();
 				} else if (no == 4) {
 					// 장바구니의 상품 구매
-					purchaseCartItem();
+					
+
+                     purchaseCartItem(me_id);
+
 				} else if (no == 5) {
 					//
 					cartMenu = false;
@@ -368,7 +371,7 @@ public class SSaladinMain {
 		}
 	}
 
-	private void showCartItems() throws IOException {
+	public void showCartItems() throws IOException {
 		// 로그인 상태 체크
 
 		if (!flag) {
@@ -476,8 +479,13 @@ public class SSaladinMain {
 		}
 	}
 
-	private void purchaseCartItem() throws IOException {
-		// 장바구니 상품 구매
+
+
+
+	
+	public void purchaseCartItem(String me_id) throws IOException {
+	//장바구니 상품 구매
+
 		try {
 			// 장바구니 항목 조회
 			List<CartItem> cartItems = cartService.getUserCartItems(me_id);
