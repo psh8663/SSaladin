@@ -29,13 +29,13 @@ public class ReviewsService {
 		int bookCode;
 		
 		while(true) {
-			System.out.print("1.내가 쓴 리뷰 보기, 2.리뷰 작성, 3. 리뷰 수정, 4. 리뷰 삭제, 5. 마이페이지 돌아가기>");
+			System.out.print("1.내가 쓴 리뷰 보기 2.리뷰 작성 3. 리뷰 수정 4. 리뷰 삭제 5. 마이페이지 돌아가기>");
 			try {
 				int no = Integer.parseInt(br.readLine());
 
 				if (no == 1) { // 내가 쓴 리뷰 보기
 					dao.selectReviews_userId(userId);
-					System.out.println("확인 할 리뷰 번호 : ");
+					System.out.print("확인 할 리뷰 번호 : ");
 					reviewNum = Integer.parseInt(br.readLine());
 					dao.detailSelectRivews_reviewNum(reviewNum);
 
@@ -44,7 +44,7 @@ public class ReviewsService {
 						Connection conn = DBUtil.getConnection();
 						odDao = new Order_detailsDAO(conn);						
 						odDao.getOrderDetailsByUserId(userId);
-						System.out.println("리뷰 작성 할 책의 번호 : ");
+						System.out.print("리뷰 작성 할 책의 번호 : ");
 						bookCode = Integer.parseInt(br.readLine());
 						System.out.print("제목 : ");
 						String bookTitle = br.readLine();
