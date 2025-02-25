@@ -107,27 +107,7 @@ public class SSaladinMain {
 		if (this.userAuth != -1) {
 			flag = true;
 			me_id = userId;
-			System.out.println(userId + "님 환영합니다!");
-
-			// userAuth 값에 따라 등급 출력
-			String userRole = "";
-			switch (this.userAuth) {
-			case 0:
-				userRole = "일반회원";
-				break;
-			case 1:
-				userRole = "VIP";
-				break;
-			case 2:
-				userRole = "관리자";
-				break;
-			default:
-				userRole = "비회원";
-				break;
-			}
-
-			System.out.println("회원 등급: " + userRole);
-			System.out.println("보유 포인트: " + this.userPoint); // 포인트 출력
+			System.out.println("\n" + userId + "님 환영합니다!");
 
 			// 권한에 따라 메뉴 출력
 			if (this.userAuth == 0) {
@@ -165,40 +145,82 @@ public class SSaladinMain {
 
 	// 로그인 후 메뉴 (유저)
 	private void userMenu() throws IOException {
-		while (flag) {
-			System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: ");
-			try {
-				int no = Integer.parseInt(br.readLine().trim());
-				if (no == 1) {
-					new BookListService(this);
-				} else if (no == 2) {
-					// 마이페이지
-					myPage();
-				} else if (no == 3) {
-					// 도서 신청 게시판
-					System.out.println("도서 신청 게시판");
-					requestService.requestService(me_id);
-				} else if (no == 4) {
-					manageCart();
-					System.out.println("장바구니 보기");
-				} else if (no == 5) {
-					// 로그아웃
-					System.out.println("로그아웃 되었습니다.");
-					flag = false; // 로그인 상태 해제
-					break;
-				} else {
-					System.out.println("잘못된 입력입니다.");
-				}
-			} catch (NumberFormatException e) {
-				System.out.println("[ 숫자만 입력 가능합니다. ]");
-			}
-		}
+	    while (flag) {
+	        // 사용자 정보를 상단에 표시
+	        String userRole = "";
+	        switch (this.userAuth) {
+	        case 0:
+	            userRole = "일반회원";
+	            break;
+	        case 1:
+	            userRole = "VIP";
+	            break;
+	        case 2:
+	            userRole = "관리자";
+	            break;
+	        default:
+	            userRole = "비회원";
+	            break;
+	        }
+	        
+	        System.out.println("\n====================================================");
+	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
+	        System.out.println("====================================================");
+	        
+	        System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: ");
+	        try {
+	            int no = Integer.parseInt(br.readLine().trim());
+	            if (no == 1) {
+	                new BookListService(this);
+	            } else if (no == 2) {
+	                // 마이페이지
+	                myPage();
+	            } else if (no == 3) {
+	                // 도서 신청 게시판
+	                System.out.println("도서 신청 게시판");
+	                requestService.requestService(me_id);
+	            } else if (no == 4) {
+	                manageCart();
+	                System.out.println("장바구니 보기");
+	            } else if (no == 5) {
+	                // 로그아웃
+	                System.out.println("로그아웃 되었습니다.");
+	                flag = false; // 로그인 상태 해제
+	                break;
+	            } else {
+	                System.out.println("잘못된 입력입니다.");
+	            }
+	        } catch (NumberFormatException e) {
+	            System.out.println("[ 숫자만 입력 가능합니다. ]");
+	        }
+	    }
 	}
 
 	// 마이페이지
 	private void myPage() throws IOException {
 	    // 마이페이지 메뉴
 	    while (flag) {
+	        // 사용자 정보를 상단에 표시
+	        String userRole = "";
+	        switch (this.userAuth) {
+	        case 0:
+	            userRole = "일반회원";
+	            break;
+	        case 1:
+	            userRole = "VIP";
+	            break;
+	        case 2:
+	            userRole = "관리자";
+	            break;
+	        default:
+	            userRole = "비회원";
+	            break;
+	        }
+	        
+	        System.out.println("\n====================================================");
+	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
+	        System.out.println("====================================================");
+	        
 	        System.out.println("\n=== 마이페이지 ===");
 	        System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 구매내역, 5. 리뷰 관리, 6. 회원 탈퇴, 7. 뒤로가기: ");
 	        try {
@@ -454,6 +476,27 @@ public class SSaladinMain {
 	private void adminMenu() throws IOException {
 
 		while (flag) {
+			// 사용자 정보를 상단에 표시
+	        String userRole = "";
+	        switch (this.userAuth) {
+	        case 0:
+	            userRole = "일반회원";
+	            break;
+	        case 1:
+	            userRole = "VIP";
+	            break;
+	        case 2:
+	            userRole = "관리자";
+	            break;
+	        default:
+	            userRole = "비회원";
+	            break;
+	        }
+	        
+	        System.out.println("\n====================================================");
+	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
+	        System.out.println("====================================================");
+	        
 			System.out.print("1. 사용자 목록, 2. 도서 상품 관리, 3. 포인트 충전 요청 관리, 4. 리뷰/요청 관리 5. 로그아웃: ");
 			try {
 				int no = Integer.parseInt(br.readLine().trim());
