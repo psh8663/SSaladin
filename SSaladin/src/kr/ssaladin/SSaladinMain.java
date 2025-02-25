@@ -313,7 +313,7 @@ public class SSaladinMain {
 		while (cartMenu) {
 			System.out.println("\n==================================== 장바구니 관리 ======================================");
 			System.out.println();
-			System.out.println("1. 장바구니 목록 보기, 2. 장바구니 상품 수량 변경, " + "3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
+			System.out.println("1. 장바구니 목록 , 2. 장바구니 상품 수량 변경, 3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
