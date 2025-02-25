@@ -49,8 +49,3 @@ public class PointRequestService {
 		return pointRequestDAO.updateRequestStatus(requestNum, newStatus);
 	}
 }
-//	// 포인트 요청 상태 업데이트 (예시)
-//	public boolean updateRequestStatus(int requestNum, int newStatus) {
-//		// 상태 업데이트 로직 추가 (예: 충전 요청 처리 완료)
-//		return pointRequestDAO.updateRequestStatus(requestNum, newStatus);
-//	}

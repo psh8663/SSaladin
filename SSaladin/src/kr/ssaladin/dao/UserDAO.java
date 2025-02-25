@@ -213,6 +213,31 @@ public class UserDAO {
 		}
 		return flag;
 	}
+	
+	// 회원 탈퇴
+	public boolean deleteUser(String userId) {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    boolean flag = false;
+
+	    String sql = "DELETE FROM users WHERE user_id = ?";
+
+	    try {
+	        conn = DBUtil.getConnection();
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, userId);
+
+	        int result = pstmt.executeUpdate();
+	        if (result > 0) {
+	            flag = true;
+	        }
+	    } catch (SQLException | ClassNotFoundException e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBUtil.executeClose(null, pstmt, conn);
+	    }
+	    return flag;
+	}
 
 	// VIP 등업
 

@@ -104,6 +104,31 @@ public class UserService {
 			return false;
 		}
 	}
+	
+	// 회원 탈퇴 (id, pw 확인)
+	public boolean deleteUser(String userId, String userPw) {
+	    try {
+	        if (userDAO.checkLogin(userId, userPw)) {
+	            return userDAO.deleteUser(userId);
+	        } else {
+	            System.out.println("비밀번호가 올바르지 않습니다.");
+	            return false;
+	        }
+	    } catch (Exception e) {
+	        System.out.println("회원 탈퇴 중 오류 발생: " + e.getMessage());
+	        return false;
+	    }
+	}
+
+	// 회원 탈퇴 (관리자) 
+	public boolean adminDeleteUser(String userId) {
+	    try {
+	        return userDAO.deleteUser(userId);
+	    } catch (Exception e) {
+	        System.out.println("회원 탈퇴 중 오류 발생: " + e.getMessage());
+	        return false;
+	    }
+	}
 
 	// 유효성 검사 - 아이디
 	private boolean isValidUserId(String userId) {
