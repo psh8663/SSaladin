@@ -6,7 +6,9 @@ create table reviews (
 	reviews_content varchar2(500) not null,
 	rating number(1) not null,
 	reg_date date default SYSDATE not null,
-	foreign key (user_id, book_title) references users (user_id, book_title) on delete cascade
+	foreign key (user_id) references users (user_id) on delete cascade
+	foreign key (book_code) references books (book_code) on delete cascade
+	
 );
 
 create sequence reviews_seq;
