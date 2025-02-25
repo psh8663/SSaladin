@@ -12,6 +12,7 @@ import kr.ssaladin.SSaladinMain;
 import kr.ssaladin.dao.AdminBookDAO;
 import kr.ssaladin.dao.BookListDAO;
 import kr.ssaladin.dao.ReviewsDAO;
+import kr.ssaladin.service.CartService.CartItem;
 import kr.ssaladin.service.OrderService.OrderStatus;
 
 public class BookListService {
@@ -22,7 +23,7 @@ public class BookListService {
 	private ReviewsDAO rDAO;
 	private AdminBookDAO adminBookDAO;
 	private SSaladinMain sSaladinMain;
-	private OrderService orderService;
+	private CartService cartService;
 
 	public BookListService(SSaladinMain sSaladinMain) {
 		try {
@@ -31,7 +32,7 @@ public class BookListService {
 			br = new BufferedReader(new InputStreamReader(System.in));
 			dao = new BookListDAO();
 			rDAO = new ReviewsDAO();
-			orderService = new OrderService();
+			cartService = new CartService();
 			booklist();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -125,7 +126,21 @@ public class BookListService {
 					}
 				} else if (option == 2) {
 					// 구매하기 처리 (장바구니를 거치지 않고 바로 구매)
-					purchaseBook(userId, num);
+					System.out.println("구매하시겠습니까? (1: 예, 2: 아니오)");
+					int confirm = Integer.parseInt(br.readLine());
+
+					if (confirm == 1) {
+						boolean success = purchaseBook(userId, num);
+
+						if (success) {
+							System.out.println("구매가 완료되었습니다.");
+							// 포인트 차감 후 업데이트
+						} else {
+							System.out.println("구매 처리 중 오류가 발생했습니다.");
+						}
+					}
+					
+					
 				} else if (option == 3) {
 					// 리뷰 보기
 					System.out.println("리뷰를 확인합니다.");
@@ -149,10 +164,10 @@ public class BookListService {
 	        return false;
 	    }
 
-	    List<OrderItem> orderItems = new ArrayList<>();
-	    orderItems.add(new OrderItem(bookCode, quantity, price));
+	    List<CartItem> orderItems = new ArrayList<>();
+	    orderItems.add(new CartItem(bookCode, quantity, price));
 
-	    return orderService.createOrder(userId, price, OrderStatus.PENDING, orderItems);
+	    return cartService.processPurchase(userId, orderItems, price);
 	}
 
 

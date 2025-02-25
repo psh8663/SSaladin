@@ -33,7 +33,12 @@ public class CartService {
         private int cartQuantity;
 
         public CartItem() {}
-
+        public CartItem(int bookCode, int cartQuantity, int bookPrice) {
+            this.book_code = bookCode;
+            this.cartQuantity = cartQuantity;
+            this.book_price = bookPrice;
+        }
+        
         public int getCartNum() { return cartNum; }
         public void setCartNum(int cartNum) { this.cartNum = cartNum; }
 
