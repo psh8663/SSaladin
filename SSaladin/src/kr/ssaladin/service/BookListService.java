@@ -99,6 +99,7 @@ public class BookListService {
 							int cartOption = Integer.parseInt(br.readLine());
 
 							if (cartOption == 1) {
+								sSaladinMain.showCartItems();
 								sSaladinMain.purchaseCartItem(userId);
 							} else {
 								System.out.println("메뉴로 돌아갑니다.");

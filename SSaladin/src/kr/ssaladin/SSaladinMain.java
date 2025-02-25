@@ -340,7 +340,7 @@ public class SSaladinMain {
 		}
 	}
 
-	private void showCartItems() throws IOException {
+	public void showCartItems() throws IOException {
 		// 로그인 상태 체크
 
 		if (!flag) {
