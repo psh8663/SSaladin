@@ -38,3 +38,5 @@ CREATE TABLE point_uses (
     used_date DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT fk_point_uses_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+.
