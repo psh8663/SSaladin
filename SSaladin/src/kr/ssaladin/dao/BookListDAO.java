@@ -90,7 +90,7 @@ public class BookListDAO {
 				System.out.println("출판사 : " + rs.getString("book_publisher"));
 				System.out.println("설명 : " + rs.getString("book_description"));
 				System.out.println("상품상태(0:품절, 1:판매중, 2:판매중지): " + rs.getInt("book_status"));
-				System.out.println("재고 :"+ rs.getInt("book_status"));
+				System.out.println("재고 :" + rs.getInt("book_status"));
 				Float avgRating = rs.getObject("avg_rating", Float.class);
 				System.out.println("평균평점 : " + (avgRating != null ? avgRating : "평점 없음"));
 				System.out.println("등록일 : " + rs.getDate("book_reg_date"));
@@ -114,7 +114,7 @@ public class BookListDAO {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%" + title + "%"); // 부분 검색
 			rs = pstmt.executeQuery();
-			System.out.println("==="+title+"로 검색한 결과:"+"===");
+			System.out.println("===" + title + "로 검색한 결과:" + "===");
 
 			boolean found = false;
 			while (rs.next()) {
@@ -162,7 +162,7 @@ public class BookListDAO {
 		try {
 			conn = DBUtil.getConnection();
 			sql = "SELECT c.category_name, b.book_code, b.book_title, b.book_author, b.book_price "
-					+ "FROM books b JOIN categories c ON b.category_num = c.category_num " 
+					+ "FROM books b JOIN categories c ON b.category_num = c.category_num "
 					+ "WHERE b.category_num = ? and b.book_status IN (0, 1)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, categoryNum);
@@ -197,18 +197,12 @@ public class BookListDAO {
 	// 베스트셀러 도서
 	public void selectBestSeller() throws SQLException, ClassNotFoundException {
 		try {
-			String sql = "SELECT * FROM ("
-			           + "    SELECT ROWNUM AS ranking, t.*"
-			           + "    FROM ("
-			           + "        SELECT b.book_code, b.book_title, b.book_author, b.book_price, SUM(od.order_quantity) AS total_quantity"
-			           + "        FROM order_details od"
-			           + "        JOIN books b ON od.book_code = b.book_code"
-			           + "        WHERE b.book_status IN (0,1)" 
-			           + "        GROUP BY b.book_code, b.book_title, b.book_author, b.book_price"
-			           + "        ORDER BY total_quantity DESC"
-			           + "    ) t"
-			           + "    WHERE ROWNUM <= 5"
-			           + ")";
+			String sql = "SELECT * FROM (" + "    SELECT ROWNUM AS ranking, t.*" + "    FROM ("
+					+ "        SELECT b.book_code, b.book_title, b.book_author, b.book_price, SUM(od.order_quantity) AS total_quantity"
+					+ "        FROM order_details od" + "        JOIN books b ON od.book_code = b.book_code"
+					+ "        WHERE b.book_status IN (0,1)"
+					+ "        GROUP BY b.book_code, b.book_title, b.book_author, b.book_price"
+					+ "        ORDER BY total_quantity DESC" + "    ) t" + "    WHERE ROWNUM <= 5" + ")";
 
 			conn = DBUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
@@ -216,16 +210,39 @@ public class BookListDAO {
 			System.out.println("-".repeat(100));
 			System.out.println("=== 베스트셀러 도서 ===");
 			while (rs.next()) {
-			    System.out.println("순위: " + rs.getInt("ranking"));
-			    System.out.println("도서 코드: " + rs.getInt("book_code"));
-			    System.out.println("도서명: " + rs.getString("book_title"));
-			    System.out.println("저자명: " + rs.getString("book_author"));
-			    System.out.println("가격: " + rs.getInt("book_price"));
-			    System.out.println("총 판매량: " + rs.getInt("total_quantity"));
-			    System.out.println("-".repeat(100));
+				System.out.println("순위: " + rs.getInt("ranking"));
+				System.out.println("도서 코드: " + rs.getInt("book_code"));
+				System.out.println("도서명: " + rs.getString("book_title"));
+				System.out.println("저자명: " + rs.getString("book_author"));
+				System.out.println("가격: " + rs.getInt("book_price"));
+				System.out.println("총 판매량: " + rs.getInt("total_quantity"));
+				System.out.println("-".repeat(100));
 			}
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
 	}
+
+	public int getBookPrice(int bookCode) throws SQLException, ClassNotFoundException {
+		String sql = "SELECT book_price FROM books WHERE book_code = ?";
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = DBUtil.getConnection(); // DB 연결
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, bookCode);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				return rs.getInt("book_price");
+			}
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+
+		return -1; // 책이 없으면 -1 반환
+	}
+
 }

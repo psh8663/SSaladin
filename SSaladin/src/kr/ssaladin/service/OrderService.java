@@ -22,6 +22,7 @@ public class OrderService {
 			conn = DBUtil.getConnection();
 			ordersDAO = new OrdersDAO(conn);
 			orderDetailsDAO = new Order_detailsDAO(conn);
+			adminBookDAO = new AdminBookDAO();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

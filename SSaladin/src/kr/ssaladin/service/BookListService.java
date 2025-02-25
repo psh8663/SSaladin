@@ -3,26 +3,35 @@ package kr.ssaladin.service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import kr.ssaladin.SSaladinMain;
+import kr.ssaladin.dao.AdminBookDAO;
 import kr.ssaladin.dao.BookListDAO;
 import kr.ssaladin.dao.ReviewsDAO;
+import kr.ssaladin.service.OrderService.OrderStatus;
 
 public class BookListService {
+	private Connection conn;
 	private BufferedReader br;
 	private BookListDAO dao;
 	private String userId; // 현재 로그인한 사용자 ID 저장
 	private ReviewsDAO rDAO;
+	private AdminBookDAO adminBookDAO;
 	private SSaladinMain sSaladinMain;
+	private OrderService orderService;
 
 	public BookListService(SSaladinMain sSaladinMain) {
 		try {
 			this.userId = sSaladinMain.getUserId(); // 로그인한 사용자 ID 가져오기
-			this.sSaladinMain =sSaladinMain;
+			this.sSaladinMain = sSaladinMain;
 			br = new BufferedReader(new InputStreamReader(System.in));
 			dao = new BookListDAO();
 			rDAO = new ReviewsDAO();
+			orderService = new OrderService();
 			booklist();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,12 +85,12 @@ public class BookListService {
 	}
 
 	// 도서 상세 정보 조회 및 장바구니 기능
-	private void showBookDetails(int num) throws IOException {
+	private void showBookDetails(int num) throws IOException, ClassNotFoundException, SQLException {
 		int count = dao.checkBCode(num);
 		if (count == 1) {
 			dao.selectDetailBook(num); // 상세 정보 출력
 			while (true) {
-				System.out.print("1. 장바구니에 담기 2. 리뷰 보기 3.메뉴로 돌아가기 > ");
+				System.out.print("1.장바구니에 담기, 2.바로 구매하기, 3.리뷰 보기, 4.메뉴로 돌아가기 > ");
 				int option = Integer.parseInt(br.readLine());
 				if (option == 1) {
 
@@ -99,10 +108,12 @@ public class BookListService {
 							int cartOption = Integer.parseInt(br.readLine());
 
 							if (cartOption == 1) {
-								sSaladinMain.showCartItems();
-								sSaladinMain.purchaseCartItem(userId);
+								sSaladinMain.manageCart();
+							} else if (cartOption == 2) {
+								System.out.println("상품 조회 메뉴로 돌아갑니다.");
+								break;
 							} else {
-								System.out.println("메뉴로 돌아갑니다.");
+								System.out.println("잘못 입력하셨습니다.");
 							}
 						} else {
 							System.out.println("상품 담기에 실패했습니다.");
@@ -113,10 +124,13 @@ public class BookListService {
 						e.printStackTrace();
 					}
 				} else if (option == 2) {
+					// 구매하기 처리 (장바구니를 거치지 않고 바로 구매)
+					purchaseBook(userId, num);
+				} else if (option == 3) {
 					// 리뷰 보기
 					System.out.println("리뷰를 확인합니다.");
 					rDAO.detailSelectRivews(num);
-				} else if (option == 3) {
+				} else if (option == 4) {
 					break; // 메뉴로 돌아가기
 				} else {
 					System.out.println("잘못 입력했습니다. 다시 선택하세요.");
@@ -128,4 +142,18 @@ public class BookListService {
 			System.out.println("정보 처리 중 오류 발생");
 		}
 	}
+	public boolean purchaseBook(String userId, int bookCode) throws ClassNotFoundException, SQLException {
+	    int quantity = 1;
+	    int price = dao.getBookPrice(bookCode);
+	    if (price == -1) {
+	        return false;
+	    }
+
+	    List<OrderItem> orderItems = new ArrayList<>();
+	    orderItems.add(new OrderItem(bookCode, quantity, price));
+
+	    return orderService.createOrder(userId, price, OrderStatus.PENDING, orderItems);
+	}
+
+
 }

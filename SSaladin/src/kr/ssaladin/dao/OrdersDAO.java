@@ -19,7 +19,7 @@ public class OrdersDAO {
 
     // 주문 등록
     public boolean insertOrder(String userId, int orderTotal, int orderStatus) throws SQLException {
-        sql = "INSERT INTO orders (user_id, order_total, order_status, order_date) VALUES (?, ?, ?, sysdate())";
+        sql = "INSERT INTO orders (user_id, order_total, order_status, order_date) VALUES (?, ?, ?, SYSDATE)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);
             pstmt.setInt(2, orderTotal);
