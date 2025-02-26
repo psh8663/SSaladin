@@ -49,21 +49,25 @@ public class AdminBookDAO {
 	
 	public boolean checkCategory(int categoryNum) throws SQLException, ClassNotFoundException {
 	    String sql = "SELECT COUNT(*) FROM categories WHERE category_id = ?";
-	    try {
-	    	conn = DBUtil.getConnection();
-			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-	        pstmt.setInt(1, categoryNum);
+	    
+	    // db 연결 및 PreparedStatement 실행
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        
+	        pstmt.setInt(1, categoryNum);  // 매개변수 바인딩
 	        try (ResultSet rs = pstmt.executeQuery()) {
 	            if (rs.next()) {
-	                return rs.getInt(1) > 0; 
+	                return rs.getInt(1) > 0;  // 카테고리가 있으면 true 반환
 	            }
 	        }
-	    }finally {
-	    	DBUtil.executeClose(rs, pstmt, conn);
-		}
-	    return false;
+	    } catch (SQLException e) {
+	        System.out.println("카테고리 목록에서 선택하세요.");
+	        e.printStackTrace();
+	    }
+	    
+	    return false;  // 카테고리가 없으면 false 반환
 	}
+
 
 
 	public int checkadminBCode(int num) {
