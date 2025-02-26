@@ -30,10 +30,24 @@ public class AdminBookService {
 			try {
 				int no = Integer.parseInt(br.readLine());
 
-				if (no == 1) { // 신규 도서 추가 기능
+				if (no == 1) { // 신규 도서 추가
 					blDao.selectCategories();
 					System.out.print("카테고리 번호 입력: ");
 					int categoryNum = Integer.parseInt(br.readLine());
+					while (true) {
+		                try {
+		                    System.out.print("카테고리 번호 입력: ");
+		                    categoryNum = Integer.parseInt(br.readLine().trim());
+		                    
+		                    if (dao.checkCategory(categoryNum)) { 
+		                        break;
+		                    } else {
+		                        System.out.println("존재하지 않는 카테고리입니다. 다시 입력하세요.");
+		                    }
+		                } catch (NumberFormatException e) {
+		                    System.out.println("잘못된 입력입니다. 다시 입력하세요.");
+		                }
+		            }
 
 					System.out.print("도서 제목 입력: ");
 					String bookTitle = br.readLine();
