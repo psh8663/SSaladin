@@ -24,6 +24,7 @@ public class BookListService {
 	private AdminBookDAO adminBookDAO;
 	private SSaladinMain sSaladinMain;
 	private CartService cartService;
+	private OrderService orderService;
 	private int userPoint;
 
 	public BookListService(SSaladinMain sSaladinMain) {
@@ -35,6 +36,7 @@ public class BookListService {
 			dao = new BookListDAO();
 			rDAO = new ReviewsDAO();
 			cartService = new CartService();
+			orderService = new OrderService();
 			booklist();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -164,11 +166,16 @@ public class BookListService {
 	    if (price == -1) {
 	        return false;
 	    }
-
+	    // 현재 포인트 확인
+        if (price > userPoint) {
+            System.out.println("포인트가 부족합니다. 현재 포인트: " + userPoint + "원, 필요 포인트: " + price + "원");
+            System.out.println("포인트를 충전해주세요.");
+            return false;
+        }
 	    List<CartItem> orderItems = new ArrayList<>();
 	    orderItems.add(new CartItem(bookCode, quantity, price));
 
-	    return cartService.processPurchase(userId, orderItems, price);
+	    return orderService.createOrderFromCart(userId, orderItems, price);
 	}
 
 
