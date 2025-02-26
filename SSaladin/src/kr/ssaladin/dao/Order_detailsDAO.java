@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import kr.util.DBUtil;
 
 public class Order_detailsDAO {
@@ -11,9 +14,11 @@ public class Order_detailsDAO {
     private PreparedStatement pstmt = null;
     private String sql = null;
     private ResultSet rs = null;
+    private List<Integer> bookCodes;
     
     public Order_detailsDAO(Connection conn) {
         this.conn = conn;
+        this.bookCodes = new ArrayList<Integer>();
     }
     
     // 주문 상세 등록
@@ -115,4 +120,5 @@ public class Order_detailsDAO {
             return pstmt.executeUpdate() > 0;
         }
     }
+    
 }

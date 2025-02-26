@@ -4,13 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-import kr.ssaladin.dao.BookListDAO;
 import kr.ssaladin.dao.Order_detailsDAO;
-import kr.ssaladin.dao.OrdersDAO;
 import kr.ssaladin.dao.ReviewsDAO;
 import kr.util.DBUtil;
 
@@ -46,6 +43,10 @@ public class ReviewsService {
 						odDao.getOrderDetailsByUserId(userId);
 						System.out.print("리뷰 작성 할 책의 번호 : ");
 						bookCode = Integer.parseInt(br.readLine());
+						if(!dao.checkPermissionBookCode(userId, bookCode)) {
+							System.out.println("책 번호를 확인해 주세요.");
+							continue;
+						}
 						String bookTitle = dao.bookName(bookCode);
 						System.out.println("제목 : " + bookTitle);
 						
@@ -125,7 +126,8 @@ public class ReviewsService {
 		} // while
 	}
 	
-	
+
+
 
 
 
