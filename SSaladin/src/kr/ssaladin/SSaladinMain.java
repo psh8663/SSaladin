@@ -230,12 +230,15 @@ public class SSaladinMain {
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
+					System.out.println("회원정보 수정");
 					updateUserInfo();
 				} else if (no == 2) {
 					// 포인트 충전
+					System.out.println("포인트 충전");
 					chargePoint();
 				} else if (no == 3) {
 					// 장바구니
+					System.out.println("장바구니");
 					cartService.manageCart(me_id, this.userPoint);
 				} else if (no == 4) {
 					 // 주문 조회
@@ -243,6 +246,7 @@ public class SSaladinMain {
 	                orderService.checkOrderStatus(me_id, this.userAuth);
 				} else if (no == 5) {
 					// 리뷰 관리
+					System.out.println("나의 리뷰 관리");
 					reviewsService.reviewService(me_id);
 				} else if (no == 6) {
 					// 회원 탈퇴
