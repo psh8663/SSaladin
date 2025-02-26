@@ -390,10 +390,11 @@ public class CartService {
 	// 사용자 장바구니 비우기
 	private boolean clearUserCart(String userId) throws ClassNotFoundException {
 		Connection conn = null;
+		PreparedStatement pstmt = null;
 		try {
 			conn = DBUtil.getConnection();
 			String sql = "DELETE FROM cart WHERE user_id = ?";
-			java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, userId);
 			return pstmt.executeUpdate() > 0;
 		} catch (SQLException e) {
@@ -401,7 +402,7 @@ public class CartService {
 			e.printStackTrace();
 			return false;
 		} finally {
-			DBUtil.executeClose(null, null, conn);
+			DBUtil.executeClose(null, pstmt, conn);
 		}
 	}
 }

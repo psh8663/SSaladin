@@ -26,14 +26,14 @@ public class CartDAO {
     
     // connection injection 을 위한 생성자
     public CartDAO(Connection conn) {
-        this.conn = conn;    // this. 로 커넥션을 외부에서 받아옴
+        this.conn = conn;    
     }
     
     // connection이 null인지 확인하는 예외처리
     private void checkConnection() throws SQLException {
         if (conn == null || conn.isClosed()) {
             try {
-                this.conn = DBUtil.getConnection(); // 연결이 닫혔거나 null이면 다시 연결 시도
+                this.conn = DBUtil.getConnection(); 
             } catch (ClassNotFoundException e) {
                 throw new SQLException("데이터베이스 커넥션 실패.", e);
             }
@@ -52,7 +52,7 @@ public class CartDAO {
             pstmt.setInt(3, cartQuantity);
             return pstmt.executeUpdate() > 0;
         } finally {
-            DBUtil.executeClose(null, pstmt, null); // connection은 유지
+            DBUtil.executeClose(null, pstmt, null); 
         }
     }
 
