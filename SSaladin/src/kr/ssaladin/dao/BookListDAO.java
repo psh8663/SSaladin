@@ -39,7 +39,7 @@ public class BookListDAO {
 			} else {
 				System.out.println("등록된 도서가 없습니다.");
 			}
-			System.out.println("-".repeat(50));
+			System.out.println("-".repeat(100));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
