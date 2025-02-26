@@ -44,7 +44,9 @@ public class ReviewsService {
 						System.out.print("리뷰 작성 할 책의 번호 : ");
 						bookCode = Integer.parseInt(br.readLine());
 						if(!dao.checkPermissionBookCode(userId, bookCode)) {
+							System.out.println("=".repeat(50));
 							System.out.println("책 번호를 확인해 주세요.");
+							System.out.println("=".repeat(50));
 							continue;
 						}
 						String bookTitle = dao.bookName(bookCode);

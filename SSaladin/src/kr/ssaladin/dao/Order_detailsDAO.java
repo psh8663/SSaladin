@@ -66,12 +66,12 @@ public class Order_detailsDAO {
         pstmt.setString(1, userId);
         rs = pstmt.executeQuery();
         
-        System.out.println("-".repeat(50));
+        System.out.println("=".repeat(50));
         if (rs.next()) {
             do {
                 System.out.println("도서 번호 : " + rs.getInt("book_code"));
                 System.out.println("제목 : " + rs.getString("book_title"));
-                System.out.println("-".repeat(50));
+                System.out.println("=".repeat(50));
             } while (rs.next());
         } else {
             System.out.println("구매한 도서가 없습니다.");

@@ -332,6 +332,8 @@ public class ReviewsDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
 		}
 		return false;
 	}
@@ -373,7 +375,9 @@ public class ReviewsDAO {
 
     	  } catch (Exception e) {
     	      e.printStackTrace();
-    	  }
+    	  } finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
     	  return false;
     	}
     
