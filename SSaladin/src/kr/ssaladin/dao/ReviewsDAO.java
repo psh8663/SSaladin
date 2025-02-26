@@ -274,6 +274,29 @@ public class ReviewsDAO {
 			DBUtil.executeClose(rs, pstmt, conn);
 		} // try_finally
 	}
+	
+	// book_code에 따른 책이름 출력
+	public String bookName(int bookCode) {
+		
+		try {
+			conn = DBUtil.getConnection();
+			sql = "SELECT book_title FROM books WHERE book_code = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, bookCode);
+			pstmt.executeUpdate();
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return rs.getString("book_title");
+			} // if
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		} // try_finally
+		
+		return null;
+		
+	}
 
 	/* 안쓰는 함수
 	// 작성자 및 관리자 유효성 검사

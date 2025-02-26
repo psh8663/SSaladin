@@ -46,8 +46,8 @@ public class ReviewsService {
 						odDao.getOrderDetailsByUserId(userId);
 						System.out.print("리뷰 작성 할 책의 번호 : ");
 						bookCode = Integer.parseInt(br.readLine());
-						System.out.print("제목 : ");
-						String bookTitle = br.readLine();
+						String bookTitle = dao.bookName(bookCode);
+						System.out.println("제목 : " + bookTitle);
 						
 						System.out.print("내용 : ");
 						String reviewsContent = br.readLine();
@@ -110,7 +110,7 @@ public class ReviewsService {
 	public int parseInputRating(String item) throws IOException{
 
 		while (true) {
-			System.out.println(item);
+			System.out.print(item);
 			try {
 				int rating = Integer.parseInt(br.readLine());
 				if (rating<0 || rating>5) {
@@ -124,6 +124,7 @@ public class ReviewsService {
 			}// try_catch
 		} // while
 	}
+	
 	
 
 
