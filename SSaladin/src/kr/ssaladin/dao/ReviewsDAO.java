@@ -163,9 +163,7 @@ public class ReviewsDAO {
 					System.out.println("등록일 : " + rs.getDate("reg_date"));
 					System.out.println("=".repeat(100));
 				} while (rs.next());
-			} else {
-				System.out.println("리뷰 번호를 확인해 주세요.");
-			} // if
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -306,7 +304,7 @@ public class ReviewsDAO {
 
 	
 	// 작성자 및 관리자 유효성 검사
-	private boolean checkPermission(String userId, int reviewNum) {
+	public boolean checkPermission(String userId, int reviewNum) {
 //		try {
 //			conn = DBUtil.getConnection();
 //			sql = "SELECT u.user_id FROM reviews r, users u "
