@@ -70,7 +70,7 @@ public class SSaladinMain {
 	private void callMenu() throws IOException {
 		// 로그인 체크 영역
 		while (true) {
-			System.out.print("1. 로그인, 2. 회원가입, 3. 종료: \n    >");
+			System.out.print("1. 로그인, 2. 회원가입, 3. 종료: \n>");
 			try {
 				int no = Integer.parseInt(br.readLine().trim());
 				if (no == 1) {
@@ -167,7 +167,7 @@ public class SSaladinMain {
 	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
 	        System.out.println("=====================================================");
 	        
-	        System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: \n    > ");
+	        System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: \n> ");
 	        try {
 	            int no = Integer.parseInt(br.readLine().trim());
 	            if (no == 1) {
