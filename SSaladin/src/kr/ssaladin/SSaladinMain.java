@@ -16,6 +16,7 @@ import kr.ssaladin.service.AdminReviewsService;
 import kr.ssaladin.service.BookListService;
 import kr.ssaladin.service.CartService;
 import kr.ssaladin.service.CartService.CartItem;
+import kr.ssaladin.service.OrderService;
 import kr.ssaladin.service.RequestService;
 import kr.ssaladin.service.ReviewsService;
 import kr.ssaladin.service.UserService;
@@ -31,6 +32,7 @@ public class SSaladinMain {
 	private Connection conn; // 데이터베이스 연결 객체
 	private UserService userService;
 	private CartService cartService;
+	private OrderService orderService;
 	private BookListService bookListService;
 	private PointRequestService pointRequestService; //
 	private RequestService requestService; // RequestService 객체 추가
@@ -45,6 +47,7 @@ public class SSaladinMain {
 			userService = new UserService(); // UserService 초기화
 			cartService = new CartService();
 			pointRequestService = new PointRequestService();
+			orderService = new OrderService();	// OrderService 초기화
 			reviewsService = new ReviewsService(); // ReviewsService 초기화
 			requestService = new RequestService(); // RequestService 초기화
 			arvService = new AdminReviewsService(); // AdminReviewsService 초기화
@@ -223,7 +226,7 @@ public class SSaladinMain {
 			System.out.println("=====================================================");
 
 			System.out.println("\n=== 마이페이지 ===");
-			System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 구매내역, 5. 리뷰 관리, 6. 회원 탈퇴, 7. 뒤로가기: ");
+			System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 주문 현황 조회, 5. 리뷰 관리, 6. 회원 탈퇴, 7. 뒤로가기: ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
@@ -235,9 +238,9 @@ public class SSaladinMain {
 					// 장바구니
 					cartService.manageCart(me_id, this.userPoint);
 				} else if (no == 4) {
-					// 구매내역
-					System.out.println("구매내역 페이지");
-					// 구매내역 페이지 구현 필요
+					 // 주문 조회
+	                System.out.println("나의 주문 조회");
+	                orderService.checkOrderStatus(me_id, this.userAuth);
 				} else if (no == 5) {
 					// 리뷰 관리
 					reviewsService.reviewService(me_id);
