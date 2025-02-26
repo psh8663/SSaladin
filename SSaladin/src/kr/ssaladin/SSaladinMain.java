@@ -522,6 +522,15 @@ public class SSaladinMain {
 	public String getUserId() {
 		return me_id;
 	}
+	
+
+	public int getUserPoint() {
+		return userPoint;
+	}
+
+	public void setUserPoint(int userPoint) {
+		this.userPoint = userPoint;
+	}
 
 	public static void main(String[] args) {
 		new SSaladinMain();

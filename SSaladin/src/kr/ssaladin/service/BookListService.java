@@ -14,8 +14,6 @@ import kr.ssaladin.dao.BookListDAO;
 import kr.ssaladin.dao.ReviewsDAO;
 import kr.ssaladin.service.CartService.CartItem;
 import kr.ssaladin.service.OrderService.OrderStatus;
-import kr.ssaladin.service.OrderItem;
-import kr.ssaladin.service.OrderService;
 
 public class BookListService {
 	private Connection conn;
@@ -26,10 +24,12 @@ public class BookListService {
 	private AdminBookDAO adminBookDAO;
 	private SSaladinMain sSaladinMain;
 	private CartService cartService;
+	private int userPoint;
 
 	public BookListService(SSaladinMain sSaladinMain) {
 		try {
 			this.userId = sSaladinMain.getUserId(); // 로그인한 사용자 ID 가져오기
+			this.userPoint=sSaladinMain.getUserPoint();
 			this.sSaladinMain = sSaladinMain;
 			br = new BufferedReader(new InputStreamReader(System.in));
 			dao = new BookListDAO();
@@ -102,7 +102,7 @@ public class BookListService {
 						CartService cartservice = new CartService();
 
 						// 장바구니에 해당 도서 추가 ( 도서 담는 초기 수량은 1로 설정 )
-						boolean result = cartservice.addToCart(userId,  num, 1);
+						boolean result = cartservice.addToCart(userId, num, 1);
 
 						if (result) {
 							System.out.println(userId + "님의 장바구니에 도서를 담았습니다.");
@@ -111,7 +111,7 @@ public class BookListService {
 							int cartOption = Integer.parseInt(br.readLine());
 
 							if (cartOption == 1) {
-								cartservice.manageCart(userId, 0);
+								cartService.manageCart(userId,userPoint);
 							} else if (cartOption == 2) {
 								System.out.println("상품 조회 메뉴로 돌아갑니다.");
 								break;
@@ -158,20 +158,17 @@ public class BookListService {
 			System.out.println("정보 처리 중 오류 발생");
 		}
 	}
-	public boolean purchaseBook(String userId, int bookCode) throws Exception {
+	public boolean purchaseBook(String userId, int bookCode) throws ClassNotFoundException, SQLException {
 	    int quantity = 1;
 	    int price = dao.getBookPrice(bookCode);
 	    if (price == -1) {
 	        return false;
 	    }
 
-	    // OrderService의 OrderItem 객체 생성 (올바른 import 사용)
-	    List<kr.ssaladin.service.OrderItem> orderItems = new ArrayList<>();
-	    orderItems.add(new kr.ssaladin.service.OrderItem(bookCode, quantity, price));
+	    List<CartItem> orderItems = new ArrayList<>();
+	    orderItems.add(new CartItem(bookCode, quantity, price));
 
-	    // OrderService 객체 생성 및 createOrder 메서드 호출
-	    OrderService orderService = new OrderService();
-	    return orderService.createOrder(userId, price, OrderService.OrderStatus.PROCESSING, orderItems);
+	    return cartService.processPurchase(userId, orderItems, price);
 	}
 
 
