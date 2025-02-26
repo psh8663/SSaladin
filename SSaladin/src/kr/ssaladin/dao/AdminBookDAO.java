@@ -48,7 +48,7 @@ public class AdminBookDAO {
 	}
 	
 	public boolean checkCategory(int categoryNum) throws SQLException, ClassNotFoundException {
-	    String query = "SELECT COUNT(*) FROM categories WHERE category_id = ?";
+	    String sql = "SELECT COUNT(*) FROM categories WHERE category_id = ?";
 	    try {
 	    	conn = DBUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);

@@ -32,12 +32,11 @@ public class AdminBookService {
 
 				if (no == 1) { // 신규 도서 추가
 					blDao.selectCategories();
-					System.out.print("카테고리 번호 입력: ");
-					int categoryNum = Integer.parseInt(br.readLine());
+					int categoryNum;
 					while (true) {
 		                try {
 		                    System.out.print("카테고리 번호 입력: ");
-		                    categoryNum = Integer.parseInt(br.readLine().trim());
+		                    categoryNum = Integer.parseInt(br.readLine());
 		                    
 		                    if (dao.checkCategory(categoryNum)) { 
 		                        break;
