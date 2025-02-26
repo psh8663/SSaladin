@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import kr.util.DBUtil;
 
 public class Order_detailsDAO {
@@ -11,9 +14,11 @@ public class Order_detailsDAO {
     private PreparedStatement pstmt = null;
     private String sql = null;
     private ResultSet rs = null;
+    private List<Integer> bookCodes;
     
     public Order_detailsDAO(Connection conn) {
         this.conn = conn;
+        this.bookCodes = new ArrayList<Integer>();
     }
     
     // 주문 상세 등록
@@ -61,12 +66,12 @@ public class Order_detailsDAO {
         pstmt.setString(1, userId);
         rs = pstmt.executeQuery();
         
-        System.out.println("-".repeat(50));
+        System.out.println("=".repeat(50));
         if (rs.next()) {
             do {
                 System.out.println("도서 번호 : " + rs.getInt("book_code"));
                 System.out.println("제목 : " + rs.getString("book_title"));
-                System.out.println("-".repeat(50));
+                System.out.println("=".repeat(50));
             } while (rs.next());
         } else {
             System.out.println("구매한 도서가 없습니다.");
@@ -115,4 +120,5 @@ public class Order_detailsDAO {
             return pstmt.executeUpdate() > 0;
         }
     }
+    
 }

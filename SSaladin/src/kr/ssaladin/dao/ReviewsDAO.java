@@ -6,6 +6,12 @@ import java.sql.ResultSet;
 
 import kr.util.DBUtil;
 
+/**
+ * @author jaemoon
+ * @date 2025. 2. 26. - 오후 5:02:31
+ * @subject
+ * @content 
+ */
 public class ReviewsDAO {
 
 	Connection conn = null;
@@ -232,10 +238,10 @@ public class ReviewsDAO {
 
 	// 게시글 수정
 	public void updateReviews(String userId, int reviewNum, String reviewsContent, int rating) {
-//		if (!checkPermission(userId, reviewNum)) {
-//			System.out.println("권한이 없습니다.");
-//			return;
-//		}
+		if (!checkPermission(userId, reviewNum)) {
+			System.out.println("리뷰 번호를 확인해 주세요.");
+			return;
+		}
 
 		try {
 			conn =DBUtil.getConnection();
@@ -256,10 +262,10 @@ public class ReviewsDAO {
 
 	// 게시글 삭제
 	public void deleteReviews(String userId, int reviewNum) {
-//		if (!checkPermission(userId, reviewNum)) {
-//			System.out.println("권한이 없습니다.");
-//			return;
-//		}
+		if (!checkPermission(userId, reviewNum)) {
+			System.out.println("리뷰 번호를 확인해 주세요.");
+			return;
+		}
 
 		try {
 			conn = DBUtil.getConnection();
@@ -298,39 +304,40 @@ public class ReviewsDAO {
 		
 	}
 
-	/* 안쓰는 함수
+	
 	// 작성자 및 관리자 유효성 검사
 	private boolean checkPermission(String userId, int reviewNum) {
-		try {
-			conn = DBUtil.getConnection();
-			sql = "SELECT u.user_id FROM reviews r, users u "
-					+ "WHERE r.user_id=u.user_id AND r.review_num=?";
-			pstmt = conn.prepareStatement(sql);
+//		try {
+//			conn = DBUtil.getConnection();
+//			sql = "SELECT u.user_id FROM reviews r, users u "
+//					+ "WHERE r.user_id=u.user_id AND r.review_num=?";
+//			pstmt = conn.prepareStatement(sql);
+//			pstmt.setInt(1, reviewNum);
+//			rs = pstmt.executeQuery();
+//			return rs.next() && (rs.getString("user_id").equals(userId) || "admin".equals(userId)) ? true : false;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			DBUtil.executeClose(rs, pstmt, conn);
+//		} // try_finally
+//		return false;
+//	}
+		try (Connection conn = DBUtil.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement("SELECT u.user_id FROM reviews r, users u "
+						+ "WHERE r.user_id=u.user_id AND r.review_num=?")) {
+
 			pstmt.setInt(1, reviewNum);
-			rs = pstmt.executeQuery();
-			return rs.next() && (rs.getString("user_id").equals(userId) || "admin".equals(userId)) ? true : false;
+			ResultSet rs = pstmt.executeQuery();
+			return (rs.next() && (rs.getString("user_id").equals(userId) || "admin".equals(userId))) ? true : false;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);
-		} // try_finally
+		}
 		return false;
 	}
-//		try (Connection conn = DBUtil.getConnection();
-//				PreparedStatement pstmt = conn.prepareStatement("SELECT u.user_id FROM reviews r, users u "
-//						+ "WHERE r.user_id=u.user_id AND r.review_num=?")) {
-//
-//			pstmt.setInt(1, reviewNum);
-//			ResultSet rs = pstmt.executeQuery();
-//			return (rs.next() && (rs.getString("user_id").equals(userId) || "admin".equals(userId))) ? true : false;
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return false;
-//	}
-///
- */
+
 
 	// 조회하는 리뷰 글이 존재하는지 여부
 	public int checkReviews(int reviewNum) {
@@ -354,6 +361,27 @@ public class ReviewsDAO {
 
 		return count;
 	}
+	
+
+    // 주문자 id 와 book_code 유효성
+    public boolean checkPermissionBookCode(String userId, int bookCode) {
+    	  try (Connection conn = DBUtil.getConnection();
+    	       PreparedStatement pstmt = conn.prepareStatement("SELECT o.book_code FROM order_details o, reviews r WHERE "
+    	       		+ "o.book_code=r.book_code AND r.user_id=?")) {
+
+    	      pstmt.setString(1, userId);
+    	      ResultSet rs = pstmt.executeQuery();
+    	      return (rs.next() && (rs.getInt("book_code") == bookCode)) ? true : false;
+
+    	  } catch (Exception e) {
+    	      e.printStackTrace();
+    	  } finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+    	  return false;
+    	}
+    
+    
 
 }
 

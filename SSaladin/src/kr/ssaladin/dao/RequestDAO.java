@@ -125,7 +125,9 @@ public class RequestDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        } finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
         return false;
     }
     
