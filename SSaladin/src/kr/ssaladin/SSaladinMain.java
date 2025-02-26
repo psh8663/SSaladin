@@ -45,7 +45,7 @@ public class SSaladinMain {
 			br = new BufferedReader(new InputStreamReader(System.in));
 			conn = DBUtil.getConnection(); // 데이터베이스 연결
 			userService = new UserService(); // UserService 초기화
-			cartService = new CartService();
+			cartService = new CartService(this);
 			pointRequestService = new PointRequestService();
 			orderService = new OrderService();	// OrderService 초기화
 			reviewsService = new ReviewsService(); // ReviewsService 초기화

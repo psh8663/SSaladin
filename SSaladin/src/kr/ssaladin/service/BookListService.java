@@ -142,8 +142,8 @@ public class BookListService {
 							System.out.println("구매 처리 중 오류가 발생했습니다.");
 						}
 					}
-					
-					
+
+
 				} else if (option == 3) {
 					// 리뷰 보기
 					System.out.println("리뷰를 확인합니다.");
@@ -161,22 +161,35 @@ public class BookListService {
 		}
 	}
 	public boolean purchaseBook(String userId, int bookCode) throws ClassNotFoundException, SQLException {
-	    int quantity = 1;
-	    int price = dao.getBookPrice(bookCode);
-	    if (price == -1) {
-	        return false;
-	    }
-	    // 현재 포인트 확인
-        if (price > userPoint) {
-            System.out.println("포인트가 부족합니다. 현재 포인트: " + userPoint + "원, 필요 포인트: " + price + "원");
-            System.out.println("포인트를 충전해주세요.");
-            return false;
-        }
-	    List<CartItem> orderItems = new ArrayList<>();
-	    orderItems.add(new CartItem(bookCode, quantity, price));
+		int quantity = 1;
+		int price = dao.getBookPrice(bookCode);
+		if (price == -1) {
+			return false;
+		}
+		// 현재 포인트 확인
+		if (price > userPoint) {
+			System.out.println("포인트가 부족합니다. 현재 포인트: " + userPoint + "원, 필요 포인트: " + price + "원");
+			System.out.println("포인트를 충전해주세요.");
+			return false;
+		}
+		// 주문 아이템 생성
+		List<CartItem> orderItems = new ArrayList<>();
+		orderItems.add(new CartItem(bookCode, quantity, price));
 
-	    return orderService.createOrderFromCart(userId, orderItems, price);
-	}
+		// 주문 처리
+		int orderNum = orderService.createOrderFromCart(userId, orderItems, price);
 
-
+		// 주문 성공 시 포인트 갱신
+		if (orderNum > 0) {
+			
+			// 사용자의 주문 후  포인트 갱신
+			this.userPoint -= price;
+			// SSaladinMain 객체의 포인트 갱신
+			sSaladinMain.setUserPoint(userPoint);
+			System.out.println("포인트가 " + price + "원 차감되었습니다.");
+			return true;
+		} else {
+			return false;
+		}
+	} 
 }

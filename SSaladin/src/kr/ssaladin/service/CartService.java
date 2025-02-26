@@ -10,19 +10,31 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ssaladin.SSaladinMain;
 import kr.ssaladin.dao.AdminBookDAO;
 import kr.ssaladin.dao.CartDAO;
+import kr.ssaladin.service.CartService.CartItem;
 import kr.util.DBUtil;
 
 public class CartService {
 	private CartDAO cartDAO;
 	private AdminBookDAO adminBookDAO;
 	private BufferedReader br;
+	private SSaladinMain sSaladinMain; // SSaladinMain 참조 추가
 
+	// 기존 생성자 유지
 	public CartService() throws ClassNotFoundException, SQLException {
 		this.cartDAO = new CartDAO();  
 		this.adminBookDAO = new AdminBookDAO();
 		this.br = new BufferedReader(new InputStreamReader(System.in));
+	}
+
+	// SSaladinMain 객체를 받는 생성자 추가
+	public CartService(SSaladinMain sSaladinMain) throws ClassNotFoundException, SQLException {
+		this.cartDAO = new CartDAO();  
+		this.adminBookDAO = new AdminBookDAO();
+		this.br = new BufferedReader(new InputStreamReader(System.in));
+		this.sSaladinMain = sSaladinMain;
 	}
 
 	// CartItem 내부 클래스 선언
@@ -57,37 +69,38 @@ public class CartService {
 	}
 
 	// 장바구니 관리 메뉴
-		public void manageCart(String userId, int userPoint) throws IOException {
-			// 장바구니 관리
-			boolean cartMenu = true;
-			while (cartMenu) {
-				System.out.println("\n==================================== 장바구니 관리 ======================================");
-				System.out.println("      1. 장바구니 목록, 2. 장바구니 상품 수량 변경, 3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
-				System.out.println("---------------------------------------------------------------------------------------");
-				try {
-					int no = Integer.parseInt(br.readLine());
-					if (no == 1) {
-						// 장바구니 상품 목록 조회
-						showCartItems(userId);
-					} else if (no == 2) {
-						// 장바구니에 있는 상품의 수량 변경
-						updateCartItemQuantity(userId);
-					} else if (no == 3) {
-						// 장바구니 내의 상품 삭제
-						deleteCartItem(userId);
-					} else if (no == 4) {
-						// 장바구니의 상품 구매
-						checkOut(userId, userPoint);
-					} else if (no == 5) {
-						cartMenu = false;
-					} else {
-						System.out.println("잘못된 입력입니다.");
-					}
-				} catch (NumberFormatException e) {
-					System.out.println("[ 숫자만 입력 가능합니다. ]");
+	public void manageCart(String userId, int userPoint) throws IOException {
+		// 장바구니 관리
+		boolean cartMenu = true;
+		while (cartMenu) {
+			System.out.println("\n==================================== 장바구니 관리 ======================================");
+			System.out.println("      1. 장바구니 목록, 2. 장바구니 상품 수량 변경, 3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
+			System.out.println("---------------------------------------------------------------------------------------");
+			try {
+				int no = Integer.parseInt(br.readLine());
+				if (no == 1) {
+					// 장바구니 상품 목록 조회
+					showCartItems(userId);
+				} else if (no == 2) {
+					// 장바구니에 있는 상품의 수량 변경
+					updateCartItemQuantity(userId);
+				} else if (no == 3) {
+					// 장바구니 내의 상품 삭제
+					deleteCartItem(userId);
+				} else if (no == 4) {
+					// 장바구니의 상품 구매
+					checkOut(userId, userPoint);
+				} else if (no == 5) {
+					cartMenu = false;
+				} else {
+					System.out.println("잘못된 입력입니다.");
 				}
+			} catch (NumberFormatException e) {
+				System.out.println("[ 숫자만 입력 가능합니다. ]");
 			}
 		}
+	}
+
 	// 장바구니에 상품 추가
 	public boolean addToCart(String userId, int book_code, int quantity) {
 		Connection conn = null;
@@ -111,11 +124,9 @@ public class CartService {
 		boolean result = false;
 
 		try {
-
 			conn = DBUtil.getConnection();
 			cartDAO = new CartDAO(conn);
 			result = cartDAO.updateCartQuantity(userId, book_code, quantity);
-
 		} catch (Exception e) {
 			System.out.println("수량 수정 중 오류 발생");
 			e.printStackTrace();
@@ -147,11 +158,8 @@ public class CartService {
 		return result;
 	}
 
-
-
 	// 사용자의 장바구니 목록 조회 
 	public List<CartItem> getUserCartItems(String userId) {
-
 		Connection conn = null;
 		ResultSet rs = null;
 		List<CartItem> cartItems = new ArrayList<>();	
@@ -176,7 +184,6 @@ public class CartService {
 				item.setCartQuantity(rs.getInt("cart_quantity"));
 				cartItems.add(item);
 			}
-
 		} catch (Exception e) {
 			System.out.println("장바구니 목록 조회 중 오류 발생");
 			e.printStackTrace();
@@ -197,11 +204,7 @@ public class CartService {
 				.sum();
 	}
 
-
-
-
 	// 장바구니 목록 보기
-	
 	public void showCartItems(String userId) throws IOException {
 		if (userId == null || userId.isEmpty()) {
 			System.out.println("로그인 후 장바구니 목록을 조회할 수 있습니다.");
@@ -229,102 +232,109 @@ public class CartService {
 			System.out.println("장바구니 목록 조회 중 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
-	
 
 	public void checkOut(String userId, int userPoint) throws IOException {
-	    try {
-	        // 장바구니 항목 조회
-	        List<CartItem> cartItems = getUserCartItems(userId);
+		try {
+			// 장바구니 항목 조회
+			List<CartItem> cartItems = getUserCartItems(userId);
 
-	        if (cartItems == null || cartItems.isEmpty()) {
-	            System.out.println("장바구니가 비어있습니다.");
-	            return;
-	        }
+			if (cartItems == null || cartItems.isEmpty()) {
+				System.out.println("장바구니가 비어있습니다.");
+				return;
+			}
 
-	        // 장바구니 목록 출력
-	        System.out.println("\n==================================== 주문 상품 목록 ====================================");
-	        
-	        int totalAmount = 0;
-	        System.out.printf("%-10s %-30s %-10s %-10s %-10s\n", "도서코드", "도서명", "수량", "가격", "소계");
-	        System.out.println("-".repeat(80));
-	        
-	        for (CartItem item : cartItems) {
-	            int subtotal = item.getBookPrice() * item.getCartQuantity();
-	            totalAmount += subtotal;
-	            System.out.printf("%-10d %-30s %-10d %-10d %-10d\n", 
-	                    item.getBookCode(), 
-	                    item.getBookTitle(), 
-	                    item.getCartQuantity(),
-	                    item.getBookPrice(),
-	                    subtotal);
-	        }
-	        System.out.println("-".repeat(80));
-	        System.out.printf("%-50s 총 금액: %d원\n", "", totalAmount);
-	        
-	        // 재고 확인
-	        boolean stockAvailable = true;
-	        for (CartItem item : cartItems) {
-	            try {
-	                if (!adminBookDAO.checkStock(item.getBookCode(), item.getCartQuantity())) {
-	                    System.out.println("도서코드 " + item.getBookCode() + "의 재고가 부족합니다.");
-	                    stockAvailable = false;
-	                    break;
-	                }
-	            } catch (SQLException | ClassNotFoundException e) {
-	                System.out.println("재고 확인 중 오류가 발생했습니다: " + e.getMessage());
-	                return;
-	            }
-	        }
-	        
-	        if (!stockAvailable) {
-	            System.out.println("일부 상품의 재고가 부족하여 주문을 진행할 수 없습니다.");
-	            return;
-	        }
+			// 장바구니 목록 출력
+			System.out.println("\n==================================== 주문 상품 목록 ====================================");
 
-	        // 현재 포인트 확인
-	        if (totalAmount > userPoint) {
-	            System.out.println("포인트가 부족합니다. 현재 포인트: " + userPoint + "원, 필요 포인트: " + totalAmount + "원");
-	            System.out.print("포인트를 충전하시겠습니까? (Y/N): ");
-	            String choice = br.readLine().trim().toUpperCase();
-	            
-	            if (choice.equals("Y")) {
-	                System.out.println("마이페이지 > 포인트 충전 메뉴를 이용해주세요.");
-	            }
-	            return;
-	        }
+			int totalAmount = 0;
+			System.out.printf("%-10s %-30s %-10s %-10s %-10s\n", "도서코드", "도서명", "수량", "가격", "소계");
+			System.out.println("-".repeat(80));
 
-	        // 주문 확인
-	        System.out.println("\n==================================== 주문 확인 ====================================");
-	        System.out.println("총 구매 금액: " + totalAmount + "원");
-	        System.out.println("구매 후 잔여 포인트: " + (userPoint - totalAmount) + "원");
-	        System.out.print("주문을 확정하시겠습니까? (Y/N): ");
-	        String confirm = br.readLine().trim().toUpperCase();
+			for (CartItem item : cartItems) {
+				int subtotal = item.getBookPrice() * item.getCartQuantity();
+				totalAmount += subtotal;
+				System.out.printf("%-10d %-30s %-10d %-10d %-10d\n", 
+						item.getBookCode(), 
+						item.getBookTitle(), 
+						item.getCartQuantity(),
+						item.getBookPrice(),
+						subtotal);
+			}
+			System.out.println("-".repeat(80));
+			System.out.printf("%-50s 총 금액: %d원\n", "", totalAmount);
 
-	        if (confirm.equals("Y")) {
-	            // OrderService의 메서드 호출
-	            OrderService orderService = new OrderService();
-	            boolean success = orderService.createOrderFromCart(userId, cartItems, totalAmount);
+			// 재고 확인
+			boolean stockAvailable = true;
+			for (CartItem item : cartItems) {
+				try {
+					if (!adminBookDAO.checkStock(item.getBookCode(), item.getCartQuantity())) {
+						System.out.println("도서코드 " + item.getBookCode() + "의 재고가 부족합니다.");
+						stockAvailable = false;
+						break;
+					}
+				} catch (SQLException | ClassNotFoundException e) {
+					System.out.println("재고 확인 중 오류가 발생했습니다: " + e.getMessage());
+					return;
+				}
+			}
 
-	            if (success) {
-	                // 주문 성공 시 장바구니 비우기
-	                clearUserCart(userId);
-	                System.out.println("\n주문이 성공적으로 완료되었습니다.");
-	                System.out.println("잔여 포인트: " + (userPoint - totalAmount) + "원");
-	            } else {
-	                System.out.println("주문 처리 중 오류가 발생했습니다.");
-	            }
-	        } else {
-	            System.out.println("주문이 취소되었습니다.");
-	        }
-	    } catch (NumberFormatException e) {
-	        System.out.println("올바른 숫자를 입력해주세요.");
-	    } catch (Exception e) {
-	        System.out.println("주문 처리 중 오류가 발생했습니다: " + e.getMessage());
-	        e.printStackTrace();
-	    }
+			if (!stockAvailable) {
+				System.out.println("일부 상품의 재고가 부족하여 주문을 진행할 수 없습니다.");
+				return;
+			}
+
+			// 현재 포인트 확인
+			if (totalAmount > userPoint) {
+				System.out.println("포인트가 부족합니다. 현재 포인트: " + userPoint + "원, 필요 포인트: " + totalAmount + "원");
+				System.out.print("포인트를 충전하시겠습니까? (Y/N): ");
+				String choice = br.readLine().trim().toUpperCase();
+
+				if (choice.equals("Y")) {
+					System.out.println("마이페이지 > 포인트 충전 메뉴를 이용해주세요.");
+				}
+				return;
+			}
+
+			// 주문 확인
+			System.out.println("\n==================================== 주문 확인 ====================================");
+			System.out.println("총 구매 금액: " + totalAmount + "원");
+			System.out.println("구매 후 잔여 포인트: " + (userPoint - totalAmount) + "원");
+			System.out.print("주문을 확정하시겠습니까? (Y/N): ");
+			String confirm = br.readLine().trim().toUpperCase();
+
+			if (confirm.equals("Y")) {
+				// OrderService의 메서드 호출
+				OrderService orderService = new OrderService();
+				int orderNum = orderService.createOrderFromCart(userId, cartItems, totalAmount);
+
+				if (orderNum > 0) {
+					
+					// 주문 성공 시 장바구니 비움
+					clearUserCart(userId);
+					System.out.println("\n주문이 성공적으로 완료되었습니다. 주문번호: " + orderNum);
+
+					// 포인트 갱신 - UI 반영
+					if (sSaladinMain != null) {
+						int newPoint = userPoint - totalAmount;
+						sSaladinMain.setUserPoint(newPoint);
+						System.out.println("잔여 포인트: " + newPoint + "원");
+					} else {
+						System.out.println("잔여 포인트: " + (userPoint - totalAmount) + "원");
+					}
+				} else {
+					System.out.println("주문 처리 중 오류가 발생했습니다.");
+				}
+			} else {
+				System.out.println("주문이 취소되었습니다.");
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("올바른 숫자를 입력해주세요.");
+		} catch (Exception e) {
+			System.out.println("주문 처리 중 오류가 발생했습니다: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
-	
-	
+
 	// 장바구니 상품 수량 변경
 	public void updateCartItemQuantity(String userId) throws IOException {
 		// 장바구니에 담긴 상품의 수량 수정
@@ -376,23 +386,22 @@ public class CartService {
 			System.out.println("상품 삭제 중 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
-	
+
 	// 사용자 장바구니 비우기
 	private boolean clearUserCart(String userId) throws ClassNotFoundException {
-	    Connection conn = null;
-	    try {
-	        conn = DBUtil.getConnection();
-	        String sql = "DELETE FROM cart WHERE user_id = ?";
-	        java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
-	        pstmt.setString(1, userId);
-	        return pstmt.executeUpdate() > 0;
-	    } catch (SQLException e) {
-	        System.out.println("장바구니 비우기 중 오류 발생: " + e.getMessage());
-	        e.printStackTrace();
-	        return false;
-	    } finally {
-	        DBUtil.executeClose(null, null, conn);
-	    }
+		Connection conn = null;
+		try {
+			conn = DBUtil.getConnection();
+			String sql = "DELETE FROM cart WHERE user_id = ?";
+			java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			return pstmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			System.out.println("장바구니 비우기 중 오류 발생: " + e.getMessage());
+			e.printStackTrace();
+			return false;
+		} finally {
+			DBUtil.executeClose(null, null, conn);
+		}
 	}
-
 }
