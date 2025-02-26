@@ -32,7 +32,6 @@ public class AdminBookService {
 
 	            if (no == 1) { // 신규 도서 추가
 	                blDao.selectCategories();  // 카테고리 목록 조회
-
 	                int categoryNum;
 	                while (true) {
 	                    try {
@@ -43,7 +42,7 @@ public class AdminBookService {
 	                        if (dao.checkCategory(categoryNum)) { 
 	                            break;  // 유효한 카테고리 번호일 경우 루프 종료
 	                        } else {
-	                            System.out.println("존재하지 않는 카테고리입니다. 다시 입력하세요.");
+	                            System.out.println("존재하지 않는 카테고리입니다. 다시 입력하세요.");	                
 	                        }
 	                    } catch (NumberFormatException e) {
 	                        System.out.println("잘못된 입력입니다. 숫자만 입력해 주세요.");
