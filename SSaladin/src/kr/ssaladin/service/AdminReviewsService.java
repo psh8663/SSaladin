@@ -40,7 +40,7 @@ public class AdminReviewsService {
 					dao.detailSelectRivews_reviewNum(reviewNum);
 					
 				} else if (no == 2) { // 리뷰 삭제
-					dao.selectReviews_userId(userId);
+					dao.selectReviews();
 					System.out.print("삭제할 리뷰의 번호 : ");
 					reviewNum = Integer.parseInt(br.readLine());
 					int count = dao.checkReviews(reviewNum);
