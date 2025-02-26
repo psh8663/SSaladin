@@ -10,14 +10,12 @@ import kr.util.DBUtil;
 
 public class CartDAO {
 
-	private Connection conn = null;
-	private PreparedStatement pstmt = null;
-	private ResultSet rs = null;
-	private String sql = null;
+    private Connection conn = null;
+    private PreparedStatement pstmt = null;
+    private ResultSet rs = null;
+    private String sql = null;
 
-    
-    //생성자 생성
-
+    // 생성자 생성
     public CartDAO() {
         try {
             this.conn = DBUtil.getConnection(); // DBUtil에서 Connection 생성
@@ -28,7 +26,7 @@ public class CartDAO {
     
     // connection injection 을 위한 생성자
     public CartDAO(Connection conn) {
-        this.conn = conn;	// this. 로 커넥션을 외부에서 받아옴
+        this.conn = conn;    // this. 로 커넥션을 외부에서 받아옴
     }
     
     // connection이 null인지 확인하는 예외처리
@@ -41,37 +39,44 @@ public class CartDAO {
             }
         }
     }
+    
     // 장바구니 추가
     public boolean insertCart(String userId, int bookCode, int cartQuantity) throws SQLException {
-    	checkConnection();
-    	sql = "INSERT INTO cart (cart_num, user_id, book_code, cart_quantity) VALUES (cart_num_seq.NEXTVAL, ?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        checkConnection();
+        sql = "INSERT INTO cart (cart_num, user_id, book_code, cart_quantity) VALUES (cart_num_seq.NEXTVAL, ?, ?, ?)";
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userId);
             pstmt.setInt(2, bookCode);
             pstmt.setInt(3, cartQuantity);
             return pstmt.executeUpdate() > 0;
+        } finally {
+            DBUtil.executeClose(null, pstmt, null); // connection은 유지
         }
     }
 
     // 장바구니 수량 수정
     public boolean updateCartQuantity(String userId, int book_code, int cartQuantity) throws SQLException {
         checkConnection();
-
+        
         // 장바구니의 book_code에 해당하는 cart_num 찾기 
         String selectCartNumSql = "SELECT cart_num FROM cart WHERE user_id = ? AND book_code = ?";
         int cartNum = -1;
+        PreparedStatement selectPstmt = null;
+        ResultSet cartRs = null;
+        PreparedStatement updatePstmt = null;
 
-        try (PreparedStatement pstmt = conn.prepareStatement(selectCartNumSql)) {
-            pstmt.setString(1, userId);
-            pstmt.setInt(2, book_code);
+        try {
+            selectPstmt = conn.prepareStatement(selectCartNumSql);
+            selectPstmt.setString(1, userId);
+            selectPstmt.setInt(2, book_code);
 
             // cart_num 조회
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    cartNum = rs.getInt("cart_num");
-                }
+            cartRs = selectPstmt.executeQuery();
+            if (cartRs.next()) {
+                cartNum = cartRs.getInt("cart_num");
             }
-
             
             if (cartNum == -1) {
                 System.out.println("장바구니에 해당 도서가 없습니다.");
@@ -80,31 +85,24 @@ public class CartDAO {
 
             // cart_num을 찾았으면, 해당 cart_num에 대해 수량 수정
             String updateSql = "UPDATE cart SET cart_quantity = ? WHERE cart_num = ?";
-            try (PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
-                updatePstmt.setInt(1, cartQuantity);
-                updatePstmt.setInt(2, cartNum);
+            updatePstmt = conn.prepareStatement(updateSql);
+            updatePstmt.setInt(1, cartQuantity);
+            updatePstmt.setInt(2, cartNum);
 
-                return updatePstmt.executeUpdate() > 0;  // 수정 성공 시 true 반환
-            }
+            return updatePstmt.executeUpdate() > 0;  // 수정 성공 시 true 반환
+        } finally {
+            DBUtil.executeClose(cartRs, selectPstmt, null);
+            DBUtil.executeClose(null, updatePstmt, null);
         }
     }
-/*
+    
     // 장바구니 삭제
-    public boolean deleteCart(int cartNum) throws SQLException {
-    	checkConnection();
-        sql = "DELETE FROM cart WHERE cart_num = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, cartNum);
-            return pstmt.executeUpdate() > 0;
-        }
-    }
-    
-    */
-    
     public boolean deleteCart(int cartNum) throws SQLException {
         checkConnection();
         String sql = "DELETE FROM cart WHERE cart_num = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, cartNum);
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected == 0) {
@@ -114,46 +112,63 @@ public class CartDAO {
         } catch (SQLException e) {
             System.out.println("SQL 오류 발생: " + e.getMessage());
             e.printStackTrace();
-            throw e;  // 예외 재던지기 (혹은 다른 처리를 할 수 있음)
+            throw e;  
+        } finally {
+            DBUtil.executeClose(null, pstmt, null);
         }
     }
     
-    
-
     // 사용자의 장바구니 목록 조회
     public ResultSet getUserCart(String userId) throws SQLException {
-    	checkConnection();
+        checkConnection();
         sql = "SELECT c.*, b.book_title, b.book_price " +
              "FROM cart c " +
              "JOIN books b ON c.book_code = b.book_code " +
              "WHERE c.user_id = ?";
-        pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, userId);
-        return pstmt.executeQuery();
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            rs = pstmt.executeQuery();
+            return rs;
+
+        } catch (SQLException e) {
+            DBUtil.executeClose(rs, pstmt, null);
+            throw e;
+        }
     }
 
     // 장바구니 개별 항목 조회
     public ResultSet getCartItem(int cartNum) throws SQLException {
-    	checkConnection();
+        checkConnection();
         sql = "SELECT c.*, b.book_title, b.book_price " +
              "FROM cart c " +
              "JOIN books b ON c.book_code = b.book_code " +
              "WHERE c.cart_num = ?";
-        pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, cartNum);
-        return pstmt.executeQuery();
-    }
-    
- // 장바구니 상품 구매 후 장바구니 초기화
-    public boolean clearCart(String userId) throws SQLException {
-    	checkConnection();
-        sql = "DELETE FROM cart WHERE user_id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);
-            return pstmt.executeUpdate() > 0;
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, cartNum);
+            rs = pstmt.executeQuery();
+            return rs;
+
+        } catch (SQLException e) {
+            DBUtil.executeClose(rs, pstmt, null);
+            throw e;
         }
     }
     
-  
-
+    // 장바구니 상품 구매 후 장바구니 초기화
+    public boolean clearCart(String userId) throws SQLException {
+        checkConnection();
+        sql = "DELETE FROM cart WHERE user_id = ?";
+        
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            return pstmt.executeUpdate() > 0;
+        } finally {
+            DBUtil.executeClose(null, pstmt, null);
+        }
+    }
 }
