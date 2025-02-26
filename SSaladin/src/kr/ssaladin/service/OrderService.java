@@ -235,6 +235,7 @@ public class OrderService {
 			System.out.println("주문 상태 변경 중 오류 발생: " + e.getMessage());
 			e.printStackTrace();
 			return false;
+			
 		}
 	}
 
@@ -704,6 +705,99 @@ public class OrderService {
 			System.out.println("상세 정보가 없습니다.");
 		}
 		System.out.println("=".repeat(50));
+	}
+	
+	// OrderService 클래스에 다음 메서드를 추가합니다.
+	public void checkOrderStatus() throws IOException {
+	    System.out.println("\n=== 주문 상태 조회 ===");
+	    System.out.print("조회할 주문 번호를 입력하세요: ");
+	    try {
+	        int orderNum = Integer.parseInt(br.readLine().trim());
+	        
+	        // 주문 정보 조회
+	        OrderInfo orderInfo = getOrderInfo(orderNum);
+	        
+	        if (orderInfo != null) {
+	            displayOrderDetails(orderInfo);
+	            // 주문 상태만 강조해서 별도로 표시
+	            System.out.println("\n현재 주문 상태: " + getOrderStatusString(orderInfo.getOrderStatus()));
+	        } else {
+	            System.out.println("해당 주문 정보를 찾을 수 없습니다.");
+	        }
+	    } catch (NumberFormatException e) {
+	        System.out.println("올바른 주문 번호를 입력해주세요.");
+	    } catch (Exception e) {
+	        System.out.println("주문 조회 중 오류가 발생했습니다: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+
+	// 사용자 ID를 파라미터로 받아옴
+	public void checkOrderStatus(String userId, int userAuth) throws IOException {
+	    System.out.println("\n=== 나의 주문 목록 ===");
+	    
+	    // 사용자의 주문 목록 조회
+	    List<OrderInfo> userOrders = getUserOrders(userId);
+	    
+	    if (userOrders == null || userOrders.isEmpty()) {
+	        System.out.println("주문 내역이 없습니다.");
+	        return;
+	    }
+	    
+	    // 주문 목록 출력
+	    System.out.println("주문번호\t주문일자\t\t주문상태\t주문금액");
+	    System.out.println("-".repeat(60));
+	    
+	    for (OrderInfo order : userOrders) {
+	        System.out.printf("%-8d %-12s %-10s %,d원\n", 
+	                order.getOrderNum(), 
+	                order.getOrderDate(), 
+	                getOrderStatusString(order.getOrderStatus()), 
+	                order.getOrderTotal());
+	    }
+	    System.out.println("-".repeat(60));
+	    
+	    // 상세 조회할 주문 번호 입력
+	    System.out.print("\n상세 조회할 주문 번호를 입력하세요 (돌아가려면 0 입력): ");
+	    try {
+	        int orderNum = Integer.parseInt(br.readLine().trim());
+	        
+	        if (orderNum == 0) {
+	            return; // 메인 메뉴로 돌아가기
+	        }
+	        
+	        // 주문 정보 조회
+	        OrderInfo orderInfo = getOrderInfo(orderNum);
+	        
+	        if (orderInfo != null) {
+	            // 일반 사용자는 자신의 주문만 볼 수 있도록 제한
+	            if (userAuth != 2 && !orderInfo.getUserId().equals(userId)) {
+	                System.out.println("해당 주문에 대한 접근 권한이 없습니다.");
+	                return;
+	            }
+	            
+	            displayOrderDetails(orderInfo);
+	            
+	            // 주문 상태 변경 기능 추가 (결제 완료 상태에서만 취소 가능)
+	            if (orderInfo.getOrderStatus() == OrderStatus.PROCESSING) {
+	                System.out.print("\n이 주문을 취소하시겠습니까? (Y/N): ");
+	                String choice = br.readLine().trim().toUpperCase();
+	                
+	                if (choice.equals("Y")) {
+	                    if (cancelOrder(orderNum)) {
+	                        System.out.println("주문이 성공적으로 취소되었습니다.");
+	                    }
+	                }
+	            }
+	        } else {
+	            System.out.println("해당 주문 정보를 찾을 수 없습니다.");
+	        }
+	    } catch (NumberFormatException e) {
+	        System.out.println("올바른 주문 번호를 입력해주세요.");
+	    } catch (Exception e) {
+	        System.out.println("주문 조회 중 오류가 발생했습니다: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 
 	// 주문 상태 문자열 반환
