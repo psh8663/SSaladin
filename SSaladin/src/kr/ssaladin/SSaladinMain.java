@@ -481,7 +481,7 @@ public class SSaladinMain {
 					break;
 				} // if
 			} catch (NumberFormatException e) {
-				System.out.println("[ 숫자만 입력 가능]");
+				System.out.println("[ 숫자로 입력해야 합니다.]");
 			} // try_catch
 		} // while
 	}

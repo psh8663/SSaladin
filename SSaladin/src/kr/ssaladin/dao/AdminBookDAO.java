@@ -88,7 +88,7 @@ public class AdminBookDAO {
 			return pstmt.executeUpdate(); // 성공하면 1 반환
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("추가실패");
 		}
 		return 0; // 실패 시 0 반환
 	}
