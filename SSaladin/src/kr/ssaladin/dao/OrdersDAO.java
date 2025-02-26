@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
+
+import kr.ssaladin.service.CartService;
 import kr.util.DBUtil;
 
 public class OrdersDAO {
@@ -168,5 +171,99 @@ public class OrdersDAO {
             case 5: return "주문 취소";
             default: return "알 수 없음";
         }
+    }
+    
+ // 사용자 포인트 업데이트 (차감 또는 증가)
+    public boolean updateUserPoint(String userId, int pointChange) throws SQLException {
+        String sql = "UPDATE users SET user_point = user_point + ? WHERE user_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, pointChange);
+            pstmt.setString(2, userId);
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+
+    // 주문 생성과 포인트 차감을 한 트랜잭션으로 처리
+    public boolean createOrderWithPointUpdate(String userId, int orderTotal, int orderStatus, 
+                                              List<CartService.CartItem> items,
+                                              AdminBookDAO adminBookDAO) throws SQLException, ClassNotFoundException {
+        
+        boolean success = false;
+        boolean originalAutoCommit = conn.getAutoCommit();
+        
+        try {
+            // 트랜잭션 시작
+            conn.setAutoCommit(false);
+            
+            // 주문 기본 정보 등록
+            if (!insertOrder(userId, orderTotal, orderStatus)) {
+                conn.rollback();
+                return false;
+            }
+            
+            // 방금 생성한 주문번호를 조회
+            int orderNum = getLastOrderNumByUser(userId);
+            if (orderNum == -1) {
+                System.out.println("주문번호 조회에 실패했습니다.");
+                conn.rollback();
+                return false;
+            }
+            
+            // 주문 상세 정보와 재고 처리
+            Order_detailsDAO orderDetailsDAO = new Order_detailsDAO(conn);
+            for (CartService.CartItem item : items) {
+                // 주문 상세 정보 등록
+                if (!orderDetailsDAO.insertOrderDetail(orderNum, item.getBookCode(),
+                        item.getCartQuantity(), item.getBookPrice())) {
+                    System.out.println("주문 상세 정보 등록에 실패했습니다.");
+                    conn.rollback();
+                    return false;
+                }
+                
+                // 재고 차감
+                if (!adminBookDAO.updateOrderStock(item.getBookCode(), item.getCartQuantity())) {
+                    System.out.println("재고 차감에 실패했습니다.");
+                    conn.rollback();
+                    return false;
+                }
+                
+                // 재고가 0일 경우 품절 상태로 변경
+                if (!adminBookDAO.updateBookStatus(item.getBookCode())) {
+                    System.out.println("도서 상태 업데이트에 실패했습니다.");
+                    conn.rollback();
+                    return false;
+                }
+            }
+            
+            // 사용자 포인트 차감
+            if (!updateUserPoint(userId, -orderTotal)) {
+                System.out.println("포인트 차감에 실패했습니다.");
+                conn.rollback();
+                return false;
+            }
+            
+            // 모든 작업이 성공적으로 완료되면 커밋
+            conn.commit();
+            success = true;
+            System.out.println("주문이 성공적으로 완료되었습니다. 주문번호: " + orderNum);
+            
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("주문 처리 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            try {
+                conn.setAutoCommit(originalAutoCommit);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return success;
     }
 }
