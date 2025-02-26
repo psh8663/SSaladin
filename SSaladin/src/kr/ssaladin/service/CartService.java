@@ -290,6 +290,7 @@ public class CartService {
 				String choice = br.readLine().trim().toUpperCase();
 
 				if (choice.equals("Y")) {
+					
 					System.out.println("마이페이지 > 포인트 충전 메뉴를 이용해주세요.");
 				}
 				return;
