@@ -46,6 +46,25 @@ public class AdminBookDAO {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
 	}
+	
+	public boolean checkCategory(int categoryNum) throws SQLException, ClassNotFoundException {
+	    String query = "SELECT COUNT(*) FROM categories WHERE category_id = ?";
+	    try {
+	    	conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+	        pstmt.setInt(1, categoryNum);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0; 
+	            }
+	        }
+	    }finally {
+	    	DBUtil.executeClose(rs, pstmt, conn);
+		}
+	    return false;
+	}
+
 
 	public int checkadminBCode(int num) {
 		int count = 0;
@@ -88,7 +107,7 @@ public class AdminBookDAO {
 			return pstmt.executeUpdate(); // 성공하면 1 반환
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("추가실패");
 		}
 		return 0; // 실패 시 0 반환
 	}
