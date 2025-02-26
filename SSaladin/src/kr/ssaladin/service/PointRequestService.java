@@ -24,6 +24,11 @@ public class PointRequestService {
 	public List<PointRequest> getAllRequests() {
 		return pointRequestDAO.getAllPointRequests();
 	}
+	
+	public List<PointRequest> getUserPointRequests(String userId) {
+	    return pointRequestDAO.getUserPointRequests(userId);
+	}
+
 
 	// 요청 상태를 문자열로 변환하는 유틸리티 메소드
 	public String getStatusString(int status) {

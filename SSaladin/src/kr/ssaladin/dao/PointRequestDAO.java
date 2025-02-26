@@ -32,6 +32,7 @@ public class PointRequestDAO {
 				flag = true;
 			}
 		} catch (SQLException | ClassNotFoundException e) {
+			System.out.println("포인트 충전요청 생성시 오류가 발생 했습니다.");
 			e.printStackTrace();
 		} finally {
 			DBUtil.executeClose(null, pstmt, conn);
@@ -84,6 +85,7 @@ public class PointRequestDAO {
 					conn.setAutoCommit(true); // 트랜잭션 설정 복구
 				}
 			} catch (SQLException e) {
+				System.out.println("포인트 요청 승인시 오류가 발생했습니다.");
 				e.printStackTrace();
 			}
 			DBUtil.executeClose(null, pstmt, conn);
@@ -116,12 +118,49 @@ public class PointRequestDAO {
 				int result = pstmt.executeUpdate();
 				flag = (result > 0);
 			}
-		} catch (SQLException e) { 
+		} catch (SQLException e) {
+			System.out.println("포인트를 충전 시킬때 오류가 발생 했습니다.");
 			e.printStackTrace();
 		} finally {
-			DBUtil.executeClose(rs, pstmt, null); 
+			DBUtil.executeClose(rs, pstmt, null);
 		}
 		return flag;
+	}
+
+	// 포인트 충전요청 조회 (유저)
+
+	public List<PointRequest> getUserPointRequests(String userId) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<PointRequest> requests = new ArrayList<>();
+
+		String sql = "SELECT request_num, user_id, point_amount, request_status, request_date "
+				+ "FROM point_requests WHERE user_id = ? " + "ORDER BY request_date ASC";
+
+		try {
+			conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				PointRequest request = new PointRequest();
+				request.setRequestNum(rs.getInt("request_num"));
+				request.setUserId(rs.getString("user_id"));
+				request.setPointAmount(rs.getInt("point_amount"));
+				request.setRequestStatus(rs.getInt("request_status"));
+				request.setRequestDate(rs.getDate("request_date"));
+				requests.add(request);
+			}
+		} catch (SQLException | ClassNotFoundException e) {
+			System.out.println("충전요청 목록을 가져오는데 오류가 발생했습니다.");
+			e.printStackTrace();
+		} finally {
+			DBUtil.executeClose(rs, pstmt, conn);
+		}
+
+		return requests;
 	}
 
 	// 포인트 충전요청 조회 (관리자)
@@ -149,6 +188,7 @@ public class PointRequestDAO {
 				requests.add(request);
 			}
 		} catch (SQLException | ClassNotFoundException e) {
+			System.out.println("충전요청 목록을 가져오는데 오류가 발생했습니다.");
 			e.printStackTrace();
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);

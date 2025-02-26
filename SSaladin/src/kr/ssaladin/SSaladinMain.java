@@ -91,6 +91,7 @@ public class SSaladinMain {
 			}
 		}
 	}
+
 //
 	// 로그인 페이지
 	private void login() throws IOException {
@@ -145,139 +146,139 @@ public class SSaladinMain {
 
 	// 로그인 후 메뉴 (유저)
 	private void userMenu() throws IOException {
-	    while (flag) {
-	        // 사용자 정보를 상단에 표시
-	        String userRole = "";
-	        switch (this.userAuth) {
-	        case 0:
-	            userRole = "일반회원";
-	            break;
-	        case 1:
-	            userRole = "VIP";
-	            break;
-	        case 2:
-	            userRole = "관리자";
-	            break;
-	        default:
-	            userRole = "비회원";
-	            break;
-	        }
-	        
-	        System.out.println("\n=====================================================");
-	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-	        System.out.println("=====================================================");
-	        
-	        System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: \n> ");
-	        try {
-	            int no = Integer.parseInt(br.readLine().trim());
-	            if (no == 1) {
-	                new BookListService(this);
-	            } else if (no == 2) {
-	                // 마이페이지
-	                myPage();
-	            } else if (no == 3) {
-	                // 도서 신청 게시판
-	                System.out.println("도서 신청 게시판");
-	                requestService.requestService(me_id);
-	            } else if (no == 4) {
-	            	cartService.manageCart(me_id, this.userPoint);
-	                System.out.println("장바구니 보기");
-	            } else if (no == 5) {
-	                // 로그아웃
-	                System.out.println("로그아웃 되었습니다.");
-	                flag = false; // 로그인 상태 해제
-	                break;
-	            } else {
-	                System.out.println("잘못된 입력입니다.");
-	            }
-	        } catch (NumberFormatException e) {
-	            System.out.println("[ 숫자만 입력 가능합니다. ]");
-	        }
-	    }
+		while (flag) {
+			// 사용자 정보를 상단에 표시
+			String userRole = "";
+			switch (this.userAuth) {
+			case 0:
+				userRole = "일반회원";
+				break;
+			case 1:
+				userRole = "VIP";
+				break;
+			case 2:
+				userRole = "관리자";
+				break;
+			default:
+				userRole = "비회원";
+				break;
+			}
+
+			System.out.println("\n=====================================================");
+			System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
+			System.out.println("=====================================================");
+
+			System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: \n> ");
+			try {
+				int no = Integer.parseInt(br.readLine().trim());
+				if (no == 1) {
+					new BookListService(this);
+				} else if (no == 2) {
+					// 마이페이지
+					myPage();
+				} else if (no == 3) {
+					// 도서 신청 게시판
+					System.out.println("도서 신청 게시판");
+					requestService.requestService(me_id);
+				} else if (no == 4) {
+					cartService.manageCart(me_id, this.userPoint);
+					System.out.println("장바구니 보기");
+				} else if (no == 5) {
+					// 로그아웃
+					System.out.println("로그아웃 되었습니다.");
+					flag = false; // 로그인 상태 해제
+					break;
+				} else {
+					System.out.println("잘못된 입력입니다.");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("[ 숫자만 입력 가능합니다. ]");
+			}
+		}
 	}
 
 	// 마이페이지
 	private void myPage() throws IOException {
-	    // 마이페이지 메뉴
-	    while (flag) {
-	        // 사용자 정보를 상단에 표시
-	        String userRole = "";
-	        switch (this.userAuth) {
-	        case 0:
-	            userRole = "일반회원";
-	            break;
-	        case 1:
-	            userRole = "VIP";
-	            break;
-	        case 2:
-	            userRole = "관리자";
-	            break;
-	        default:
-	            userRole = "비회원";
-	            break;
-	        }
-	        
-	        System.out.println("\n=====================================================");
-	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-	        System.out.println("=====================================================");
-	        
-	        System.out.println("\n=== 마이페이지 ===");
-	        System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 구매내역, 5. 리뷰 관리, 6. 회원 탈퇴, 7. 뒤로가기: ");
-	        try {
-	            int no = Integer.parseInt(br.readLine());
-	            if (no == 1) {
-	                updateUserInfo();
-	            } else if (no == 2) {
-	                // 포인트 충전
-	                chargePoint();
-	            } else if (no == 3) {
-	                // 장바구니
-	              cartService.manageCart(me_id, this.userPoint);
-	            } else if (no == 4) {
-	                // 구매내역
-	                System.out.println("구매내역 페이지");
-	                // 구매내역 페이지 구현 필요
-	            } else if (no == 5) {
-	                // 리뷰 관리
-	                reviewsService.reviewService(me_id);
-	            } else if (no == 6) {
-	                // 회원 탈퇴
-	                withdrawUser();
-	            } else if (no == 7) {
-	                // 뒤로가기
-	                break; // 마이페이지 메뉴 종료
-	            } else {
-	                System.out.println("잘못된 입력입니다.");
-	            }
-	        } catch (NumberFormatException e) {
-	            System.out.println("[ 숫자만 입력 가능합니다. ]");
-	        }
-	    }
+		// 마이페이지 메뉴
+		while (flag) {
+			// 사용자 정보를 상단에 표시
+			String userRole = "";
+			switch (this.userAuth) {
+			case 0:
+				userRole = "일반회원";
+				break;
+			case 1:
+				userRole = "VIP";
+				break;
+			case 2:
+				userRole = "관리자";
+				break;
+			default:
+				userRole = "비회원";
+				break;
+			}
+
+			System.out.println("\n=====================================================");
+			System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
+			System.out.println("=====================================================");
+
+			System.out.println("\n=== 마이페이지 ===");
+			System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 구매내역, 5. 리뷰 관리, 6. 회원 탈퇴, 7. 뒤로가기: ");
+			try {
+				int no = Integer.parseInt(br.readLine());
+				if (no == 1) {
+					updateUserInfo();
+				} else if (no == 2) {
+					// 포인트 충전
+					chargePoint();
+				} else if (no == 3) {
+					// 장바구니
+					cartService.manageCart(me_id, this.userPoint);
+				} else if (no == 4) {
+					// 구매내역
+					System.out.println("구매내역 페이지");
+					// 구매내역 페이지 구현 필요
+				} else if (no == 5) {
+					// 리뷰 관리
+					reviewsService.reviewService(me_id);
+				} else if (no == 6) {
+					// 회원 탈퇴
+					withdrawUser();
+				} else if (no == 7) {
+					// 뒤로가기
+					break; // 마이페이지 메뉴 종료
+				} else {
+					System.out.println("잘못된 입력입니다.");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("[ 숫자만 입력 가능합니다. ]");
+			}
+		}
 	}
 
 	// 회원 탈퇴 메소드
 	private void withdrawUser() throws IOException {
-	    System.out.println("\n=== 회원 탈퇴 ===");
-	    System.out.println("※ 주의: 회원 탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.");
-	    System.out.print("비밀번호를 입력하세요: ");
-	    String password = br.readLine().trim();
-	    
-	    System.out.print("정말 탈퇴하시겠습니까? (Y/N): ");
-	    String confirm = br.readLine().trim().toUpperCase();
-	    
-	    if (confirm.equals("Y")) {
-	        boolean success = userService.deleteUser(me_id, password);
-	        if (success) {
-	            System.out.println("회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.");
-	            flag = false; // 로그인 상태 해제
-	            // 첫 화면으로 돌아가기
-	            callMenu();
-	        } else {
-	            System.out.println("회원 탈퇴에 실패했습니다. 비밀번호를 확인해주세요.");
-	        }
-	    } else {
-	        System.out.println("회원 탈퇴가 취소되었습니다.");
-	    }
+		System.out.println("\n=== 회원 탈퇴 ===");
+		System.out.println("※ 주의: 회원 탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.");
+		System.out.print("비밀번호를 입력하세요: ");
+		String password = br.readLine().trim();
+
+		System.out.print("정말 탈퇴하시겠습니까? (Y/N): ");
+		String confirm = br.readLine().trim().toUpperCase();
+
+		if (confirm.equals("Y")) {
+			boolean success = userService.deleteUser(me_id, password);
+			if (success) {
+				System.out.println("회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.");
+				flag = false; // 로그인 상태 해제
+				// 첫 화면으로 돌아가기
+				callMenu();
+			} else {
+				System.out.println("회원 탈퇴에 실패했습니다. 비밀번호를 확인해주세요.");
+			}
+		} else {
+			System.out.println("회원 탈퇴가 취소되었습니다.");
+		}
 	}
 
 	private void updateUserInfo() {
@@ -328,56 +329,70 @@ public class SSaladinMain {
 
 	// 포인트 충전 페이지
 	private void chargePoint() throws IOException {
-		// 포인트 충전
-		System.out.println("충전할 금액을 입력하세요: ");
-		try {
-			int chargeAmount = Integer.parseInt(br.readLine().trim());
+		// 먼저 사용자가 요청한 포인트 충전 내역 출력
+		System.out.println("\n=== 요청한 포인트 충전 내역 ===");
+		List<PointRequest> userRequests = pointRequestService.getUserPointRequests(me_id); // 사용자 충전 요청 목록 가져오기
 
-			// 포인트 충전 요청을 DB에 생성 (PointRequestDAO 사용)
+		if (userRequests.isEmpty()) {
+			System.out.println("충전 요청 내역이 없습니다.");
+		} else {
+			System.out.println("요청번호\t사용자ID\t요청금액\t상태\t요청일자");
+			System.out.println("----------------------------------------");
 
-			boolean requestCreated = pointRequestService.requestCharge(me_id, chargeAmount);
-
-			if (requestCreated) {
-				System.out.println("현재 보유 포인트: " + userPoint + "원");
-				System.out.println("충전 요청금액: " + chargeAmount + "원");
-			} else {
-				System.out.println("포인트 충전 요청에 실패했습니다. 잠시 후 다시 시도해주세요.");
+			for (PointRequest request : userRequests) {
+				System.out.printf("%d\t%s\t%d\t%s\t%s%n", request.getRequestNum(), request.getUserId(),
+						request.getPointAmount(), pointRequestService.getStatusString(request.getRequestStatus()),
+						request.getRequestDate());
 			}
-		} catch (NumberFormatException e) {
-			// 입력이 숫자가 아닐 때
-			System.out.println("올바른 금액을 입력해주세요.");
-		} catch (Exception e) {
-			// 그 외의 예외가 발생했을 때
-			System.out.println("포인트 충전 중 오류가 발생했습니다: " + e.getMessage());
+
+			// 그 후에 충전할 금액을 입력 받음
+			System.out.println("충전할 금액을 입력하세요: ");
+			try {
+				int chargeAmount = Integer.parseInt(br.readLine().trim());
+
+				// 포인트 충전 요청을 DB에 생성 (PointRequestDAO 사용)
+				boolean requestCreated = pointRequestService.requestCharge(me_id, chargeAmount);
+
+				if (requestCreated) {
+					System.out.println("현재 보유 포인트: " + userPoint + "원");
+					System.out.println("충전 요청금액: " + chargeAmount + "원");
+				} else {
+					System.out.println("포인트 충전 요청에 실패했습니다. 잠시 후 다시 시도해주세요.");
+				}
+			} catch (NumberFormatException e) {
+				// 입력이 숫자가 아닐 때
+				System.out.println("올바른 금액을 입력해주세요.");
+			} catch (Exception e) {
+				// 그 외의 예외가 발생했을 때
+				System.out.println("포인트 충전 중 오류가 발생했습니다: " + e.getMessage());
+			}
 		}
 	}
-
-
 
 	private void adminMenu() throws IOException {
 
 		while (flag) {
 			// 사용자 정보를 상단에 표시
-	        String userRole = "";
-	        switch (this.userAuth) {
-	        case 0:
-	            userRole = "일반회원";
-	            break;
-	        case 1:
-	            userRole = "VIP";
-	            break;
-	        case 2:
-	            userRole = "관리자";
-	            break;
-	        default:
-	            userRole = "비회원";
-	            break;
-	        }
-	        
-	        System.out.println("\n=====================================================");
-	        System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-	        System.out.println("=====================================================");
-	        
+			String userRole = "";
+			switch (this.userAuth) {
+			case 0:
+				userRole = "일반회원";
+				break;
+			case 1:
+				userRole = "VIP";
+				break;
+			case 2:
+				userRole = "관리자";
+				break;
+			default:
+				userRole = "비회원";
+				break;
+			}
+
+			System.out.println("\n=====================================================");
+			System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
+			System.out.println("=====================================================");
+
 			System.out.print("1. 사용자 목록, 2. 도서 상품 관리, 3. 포인트 충전 요청 관리, 4. 리뷰/요청 관리 5. 로그아웃: ");
 			try {
 				int no = Integer.parseInt(br.readLine().trim());
@@ -402,12 +417,6 @@ public class SSaladinMain {
 			}
 		}
 	}
-
-
-
-
-	
-
 
 	private void displayUserList() {
 
@@ -522,7 +531,6 @@ public class SSaladinMain {
 	public String getUserId() {
 		return me_id;
 	}
-	
 
 	public int getUserPoint() {
 		return userPoint;
