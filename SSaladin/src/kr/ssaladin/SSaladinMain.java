@@ -339,11 +339,11 @@ public class SSaladinMain {
 		if (userRequests.isEmpty()) {
 			System.out.println("충전 요청 내역이 없습니다.");
 		} else {
-			System.out.println("요청번호\t사용자ID\t요청금액\t상태\t요청일자");
+			System.out.println("요청번호\t사용자ID\t요청금액\t\t상태\t요청일자");
 			System.out.println("----------------------------------------");
 
 			for (PointRequest request : userRequests) {
-				System.out.printf("%d\t%s\t%d\t%s\t%s%n", request.getRequestNum(), request.getUserId(),
+				System.out.printf("%d\t%s\t%-9d\t%s\t%s%n", request.getRequestNum(), request.getUserId(),
 						request.getPointAmount(), pointRequestService.getStatusString(request.getRequestStatus()),
 						request.getRequestDate());
 			}
@@ -496,11 +496,11 @@ public class SSaladinMain {
 				break;
 			}
 
-			System.out.println("요청번호\t사용자ID\t요청금액\t상태\t요청일자");
+			System.out.println("요청번호\t사용자ID\t요청금액\t\t상태\t요청일자");
 			System.out.println("----------------------------------------");
 
 			for (PointRequest request : requests) {
-				System.out.printf("%d\t%s\t%d\t%s\t%s%n", request.getRequestNum(), request.getUserId(),
+				System.out.printf("%d\t%s\t%-9d\t%s\t%s%n", request.getRequestNum(), request.getUserId(),
 						request.getPointAmount(), pointRequestService.getStatusString(request.getRequestStatus()),
 						request.getRequestDate());
 			}
