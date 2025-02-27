@@ -26,7 +26,7 @@ public class AdminBookService {
 
 	private void adminBookManage() throws IOException, ClassNotFoundException, SQLException {
 	    while (true) {
-	        System.out.print("1.신규 도서 추가, 2.신규 카테고리 추가, 3.도서 재고 추가, 4.도서 설명 변경, 5.도서 판매중지 처리, 6.뒤로가기> ");
+	        System.out.print("1.신규 도서 추가 , 2.신규 카테고리 추가, 3.도서 재고 추가, 4.도서 설명 변경, 5.도서 판매중지 처리, 6.뒤로가기> ");
 	        try {
 	            int no = Integer.parseInt(br.readLine());
 
