@@ -148,6 +148,7 @@ public class AdminBookService {
 	                if (count == 1) {
 	                    dao.updateOutOfPrintStatus(num);
 	                    System.out.println("판매중지 처리가 완료되었습니다.");
+	                    dao.selectAdminBook();
 	                } else if (count == 0) {
 	                    System.out.println("도서코드를 잘못 입력하셨습니다.");
 	                } else {

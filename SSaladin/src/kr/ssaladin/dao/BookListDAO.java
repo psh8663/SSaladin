@@ -24,7 +24,7 @@ public class BookListDAO {
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
-			System.out.println("===전체 도서===");
+			System.out.println("===판매중 도서===");
 			System.out.printf("%s\t%-30s\t%s\t%s%n", "도서코드", "도서명", "저자명", "가격");
 			System.out.println("-".repeat(100));
 			if (rs.next()) {
