@@ -218,7 +218,9 @@ public class BookListDAO {
 				System.out.println("총 판매량: " + rs.getInt("total_quantity"));
 				System.out.println("-".repeat(100));
 			}
-		} finally {
+		} catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
 	}
@@ -238,9 +240,12 @@ public class BookListDAO {
 			if (rs.next()) {
 				return rs.getInt("book_price");
 			}
-		} finally {
-			DBUtil.executeClose(rs, pstmt, conn);
-		}
+		} catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBUtil.executeClose(rs, pstmt, conn); // 자원 정리
+	    }
+
 
 		return -1; // 책이 없으면 -1 반환
 	}
