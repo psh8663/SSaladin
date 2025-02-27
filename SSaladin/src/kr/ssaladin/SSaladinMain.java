@@ -39,6 +39,7 @@ public class SSaladinMain {
 	private ReviewsService reviewsService; // ReviewsService 객체 추가
 	private AdminReviewsService arvService; // AdminReviewsService 객체 추가
 	private AdminRequestService arqService; // AdminRequestService 객체 추가
+	private static SSaladinMain Ssaladinmain;	// SsaladinMain 인스턴스 추가
 
 	public SSaladinMain() {
 		try {
@@ -52,6 +53,7 @@ public class SSaladinMain {
 			requestService = new RequestService(); // RequestService 초기화
 			arvService = new AdminReviewsService(); // AdminReviewsService 초기화
 			arqService = new AdminRequestService(); // AdminRequestService 초기화
+			Ssaladinmain = this;
 
 			// 메뉴 호출
 			callMenu();
@@ -335,7 +337,7 @@ public class SSaladinMain {
 	}
 
 	// 포인트 충전 페이지
-	public void chargePoint() throws IOException {
+	private void chargePoint() throws IOException {
 		// 먼저 사용자가 요청한 포인트 충전 내역 출력
 		System.out.println("\n=== 요청한 포인트 충전 내역 ===");
 		List<PointRequest> userRequests = pointRequestService.getUserPointRequests(me_id); // 사용자 충전 요청 목록 가져오기
@@ -374,6 +376,42 @@ public class SSaladinMain {
 				System.out.println("포인트 충전 중 오류가 발생했습니다: " + e.getMessage());
 			}
 		}
+	}
+	
+	// 충전 금액 입력부터 시작. cartService에서 사용
+	public void chargePointFromCart() throws IOException {
+	    System.out.println("\n=== 포인트 충전 ===");
+	    System.out.println("충전할 금액을 입력하세요: ");
+	    try {
+	        int chargeAmount = Integer.parseInt(br.readLine().trim());
+
+	        // 포인트 충전 요청을 DB에 생성
+	        boolean requestCreated = pointRequestService.requestCharge(me_id, chargeAmount);
+
+	        if (requestCreated) {
+	            System.out.println("현재 보유 포인트: " + userPoint + "원");
+	            System.out.println("충전 요청금액: " + chargeAmount + "원");
+	            
+	            
+	            
+	        } else {
+	            System.out.println("포인트 충전 요청에 실패했습니다. 잠시 후 다시 시도해주세요.");
+	        }
+	    } catch (NumberFormatException e) {
+	        System.out.println("올바른 금액을 입력해주세요.");
+	    } catch (Exception e) {
+	        System.out.println("포인트 충전 중 오류가 발생했습니다: " + e.getMessage());
+	    }
+	}
+
+
+
+	public static void chargePointFromcart() throws IOException {
+	    if (Ssaladinmain != null) {
+	    	Ssaladinmain.chargePointFromCart();
+	    } else {
+	        System.out.println("SSaladinMain 인스턴스가 초기화되지 않았습니다.");
+	    }
 	}
 
 	private void adminMenu() throws IOException {

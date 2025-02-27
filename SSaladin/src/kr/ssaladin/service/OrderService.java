@@ -43,7 +43,6 @@ public class OrderService {
 
 
 	// 장바구니 상품 구매. 주문 생성 (CartService에서 이동)
-	// OrderService 클래스의 메서드
 	public int createOrderFromCart(String userId, List<CartItem> items, int totalAmount) throws ClassNotFoundException {
 	    try {
 	        conn.setAutoCommit(false); // 트랜잭션 시작
@@ -54,7 +53,7 @@ public class OrderService {
 	            if (!stockAvailable) {
 	                System.out.println("도서코드 " + item.getBookCode() + "의 재고가 부족합니다.");
 	                conn.rollback();
-	                return -1; // 오류 코드
+	                return -1; 
 	            }
 	        }
 
@@ -219,6 +218,20 @@ public class OrderService {
 		}
 	}
 
+    // 사용자의 현재 포인트 조회
+    private int getUserCurrentPoint(String userId) throws SQLException {
+        String sql = "SELECT user_point FROM users WHERE user_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("user_point");
+                }
+                return 0;
+            }
+        }
+    }
+    
 	// 사용자 포인트 업데이트 (차감 또는 증가)
 	private boolean updateUserPoint(String userId, int pointChange) throws SQLException {
 		String sql = "UPDATE users SET user_point = user_point + ? WHERE user_id = ?";
@@ -348,13 +361,13 @@ public class OrderService {
 				return false;
 			}
 
-			// 배송 완료된 주문은 취소 불가
+			// 배송 완료된 주문은 취소 X
 			if (orderInfo.getOrderStatus() == OrderStatus.DELIVERY_COM) {
 				System.out.println("배송 완료된 주문은 취소할 수 없습니다.");
 				return false;
 			}
 
-			// 주문 상태를 취소로 변경
+			// 주문 상태를 '취소'로 변경
 			boolean statusUpdated = ordersDAO.updateOrderStatus(orderNum, OrderStatus.CANCELLED);
 			if (!statusUpdated) {
 				System.out.println("주문 상태 변경에 실패했습니다.");
@@ -362,9 +375,8 @@ public class OrderService {
 				return false;
 			}
 
-			// 주문에 포함된 도서 재고 복구
+			// 도서 재고 복구
 			for (OrderDetailInfo detail : orderInfo.getOrderDetails()) {
-				// 재고 증가 - AdminBookDAO 메서드 추가 필요
 				boolean stockUpdated = restoreStock(detail.getBookCode(), detail.getOrderQuantity());
 				if (!stockUpdated) {
 					System.out.println("재고 복구에 실패했습니다.");
@@ -372,25 +384,25 @@ public class OrderService {
 					return false;
 				}
 
-				// 도서 상태 업데이트 (품절 -> 판매중) - AdminBookDAO 메서드 추가 필요
+				// 도서 상태 업데이트
 				boolean statusUpdated2 = updateBookStatusAfterCancel(detail.getBookCode());
-				if (!statusUpdated2) {
-					System.out.println("도서 상태 업데이트에 실패했습니다.");
-					conn.rollback();
-					return false;
-				}
+
 			}
 
 			// 사용자 포인트 환불
+			int refund = orderInfo.getOrderTotal(); // 환불할 금액
 			boolean pointUpdated = updateUserPoint(orderInfo.getUserId(), orderInfo.getOrderTotal());
 			if (!pointUpdated) {
 				System.out.println("포인트 환불에 실패했습니다.");
 				conn.rollback();
 				return false;
 			}
-
+			int afterRefundPoint = getUserCurrentPoint(orderInfo.getUserId());
+			
 			conn.commit();
 			System.out.println("주문이 성공적으로 취소되었습니다.");
+			System.out.println("환불 된 포인트: " + refund + "원");
+			System.out.println("현재 포인트: " + afterRefundPoint + "원");
 			return true;
 
 		} catch (SQLException e) {
@@ -709,7 +721,7 @@ public class OrderService {
 		System.out.println("=".repeat(50));
 	}
 	
-	// OrderService 클래스에 다음 메서드를 추가합니다.
+
 	public void checkOrderStatus() throws IOException {
 	    System.out.println("\n=== 주문 상태 조회 ===");
 	    System.out.print("조회할 주문 번호를 입력하세요: ");
@@ -759,7 +771,7 @@ public class OrderService {
 	    }
 	    System.out.println("-".repeat(60));
 	    
-	    // 상세 조회할 주문 번호 입력
+
 	    System.out.print("\n상세 조회할 주문 번호를 입력하세요 (돌아가려면 0 입력): ");
 	    try {
 	        int orderNum = Integer.parseInt(br.readLine().trim());
