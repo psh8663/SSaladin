@@ -20,22 +20,23 @@ public class CartService {
 	private AdminBookDAO adminBookDAO;
 	private BufferedReader br;
 	private PointRequestService pointRequestService;
+	private CartService cartService;
 	private SSaladinMain sSaladinMain; // SSaladinMain 참조 추가
 
 	// 기존 생성자 유지
 	public CartService() throws ClassNotFoundException, SQLException {
 		this.cartDAO = new CartDAO();  
 		this.adminBookDAO = new AdminBookDAO();
+		cartService = new CartService(sSaladinMain);
 		this.br = new BufferedReader(new InputStreamReader(System.in));
-		this.sSaladinMain = new SSaladinMain();
 	}
 
 	// SSaladinMain 객체를 받는 생성자 추가
 	public CartService(SSaladinMain sSaladinMain) throws ClassNotFoundException, SQLException {
 		this.cartDAO = new CartDAO();  
-		this.adminBookDAO = new AdminBookDAO();
-		this.br = new BufferedReader(new InputStreamReader(System.in));
-		this.sSaladinMain = sSaladinMain;
+	    this.adminBookDAO = new AdminBookDAO();
+	    this.br = new BufferedReader(new InputStreamReader(System.in));
+	    this.sSaladinMain = sSaladinMain;
 	}
 
 	// CartItem 내부 클래스 선언
@@ -205,7 +206,10 @@ public class CartService {
 
 		// 로그인 상태일 때만 장바구니 목록 조회
 		try {
-			System.out.println("――――――――――――――――――――――――――――――――――――――――― 내 장바구니 목록 ―――――――――――――――――――――――――――――――――――――――――");
+			System.out.println("―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
+			System.out.println("                                          내 장바구니 목록");
+	//		System.out.println("――――――――――――――――――――――――――――――――――――――――― 내 장바구니 목록 ―――――――――――――――――――――――――――――――――――――――――");
+			System.out.printf("―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
 			System.out.println();
 
 			// 장바구니 항목을 가져오기
@@ -217,11 +221,11 @@ public class CartService {
 			} else {
 				// 장바구니 목록 출력
 				for (CartItem item : cartItems) {
-					System.out.println("주문번호: " + item.getCartNum() + 
-							", 도서코드: " + item.getBookCode() + 
-							", 도서명: " + item.getBookTitle() + 
-							", 수량: " + item.getCartQuantity() + 
-							", 가격: " + item.getBookPrice());
+					System.out.println("   주문번호: " + item.getCartNum() + 
+							"      도서코드: " + item.getBookCode() + 
+							"      도서명: " + item.getBookTitle() + 
+							"      수량: " + item.getCartQuantity() + 
+							"      가격: " + item.getBookPrice());
 				}
 			}
 			System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
