@@ -709,7 +709,7 @@ public class OrderService {
 		System.out.println("=".repeat(50));
 	}
 	
-	// OrderService 클래스에 다음 메서드를 추가합니다.
+
 	public void checkOrderStatus() throws IOException {
 	    System.out.println("\n=== 주문 상태 조회 ===");
 	    System.out.print("조회할 주문 번호를 입력하세요: ");
@@ -759,7 +759,7 @@ public class OrderService {
 	    }
 	    System.out.println("-".repeat(60));
 	    
-	    // 상세 조회할 주문 번호 입력
+
 	    System.out.print("\n상세 조회할 주문 번호를 입력하세요 (돌아가려면 0 입력): ");
 	    try {
 	        int orderNum = Integer.parseInt(br.readLine().trim());

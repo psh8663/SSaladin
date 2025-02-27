@@ -1,6 +1,7 @@
 package kr.ssaladin.service;	
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -14,12 +15,14 @@ import kr.ssaladin.SSaladinMain;
 import kr.ssaladin.dao.AdminBookDAO;
 import kr.ssaladin.dao.CartDAO;
 import kr.ssaladin.service.CartService.CartItem;
+import kr.ssaladin.service.PointRequestService;
 import kr.util.DBUtil;
 
 public class CartService {
 	private CartDAO cartDAO;
 	private AdminBookDAO adminBookDAO;
 	private BufferedReader br;
+	private PointRequestService pointRequestService;
 	private SSaladinMain sSaladinMain; // SSaladinMain 참조 추가
 
 
@@ -29,6 +32,7 @@ public class CartService {
 		this.cartDAO = new CartDAO();  
 		this.adminBookDAO = new AdminBookDAO();
 		this.br = new BufferedReader(new InputStreamReader(System.in));
+		this.sSaladinMain = new SSaladinMain();
 	}
 
 	// SSaladinMain 객체를 받는 생성자 추가
@@ -294,7 +298,9 @@ public class CartService {
 				if (choice.equals("Y")) {
 
 					System.out.println("포인트 충전 화면으로 이동합니다.\n");
-					sSaladinMain.chargePoint();
+				    SSaladinMain.chargePointFromcart();
+					
+					System.out.println("충전 요청이 완료되었습니다. \n");
 				}
 				return;
 			}
