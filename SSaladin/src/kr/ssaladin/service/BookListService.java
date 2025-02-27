@@ -35,7 +35,7 @@ public class BookListService {
 			br = new BufferedReader(new InputStreamReader(System.in));
 			dao = new BookListDAO();
 			rDAO = new ReviewsDAO();
-			cartService = new CartService();
+			cartService = new CartService(sSaladinMain);
 			orderService = new OrderService();
 			booklist();
 		} catch (Exception e) {
