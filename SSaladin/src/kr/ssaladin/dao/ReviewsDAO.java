@@ -70,13 +70,6 @@ public class ReviewsDAO {
 				System.out.printf("%-9s %-18s %-19s %-10s%n", "번호", "등록일", "닉네임", "도서명");
 				System.out.println("-".repeat(100));
 				do {
-//					System.out.print(rs.getInt("review_num"));
-//					System.out.print("\t");
-//					System.out.print(rs.getString("user_id"));
-//					System.out.print("\t");
-//					System.out.print(rs.getString("book_title"));
-//					System.out.print("\t");
-//					System.out.println(rs.getDate("reg_date"));
 					System.out.printf("%-10s %-20s %-20s %-10s%n", 
 							rs.getInt("review_num"), rs.getDate("reg_date"), rs.getString("user_id"), rs.getString("book_title"));
 				} while (rs.next());
@@ -93,50 +86,6 @@ public class ReviewsDAO {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
 	}
-
-	/* 안쓰는 함수
-	// bookCode에 따른 리뷰 글 보기
-	public void selectReviewsByBookCod(int bookCode) {
-
-		try {
-			conn = DBUtil.getConnection();
-			sql = "SELECT * FROM reviews r, users u, books b "
-					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title AND r.book_code=?"
-					+ "ORDER BY review_num DESC";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, bookCode);
-			pstmt.executeUpdate();
-			rs = pstmt.executeQuery();
-
-			System.out.println("=".repeat(100));
-
-			if (rs.next()) {
-				System.out.printf("%-9s %-18s %-19s %-10s%n", "번호", "등록일", "닉네임", "도서명");
-				System.out.println("-".repeat(100));
-				do {
-//					System.out.print(rs.getInt("review_num"));
-//					System.out.print("\t");
-//					System.out.print(rs.getString("user_id"));
-//					System.out.print("\t");
-//					System.out.print(rs.getString("book_title"));
-//					System.out.print("\t");
-//					System.out.println(rs.getDate("reg_date"));
-					System.out.printf("%-10s %-20s %-20s %-10s%n", 
-							rs.getInt("review_num"), rs.getDate("reg_date"), rs.getString("user_id"), rs.getString("book_title"));
-				} while (rs.next());
-			} else {
-				System.out.println("등록된 게시글이 없습니다.");
-			} // if
-
-			System.out.println("=".repeat(100));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			DBUtil.executeClose(rs, pstmt, conn);
-		} // try_finally
-	}
-	 */
 	
 	// review_num에 따른 셀렉트 디테일
 	public void detailSelectRivews_reviewNum(int reviewNum) {
@@ -305,21 +254,6 @@ public class ReviewsDAO {
 	
 	// 작성자 및 관리자 유효성 검사
 	public boolean checkPermission(String userId, int reviewNum) {
-//		try {
-//			conn = DBUtil.getConnection();
-//			sql = "SELECT u.user_id FROM reviews r, users u "
-//					+ "WHERE r.user_id=u.user_id AND r.review_num=?";
-//			pstmt = conn.prepareStatement(sql);
-//			pstmt.setInt(1, reviewNum);
-//			rs = pstmt.executeQuery();
-//			return rs.next() && (rs.getString("user_id").equals(userId) || "admin".equals(userId)) ? true : false;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//			DBUtil.executeClose(rs, pstmt, conn);
-//		} // try_finally
-//		return false;
-//	}
 		try (Connection conn = DBUtil.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement("SELECT u.user_id FROM reviews r, users u "
 						+ "WHERE r.user_id=u.user_id AND r.review_num=?")) {
@@ -382,21 +316,3 @@ public class ReviewsDAO {
     
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
