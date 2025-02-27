@@ -397,31 +397,58 @@ public class OrderService {
 				conn.rollback();
 				return false;
 			}
-			int afterRefundPoint = getUserCurrentPoint(orderInfo.getUserId());
 			
-			conn.commit();
-			System.out.println("주문이 성공적으로 취소되었습니다.");
-			System.out.println("환불 된 포인트: " + refund + "원");
-			System.out.println("현재 포인트: " + afterRefundPoint + "원");
-			return true;
+			// 환불 후 현재 포인트 조회
+	        int afterRefundPoint = getUserCurrentPoint(orderInfo.getUserId());
 
-		} catch (SQLException e) {
-			try {
-				conn.rollback();
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
-			System.out.println("주문 취소 중 오류 발생: " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		} finally {
-			try {
-				conn.setAutoCommit(true);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+	        conn.commit();
+	        System.out.println("주문이 성공적으로 취소되었습니다.");
+	        System.out.println("환불 된 포인트: " + refund + "원");
+	        System.out.println("현재 포인트: " + afterRefundPoint + "원");
+	        
+	        // SSaladinMain 객체의 포인트 값을 업데이트하는 코드
+	        try {
+	            // SSaladinMain 클래스에 있는 getCurrentInstance 정적 메서드를 호출하여 현재 인스턴스를 가져옴
+	            java.lang.reflect.Method getCurrentInstance = Class.forName("kr.ssaladin.SSaladinMain").getMethod("getCurrentInstance");
+	            Object mainInstance = getCurrentInstance.invoke(null);
+	            
+	            if (mainInstance != null) {
+	                // getUserId 메서드 호출하여 현재 로그인한 사용자 ID 가져오기
+	                java.lang.reflect.Method getUserId = mainInstance.getClass().getMethod("getUserId");
+	                String currentUserId = (String) getUserId.invoke(mainInstance);
+	                
+	                // 현재 로그인한 사용자와 주문 취소한 사용자가 같은 경우에만 포인트 업데이트
+	                if (currentUserId != null && currentUserId.equals(orderInfo.getUserId())) {
+	                    // setUserPoint 메서드 호출하여 포인트 업데이트
+	                    java.lang.reflect.Method setUserPoint = mainInstance.getClass().getMethod("setUserPoint", int.class);
+	                    setUserPoint.invoke(mainInstance, afterRefundPoint);
+	                }
+	            }
+	        } catch (Exception e) {
+	            // 리플렉션 에러는 무시하고 로깅만 함 (주요 기능에 영향 없음)
+	            System.out.println("인스턴스에 변경된 포인트 값 전달 중 오류 발생: " + e.getMessage());
+	        }
+	        
+	        return true;
+
+	    } catch (SQLException e) {
+	        try {
+	            conn.rollback();
+	        } catch (SQLException ex) {
+	            ex.printStackTrace();
+	        }
+	        System.out.println("주문 취소 중 오류 발생: " + e.getMessage());
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        try {
+	            conn.setAutoCommit(true);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
+	
 
 	// 재고 복구 메서드
 	private boolean restoreStock(int bookCode, int quantity) throws SQLException {

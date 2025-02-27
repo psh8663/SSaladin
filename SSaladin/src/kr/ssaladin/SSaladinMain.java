@@ -39,7 +39,7 @@ public class SSaladinMain {
 	private ReviewsService reviewsService; // ReviewsService 객체 추가
 	private AdminReviewsService arvService; // AdminReviewsService 객체 추가
 	private AdminRequestService arqService; // AdminRequestService 객체 추가
-	private static SSaladinMain Ssaladinmain;	// SsaladinMain 인스턴스 추가
+	private static SSaladinMain orderInstance;	// SsaladinMain 인스턴스 추가
 
 	public SSaladinMain() {
 		try {
@@ -53,7 +53,7 @@ public class SSaladinMain {
 			requestService = new RequestService(); // RequestService 초기화
 			arvService = new AdminReviewsService(); // AdminReviewsService 초기화
 			arqService = new AdminRequestService(); // AdminRequestService 초기화
-			Ssaladinmain = this;
+			orderInstance = this;
 
 			// 메뉴 호출
 			callMenu();
@@ -407,8 +407,8 @@ public class SSaladinMain {
 
 
 	public static void chargePointFromcart() throws IOException {
-	    if (Ssaladinmain != null) {
-	    	Ssaladinmain.chargePointFromCart();
+	    if (orderInstance != null) {
+	    	orderInstance.chargePointFromCart();
 	    } else {
 	        System.out.println("SSaladinMain 인스턴스가 초기화되지 않았습니다.");
 	    }
@@ -571,6 +571,10 @@ public class SSaladinMain {
 				return;
 			}
 		}
+	}
+	
+	public static SSaladinMain getCurrentInstance() {
+	    return orderInstance;
 	}
 
 	public String getUserId() {
