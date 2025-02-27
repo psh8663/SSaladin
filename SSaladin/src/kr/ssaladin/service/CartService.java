@@ -22,6 +22,8 @@ public class CartService {
 	private BufferedReader br;
 	private SSaladinMain sSaladinMain; // SSaladinMain 참조 추가
 
+
+
 	// 기존 생성자 유지
 	public CartService() throws ClassNotFoundException, SQLException {
 		this.cartDAO = new CartDAO();  
@@ -290,8 +292,9 @@ public class CartService {
 				String choice = br.readLine().trim().toUpperCase();
 
 				if (choice.equals("Y")) {
-					
-					System.out.println("마이페이지 > 포인트 충전 메뉴를 이용해주세요.");
+
+					System.out.println("포인트 충전 화면으로 이동합니다.\n");
+					sSaladinMain.chargePoint();
 				}
 				return;
 			}
@@ -309,7 +312,7 @@ public class CartService {
 				int orderNum = orderService.createOrderFromCart(userId, cartItems, totalAmount);
 
 				if (orderNum > 0) {
-					
+
 					// 주문 성공 시 장바구니 비움
 					clearUserCart(userId);
 					System.out.println("\n주문이 성공적으로 완료되었습니다. 주문번호: " + orderNum);

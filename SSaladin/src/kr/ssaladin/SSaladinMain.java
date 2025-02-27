@@ -335,7 +335,7 @@ public class SSaladinMain {
 	}
 
 	// 포인트 충전 페이지
-	private void chargePoint() throws IOException {
+	public void chargePoint() throws IOException {
 		// 먼저 사용자가 요청한 포인트 충전 내역 출력
 		System.out.println("\n=== 요청한 포인트 충전 내역 ===");
 		List<PointRequest> userRequests = pointRequestService.getUserPointRequests(me_id); // 사용자 충전 요청 목록 가져오기
