@@ -169,11 +169,12 @@ public class SSaladinMain {
 				break;
 			}
 
-			System.out.println("\n=====================================================");
+			System.out.println("\n===============================================================================");
+			System.out.print("\t  \t  ");
 			System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-			System.out.println("=====================================================");
+			System.out.println("===============================================================================");
 
-			System.out.print("1. 상품목록, 2. 마이페이지 , 3. 도서 신청 게시판 , 4. 장바구니 보기, 5. 로그아웃: \n> ");
+			System.out.print("1. 상품목록  |  2. 마이페이지  |  3. 도서 신청 게시판  |  4. 장바구니 보기  |  5. 로그아웃 \n> ");
 			try {
 				int no = Integer.parseInt(br.readLine().trim());
 				if (no == 1) {
