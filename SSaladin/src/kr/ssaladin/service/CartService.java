@@ -298,8 +298,8 @@ public class CartService {
 				if (choice.equals("Y")) {
 
 					System.out.println("포인트 충전 화면으로 이동합니다.\n");
-				    SSaladinMain.chargePointFromcart();
-					
+					SSaladinMain.chargePointFromcart();
+
 					System.out.println("충전 요청이 완료되었습니다. \n");
 				}
 				return;
@@ -345,6 +345,8 @@ public class CartService {
 		}
 	}
 
+
+
 	// 장바구니 상품 수량 변경
 	public void updateCartItemQuantity(String userId) throws IOException {
 		// 장바구니에 담긴 상품의 수량 수정
@@ -356,7 +358,16 @@ public class CartService {
 			System.out.print("수량을 수정할 상품의 도서 코드를 입력하세요: ");
 			int bookCode = Integer.parseInt(br.readLine());
 			System.out.print("새로운 수량을 입력하세요: ");
+
 			int newQuantity = Integer.parseInt(br.readLine());
+
+			int availableStock = getBookStock(bookCode);
+			if (availableStock < newQuantity) {
+				System.out.println("요청하신 수량이 재고보다 많습니다.");
+				System.out.println("현재 재고: " + availableStock + "개");
+				System.out.println("요청 수량: " + newQuantity + "개");
+				return;
+			}
 
 			// 상품 수량 수정
 			boolean success = updateQuantity(userId, bookCode, newQuantity);
@@ -369,6 +380,21 @@ public class CartService {
 			System.out.println("올바른 숫자를 입력해주세요.");
 		} catch (Exception e) {
 			System.out.println("수량 수정 중 오류가 발생했습니다: " + e.getMessage());
+		}
+	}
+
+	// 도서 코드로 재고 확인하는 메서드
+	private int getBookStock(int bookCode) throws SQLException {
+		String sql = "SELECT book_stock FROM books WHERE book_code = ?";
+		Connection conn = null;
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, bookCode);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt("book_stock");
+				}
+				return 0;
+			}
 		}
 	}
 
