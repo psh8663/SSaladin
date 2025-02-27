@@ -161,6 +161,7 @@ public class ReviewsDAO {
 
 	// 게시판 글 작성
 	public void insertReviews(String userId, String bookTitle, String reviewsContent, int rating, int bookCode) {
+		
 
 		try {
 			conn = DBUtil.getConnection();
@@ -296,12 +297,12 @@ public class ReviewsDAO {
 	
 
     // 주문자 id 와 book_code 유효성
-    public boolean checkPermissionBookCode(String userId, int bookCode) {
+    public boolean checkPermissionBookCode(int bookCode) {
     	  try (Connection conn = DBUtil.getConnection();
     	       PreparedStatement pstmt = conn.prepareStatement("SELECT o.book_code FROM order_details o, reviews r WHERE "
     	       		+ "o.book_code=r.book_code AND r.user_id=?")) {
 
-    	      pstmt.setString(1, userId);
+    	      pstmt.setString(1, "user_id");
     	      ResultSet rs = pstmt.executeQuery();
     	      return (rs.next() && (rs.getInt("book_code") == bookCode)) ? true : false;
 

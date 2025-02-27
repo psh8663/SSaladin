@@ -38,29 +38,26 @@ public class ReviewsService {
 
 				} else if (no == 2) { // 리뷰 작성
 					try {
-						boolean flag = false;
 						Connection conn = DBUtil.getConnection();
-						odDao = new Order_detailsDAO(conn);	
-							odDao.getOrderDetailsByUserId(userId);
-							System.out.print("리뷰 작성 할 책의 번호 : ");
-							bookCode = Integer.parseInt(br.readLine());
-								String bookTitle = dao.bookName(bookCode);
-								System.out.println("제목 : " + bookTitle);
-								
-								System.out.print("내용 : ");
-								String reviewsContent = br.readLine();
-								
-								int rating = parseInputRating("평점 : ");
-								dao.insertReviews(userId, bookTitle, reviewsContent, rating, bookCode);
-						
-					} catch (ClassNotFoundException e) {
+						odDao = new Order_detailsDAO(conn);
+						odDao.getOrderDetailsByUserId(userId);
+						System.out.print("리뷰 작성 할 책의 번호 : ");
+						bookCode = Integer.parseInt(br.readLine());
+						if(!dao.checkPermissionBookCode(bookCode)) {
+							System.out.println("책 번호를 확인해 주세요.");
+							return;
+						}
+						String bookTitle = dao.bookName(bookCode);
+						System.out.println("제목 : " + bookTitle);
+
+						System.out.print("내용 : ");
+						String reviewsContent = br.readLine();
+
+						int rating = parseInputRating("평점 : ");
+						dao.insertReviews(userId, bookTitle, reviewsContent, rating, bookCode);
+					} catch (Exception e) {
 						e.printStackTrace();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					} // try_catch
-					
-					
-					 
+					}
 
 				} else if (no == 3) { // 리뷰 수정
 					dao.selectReviews_userId(userId);
