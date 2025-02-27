@@ -79,9 +79,9 @@ public class CartService {
 		// 장바구니 관리
 		boolean cartMenu = true;
 		while (cartMenu) {
-			System.out.println("\n==================================== 장바구니 관리 ======================================");
-			System.out.println("      1. 장바구니 목록, 2. 장바구니 상품 수량 변경, 3. 장바구니 상품 삭제, 4. 구매하기, 5. 뒤로가기: ");
-			System.out.println("---------------------------------------------------------------------------------------");
+			System.out.println("\n――――――――――――――――――――――――――――――――――――――――  장바구니 관리  ――――――――――――――――――――――――――――――――――――――――――");
+			System.out.println("      1. 장바구니 목록     2. 장바구니 상품 수량 변경     3. 장바구니 상품 삭제     4. 구매하기      5. 뒤로가기 ");
+			System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
@@ -219,7 +219,8 @@ public class CartService {
 
 		// 로그인 상태일 때만 장바구니 목록 조회
 		try {
-			System.out.println("==================================== 내 장바구니 목록 ====================================");
+
+			System.out.println("――――――――――――――――――――――――――――――――――――――――― 내 장바구니 목록 ―――――――――――――――――――――――――――――――――――――――――");
 			System.out.println();
 
 			// 장바구니 항목을 가져오기
@@ -234,6 +235,7 @@ public class CartService {
 						"주문번호: " + item.getCartNum() + ", 도서코드: " + item.getBookCode() + ", 도서명: " + item.getBookTitle()
 						+ ", 수량: " + item.getCartQuantity() + ", 가격: " + item.getBookPrice()));
 			}
+			System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
 		} catch (Exception e) {
 			System.out.println("장바구니 목록 조회 중 오류가 발생했습니다: " + e.getMessage());
 		}
@@ -250,11 +252,14 @@ public class CartService {
 			}
 
 			// 장바구니 목록 출력
-			System.out.println("\n==================================== 주문 상품 목록 ====================================");
+
+			System.out.println("\n―――――――――――――――――――――――――――――――――― 주문 상품 목록 ―――――――――――――――――――――――――――――――");
 
 			int totalAmount = 0;
 			System.out.printf("%-10s %-30s %-10s %-10s %-10s\n", "도서코드", "도서명", "수량", "가격", "소계");
-			System.out.println("-".repeat(80));
+			System.out.println("――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
+
+			
 
 			for (CartItem item : cartItems) {
 				int subtotal = item.getBookPrice() * item.getCartQuantity();
@@ -266,7 +271,7 @@ public class CartService {
 						item.getBookPrice(),
 						subtotal);
 			}
-			System.out.println("-".repeat(80));
+			  System.out.println("―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
 			System.out.printf("%-50s 총 금액: %d원\n", "", totalAmount);
 
 			// 재고 확인
@@ -306,7 +311,7 @@ public class CartService {
 			}
 
 			// 주문 확인
-			System.out.println("\n==================================== 주문 확인 ====================================");
+			System.out.println("\n―――――――――――――――――――――――――――――――――― 주문 확인 ――――――――――――――――――――――――――――――――――");
 			System.out.println("총 구매 금액: " + totalAmount + "원");
 			System.out.println("구매 후 잔여 포인트: " + (userPoint - totalAmount) + "원");
 			System.out.print("주문을 확정하시겠습니까? (Y/N): ");
@@ -400,28 +405,28 @@ public class CartService {
 
 	// 장바구니 상품 삭제
 	public void deleteCartItem(String userId) throws IOException {
-		// 장바구니 상품 삭제
-		System.out.println();
-		showCartItems(userId);
-		System.out.println("-".repeat(66));
-		System.out.println();
-		try {
-			System.out.print("장바구니에서 삭제할 주문 번호를 입력하세요: ");
-			int productId = Integer.parseInt(br.readLine());
+	    showCartItems(userId);
+	    System.out.println("\n―――――――――――――――――――――――――――――――― 상품 삭제 ――――――――――――――――――――――――――――――――");
+	    
+	    try {
+	        System.out.print("장바구니에서 삭제할 주문 번호를 입력하세요: ");
+	        int productId = Integer.parseInt(br.readLine());
 
-			// 장바구니에서 상품 삭제
-			boolean success = removeFromCart(productId);
-			if (success) {
-				System.out.println("상품이 장바구니에서 삭제되었습니다.");
-			} else {
-				System.out.println("상품 삭제에 실패했습니다.");
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("올바른 숫자를 입력해주세요.");
-		} catch (Exception e) {
-			System.out.println("상품 삭제 중 오류가 발생했습니다: " + e.getMessage());
-		}
+	        // 장바구니에서 상품 삭제
+	        boolean success = removeFromCart(productId);
+	        if (success) {
+	            System.out.println("상품이 장바구니에서 삭제되었습니다.");
+	        } else {
+	            System.out.println("상품 삭제에 실패했습니다.");
+	        }
+	        System.out.println("―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
+	    } catch (NumberFormatException e) {
+	        System.out.println("올바른 숫자를 입력해주세요.");
+	    } catch (Exception e) {
+	        System.out.println("상품 삭제 중 오류가 발생했습니다: " + e.getMessage());
+	    }
 	}
+
 
 	// 사용자 장바구니 비우기
 	private boolean clearUserCart(String userId) throws ClassNotFoundException {

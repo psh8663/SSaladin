@@ -172,9 +172,10 @@ public class SSaladinMain {
 			System.out.println("\n===============================================================================");
 			System.out.print("\t  \t  ");
 			System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-			System.out.println("===============================================================================");
+			System.out.println("===============================================================================\n");
+			
 
-			System.out.print("1. 상품목록  |  2. 마이페이지  |  3. 도서 신청 게시판  |  4. 장바구니 보기  |  5. 로그아웃 \n> ");
+			System.out.print("1. 상품목록    2. 마이페이지    3. 도서 신청 게시판    4. 장바구니 보기    5. 로그아웃 \n > ");
 			try {
 				int no = Integer.parseInt(br.readLine().trim());
 				if (no == 1) {
@@ -224,12 +225,14 @@ public class SSaladinMain {
 				break;
 			}
 
-			System.out.println("\n=====================================================");
+			System.out.println("\n===============================================================================");
+			System.out.print("\t  \t  ");
 			System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-			System.out.println("=====================================================");
+			System.out.println("===============================================================================\n");
+			
 
-			System.out.println("\n=== 마이페이지 ===");
-			System.out.print("1. 회원정보 수정, 2. 포인트 충전, 3. 장바구니, 4. 주문 현황 조회, 5. 리뷰 관리, 6. 회원 탈퇴, 7. 뒤로가기: ");
+			System.out.println("\n―――――――――――――――――――――――――――――――――――――――――  마이페이지  ―――――――――――――――――――――――――――――――――――――――――――");
+			System.out.print("1. 회원정보 수정    2. 포인트 충전    3. 장바구니    4. 주문 현황 조회    5. 리뷰 관리    6. 회원 탈퇴    7. 뒤로가기 ");
 			try {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
@@ -347,7 +350,7 @@ public class SSaladinMain {
 			System.out.println("충전 요청 내역이 없습니다.");
 		} else {
 			System.out.println("요청번호\t사용자ID\t요청금액\t\t상태\t요청일자");
-			System.out.println("----------------------------------------");
+			System.out.println("――――――――――――――――――――――――――――――――――――――――");
 
 			for (PointRequest request : userRequests) {
 				System.out.printf("%d\t%s\t%-9d\t%s\t%s%n", request.getRequestNum(), request.getUserId(),
@@ -435,9 +438,9 @@ public class SSaladinMain {
 				break;
 			}
 
-			System.out.println("\n=====================================================");
-			System.out.println(me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
-			System.out.println("=====================================================");
+			System.out.println("\n==========================================================================");
+			System.out.println("                  " + me_id + "님 (" + userRole + ") | 보유 포인트: " + this.userPoint + "원");
+			System.out.println("==========================================================================");
 
 			System.out.print("1. 사용자 목록, 2. 도서 상품 관리, 3. 포인트 충전 요청 관리, 4. 리뷰/요청 관리 5. 로그아웃: ");
 			try {
@@ -467,7 +470,7 @@ public class SSaladinMain {
 	private void displayUserList() {
 
 		System.out.println(
-				"\n======================================================== 사용자 목록 ========================================================");
+				"\n=======================================================  사용자 목록  =======================================================\n");
 		List<User> userList = userService.getAllUsers();
 
 		if (userList.isEmpty()) {
@@ -531,7 +534,8 @@ public class SSaladinMain {
 
 	private void managePointRequests() throws IOException {
 		while (true) {
-			System.out.println("\n=== 포인트 충전 요청 관리 ===");
+			System.out.println("\n―――――――――――――――――――――――――――  포인트 충전 요청 관리  ―――――――――――――――――――――――――――");
+//			System.out.println("\n=== 포인트 충전 요청 관리 ===");
 			List<PointRequest> requests = pointRequestService.getAllRequests();
 
 			if (requests.isEmpty()) {
@@ -539,8 +543,9 @@ public class SSaladinMain {
 				break;
 			}
 
-			System.out.println("요청번호\t사용자ID\t요청금액\t\t상태\t요청일자");
-			System.out.println("----------------------------------------");
+			System.out.printf("요청번호\t사용자ID\t요청금액\t\t상태\t요청일자");
+			System.out.println("\n――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――");
+	//		System.out.println("----------------------------------------");
 
 			for (PointRequest request : requests) {
 				System.out.printf("%d\t%s\t%-9d\t%s\t%s%n", request.getRequestNum(), request.getUserId(),
