@@ -25,7 +25,7 @@ public class BookListDAO {
 			rs = pstmt.executeQuery();
 
 			System.out.println("===전체 도서===");
-			System.out.printf("%-10s %-30s %-20s %-10s%n", "도서코드", "도서명", "저자명", "가격");
+			System.out.printf("%s\t%-30s\t%s\t%s%n", "도서코드", "도서명", "저자명", "가격");
 			System.out.println("-".repeat(100));
 			if (rs.next()) {
 				do {
@@ -34,7 +34,7 @@ public class BookListDAO {
 					String bookAuthor = rs.getString(3);
 					String bookPrice = rs.getString(4);
 
-					System.out.printf("%-10d %-30s %-20s %-10s%n", bookCode, bookTitle, bookAuthor, bookPrice);
+					System.out.printf("%s\t%-30s\t%s\t%s%n", bookCode, bookTitle, bookAuthor, bookPrice);
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 도서가 없습니다.");
