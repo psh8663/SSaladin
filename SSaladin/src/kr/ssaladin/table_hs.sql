@@ -25,8 +25,3 @@ CREATE TABLE point_requests (
     CONSTRAINT chk_request_status CHECK (request_status IN (1, 2, 3))
 );
 
-CREATE SEQUENCE seq_pointuse_num
-START WITH 1
-INCREMENT BY 1
-NOCACHE
-NOCYCLE;
