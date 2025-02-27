@@ -34,7 +34,7 @@ public class SSaladinMain {
 	private CartService cartService;
 	private OrderService orderService;
 	private BookListService bookListService;
-	private PointRequestService pointRequestService; //
+	private PointRequestService pointRequestService; 
 	private RequestService requestService; // RequestService 객체 추가
 	private ReviewsService reviewsService; // ReviewsService 객체 추가
 	private AdminReviewsService arvService; // AdminReviewsService 객체 추가

@@ -174,8 +174,6 @@ public class CartService {
 			// DBUtil 이용해서 connection 수행
 			conn = DBUtil.getConnection();
 
-			// 장바구니 목록을 다시 조회 (ex. 장바구니 변경or 삭제 후 장바구니를 조회할 때) 시
-			//  Connection 을 다시 연결
 			if(conn == null || conn.isClosed() ) {
 				conn = DBUtil.getConnection();
 			}
@@ -427,7 +425,7 @@ public class CartService {
 	    }
 	}
 
-
+ 
 	// 사용자 장바구니 비우기
 	private boolean clearUserCart(String userId) throws ClassNotFoundException {
 		Connection conn = null;
