@@ -357,6 +357,7 @@ public class SSaladinMain {
 						request.getPointAmount(), pointRequestService.getStatusString(request.getRequestStatus()),
 						request.getRequestDate());
 			}
+		}
 
 			// 그 후에 충전할 금액을 입력 받음
 			System.out.println("충전할 금액을 입력하세요: ");
@@ -380,7 +381,7 @@ public class SSaladinMain {
 				System.out.println("포인트 충전 중 오류가 발생했습니다: " + e.getMessage());
 			}
 		}
-	}
+	
 	
 	// 충전 금액 입력부터 시작. cartService에서 사용
 	public void chargePointFromCart() throws IOException {
