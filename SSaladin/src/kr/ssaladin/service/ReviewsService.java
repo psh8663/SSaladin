@@ -41,14 +41,9 @@ public class ReviewsService {
 						boolean flag = false;
 						Connection conn = DBUtil.getConnection();
 						odDao = new Order_detailsDAO(conn);	
-						while(!flag) {
 							odDao.getOrderDetailsByUserId(userId);
 							System.out.print("리뷰 작성 할 책의 번호 : ");
 							bookCode = Integer.parseInt(br.readLine());
-							if(!dao.checkPermissionBookCode(userId, bookCode)) {
-								System.out.println("=".repeat(50));
-								System.out.println("책 번호를 확인해 주세요.");
-							} else {
 								String bookTitle = dao.bookName(bookCode);
 								System.out.println("제목 : " + bookTitle);
 								
@@ -57,9 +52,6 @@ public class ReviewsService {
 								
 								int rating = parseInputRating("평점 : ");
 								dao.insertReviews(userId, bookTitle, reviewsContent, rating, bookCode);
-								flag = true;
-							}
-						} // while
 						
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();

@@ -28,23 +28,23 @@ public class ReviewsDAO {
 			sql = "SELECT * FROM reviews r, users u, books b "
 					+ "WHERE r.user_id = u.user_id AND r.book_title = b.book_title";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.executeUpdate();
+			//pstmt.executeUpdate();
 			rs = pstmt.executeQuery();
 			
-			System.out.println("=".repeat(100));
+			System.out.println("=".repeat(80));
 
 			if (rs.next()) {
-				System.out.printf("%-9s %-18s %-19s %-10s%n", "번호", "등록일", "닉네임", "도서명");
-				System.out.println("-".repeat(100));
+				System.out.printf("%-5s %-12s %-15s %-10s%n", "번호", "등록일", "닉네임", "도서명");
+				System.out.println("-".repeat(80));
 				do {
-					System.out.printf("%-10s %-20s %-20s %-10s%n", 
-							rs.getInt("review_num"), rs.getDate("reg_date"), rs.getString("user_id"), rs.getString("book_title"), rs.getDate("reg_date"));
+					System.out.printf("%-5s %-15s %-16s %-10s%n", 
+							rs.getInt("review_num"), rs.getDate("reg_date"), rs.getString("user_id"), rs.getString("book_title"));
 				} while (rs.next());
 			} else {
 				System.out.println("등록된 게시글이 없습니다.");
 			} // if
 
-			System.out.println("=".repeat(100));
+			System.out.println("=".repeat(80));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -307,9 +307,7 @@ public class ReviewsDAO {
 
     	  } catch (Exception e) {
     	      e.printStackTrace();
-    	  } finally {
-			DBUtil.executeClose(rs, pstmt, conn);
-		}
+    	  }
     	  return false;
     	}
     
