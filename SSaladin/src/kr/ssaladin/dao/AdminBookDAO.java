@@ -50,8 +50,9 @@ public class AdminBookDAO {
 	public boolean checkCategory(int categoryNum) throws SQLException, ClassNotFoundException {
 	    String sql = "SELECT COUNT(*) FROM categories WHERE category_num = ?";
 	    
-	    try (Connection conn = DBUtil.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	    try {
+	    	conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
 	        
 	        pstmt.setInt(1, categoryNum);  
 	        try (ResultSet rs = pstmt.executeQuery()) {
@@ -61,6 +62,8 @@ public class AdminBookDAO {
 	        }
 	    } catch (SQLException e) {
 	        System.out.println("카테고리 목록에서 선택하세요.");
+	    }finally {
+	    	DBUtil.executeClose(null, pstmt, conn);
 	    }
 	    
 	    return false;  
@@ -110,6 +113,8 @@ public class AdminBookDAO {
 
 		} catch (SQLException e) {
 			System.out.println("추가실패");
+		}finally {
+			DBUtil.executeClose(null, pstmt, conn);
 		}
 		return 0; // 실패 시 0 반환
 	}
@@ -161,7 +166,6 @@ public class AdminBookDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			// 자원정리
 			DBUtil.executeClose(null, pstmt, conn);
 		}
 	}
@@ -183,7 +187,6 @@ public class AdminBookDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			// 자원 정리
 			DBUtil.executeClose(null, pstmt, conn);
 		}
 	}
@@ -191,8 +194,9 @@ public class AdminBookDAO {
 	public boolean checkStock(int bookCode, int orderQuantity) throws SQLException, ClassNotFoundException {
 		String sql = "SELECT book_stock FROM books WHERE book_code = ?";
 
-		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+		try {
+			conn = DBUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, bookCode);
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
@@ -208,6 +212,8 @@ public class AdminBookDAO {
 					return false;
 				}
 			}
+		}finally {
+			DBUtil.executeClose(null, pstmt, conn);
 		}
 		return true; // 재고가 충분한 경우
 	}
