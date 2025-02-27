@@ -160,12 +160,10 @@ public class ReviewsDAO {
 					System.out.println("제목 : " + rs.getString("book_title"));
 					System.out.println("내용 : " + rs.getString("reviews_content"));
 					System.out.println("평점 : " + rs.getInt("rating"));
-					System.out.println("등록일" + rs.getDate("reg_date"));
+					System.out.println("등록일 : " + rs.getDate("reg_date"));
 					System.out.println("=".repeat(100));
 				} while (rs.next());
-			} else {
-				System.out.println("등록된 게시글이 없습니다.");
-			} // if
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -306,7 +304,7 @@ public class ReviewsDAO {
 
 	
 	// 작성자 및 관리자 유효성 검사
-	private boolean checkPermission(String userId, int reviewNum) {
+	public boolean checkPermission(String userId, int reviewNum) {
 //		try {
 //			conn = DBUtil.getConnection();
 //			sql = "SELECT u.user_id FROM reviews r, users u "
