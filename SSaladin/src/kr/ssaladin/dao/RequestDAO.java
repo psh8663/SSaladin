@@ -28,13 +28,6 @@ public class RequestDAO {
 				System.out.printf("%-9s %-18s %-19s %-10s%n", "번호", "등록일", "닉네임", "내용");
 				System.out.println("-".repeat(100));
 				do {
-//					System.out.print(rs.getInt("request_num"));
-//					System.out.print("\t");
-//					System.out.print(rs.getString("user_id"));
-//					System.out.print("\t");
-//					System.out.print(rs.getString("request_content"));
-//					System.out.print("\t");
-//					System.out.println(rs.getDate("request_date"));
 					System.out.printf("%-10s %-20s %-20s %-10s%n", 
 							rs.getInt("request_num"), rs.getDate("request_date"), rs.getString("user_id"), rs.getString("request_content"));
 				} while (rs.next());
