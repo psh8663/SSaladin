@@ -34,7 +34,10 @@ public class ReviewsService {
 					dao.selectReviews_userId(userId);
 					System.out.print("확인 할 리뷰 번호 : ");
 					reviewNum = Integer.parseInt(br.readLine());
-					dao.detailSelectRivews_reviewNum(reviewNum);
+					if (!dao.checkPermission(userId, reviewNum)) {
+						System.out.println("리뷰 번호를 확인해 주세요.");
+						return;
+					} else dao.detailSelectRivews_reviewNum(reviewNum);
 
 				} else if (no == 2) { // 리뷰 작성
 					try {
@@ -63,6 +66,7 @@ public class ReviewsService {
 					dao.selectReviews_userId(userId);
 					System.out.print("수정할 리뷰글의 번호 : ");
 					reviewNum = Integer.parseInt(br.readLine());
+					
 					int count = dao.checkReviews(reviewNum);
 
 					if (count == 1) {
