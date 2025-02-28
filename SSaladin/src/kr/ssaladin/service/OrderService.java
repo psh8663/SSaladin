@@ -55,36 +55,52 @@ public class OrderService {
 
 	// 장바구니에서 주문 생성
 	public int createOrderFromCart(String userId, List<CartItem> items, int totalAmount) throws ClassNotFoundException {
-		try {
-			conn.setAutoCommit(false); // 트랜잭션 시작
-
-			// 재고 확인
-			if (!checkStock(items)) {conn.rollback();
-			return -1;
-			}
-
-			// 주문 생성
-			int orderNum = createOrderTransaction(userId, totalAmount, OrderStatus.PROCESSING);
-			if (orderNum == -1) {conn.rollback();
-			return -1;
-			}
-
-			// 주문 상세 정보 생성 및 재고 업데이트
-			if (!createOrderDetails(orderNum, items)) {conn.rollback();
-			return -1;
-			}
-
-			// 포인트 차감
-			if (!updateUserPoint(userId, -totalAmount)) {conn.rollback();
-			return -1;
-			} 
-			conn.commit();
-			System.out.println("주문이 성공적으로 완료되었습니다. 주문번호: " + orderNum);
-			return orderNum;
-
-		} catch (SQLException e) {handleTransactionError(e);
-		return -1;
-		} finally {resetAutoCommit();}
+	    boolean originalAutoCommit = false;
+	    
+	    try {
+	        // 현재 autoCommit 상태 저장
+	        originalAutoCommit = conn.getAutoCommit();  
+	        // 트랜잭션 시작
+	        conn.setAutoCommit(false);	      
+	        // 재고 확인
+	        if (!checkStock(items)) {conn.rollback();
+	            return -1;
+	        }       
+	        // 주문 생성
+	        int orderNum = createOrderTransaction(userId, totalAmount, OrderStatus.PROCESSING);
+	        if (orderNum == -1) {conn.rollback();
+	            return -1;
+	        }	        
+	        // 주문 상세 정보 생성 및 재고 업데이트
+	        if (!createOrderDetails(orderNum, items)) {conn.rollback();
+	            return -1;
+	        }	        
+	        // 포인트 차감
+	        if (!ordersDAO.updateUserPoint(userId, -totalAmount)) {conn.rollback();
+	            return -1;
+	        }
+	        
+	        conn.commit();
+	        System.out.println("주문이 성공적으로 완료되었습니다. 주문번호: " + orderNum);
+	        return orderNum;
+	        
+	    } catch (SQLException e) {
+	        try {
+	            if (conn != null) {
+	                conn.rollback();
+	            }
+	        } catch (SQLException ex) {
+	            System.out.println("롤백 중 오류 발생: " + ex.getMessage());
+	        }
+	        System.out.println("주문 처리 중 오류 발생: " + e.getMessage());
+	        return -1;
+	    } finally {
+	        try {
+	            if (conn != null) {conn.setAutoCommit(originalAutoCommit);
+	            }
+	        } catch (SQLException e) {System.out.println("AutoCommit 설정 복원 중 오류: " + e.getMessage());
+	        }
+	    }
 	}
 
 	// 직접 주문 생성
@@ -107,7 +123,7 @@ public class OrderService {
 			}
 
 			// 포인트 차감
-			if (!updateUserPoint(userId, -orderTotal)) {conn.rollback();
+			if (!ordersDAO.updateUserPoint(userId, -orderTotal)) {conn.rollback();
 			return false;
 			}
 
@@ -232,15 +248,15 @@ public class OrderService {
 			return false;
 			}
 			// 환불 전 포인트 조회
-			int beforeRefundPoint = getUserCurrentPoint(orderInfo.getUserId());
+			int beforeRefundPoint = ordersDAO.getUserCurrentPoint(orderInfo.getUserId());
 			// 사용자 포인트 환불
 			int refund = orderInfo.getOrderTotal();
-			if (!updateUserPoint(orderInfo.getUserId(), refund)) {System.out.println("포인트 환불에 실패했습니다.");
+			if (!ordersDAO.updateUserPoint(orderInfo.getUserId(), refund)) {System.out.println("포인트 환불에 실패했습니다.");
 			conn.rollback();
 			return false;
 			}
 			// 환불 후 포인트 조회
-			int afterRefundPoint = getUserCurrentPoint(orderInfo.getUserId());     
+			int afterRefundPoint = ordersDAO.getUserCurrentPoint(orderInfo.getUserId());     
 			conn.commit();
 			System.out.println("주문이 성공적으로 취소되었습니다.");
 			System.out.println("환불 된 포인트: " + refund + "원");
@@ -276,13 +292,14 @@ public class OrderService {
 	// 도서 재고 복구
 	private boolean restoreOrderStock(List<OrderDetailInfo> details) throws SQLException {
 		for (OrderDetailInfo detail : details) {
-			boolean stockUpdated = restoreStock(detail.getBookCode(), detail.getOrderQuantity());
+			boolean stockUpdated =
+					ordersDAO.restoreStock(detail.getBookCode(), detail.getOrderQuantity());
 			if (!stockUpdated) {
 				System.out.println("재고 복구에 실패했습니다.");
 				return false;
 			}
 			// 도서 상태 업데이트 (품절 -> 판매중)
-			updateBookStatusAfterCancel(detail.getBookCode());
+			ordersDAO.updateBookStatusAfterCancel(detail.getBookCode());
 		}
 		return true;
 	}
@@ -308,7 +325,7 @@ public class OrderService {
 		} catch (Exception e) {System.out.println("인스턴스에 변경된 포인트 값 전달 중 오류 발생: " + e.getMessage());
 		}
 	}
-
+/*
 	// 사용자의 현재 포인트 조회
 	private int getUserCurrentPoint(String userId) throws SQLException {
 		String sql = "SELECT user_point FROM users WHERE user_id = ?";
@@ -329,7 +346,9 @@ public class OrderService {
 			return pstmt.executeUpdate() > 0;
 		}
 	}
+	*/
 
+	/*
 	// 재고 복구 메서드
 	private boolean restoreStock(int bookCode, int quantity) throws SQLException {
 		String sql = "UPDATE books SET book_stock = book_stock + ? WHERE book_code = ?";
@@ -348,6 +367,7 @@ public class OrderService {
 			return pstmt.executeUpdate() > 0;
 		}
 	}
+	*/
 
 	// 주문 상태 변경
 	public boolean updateOrderStatus(int orderNum, int newStatus) {
@@ -380,29 +400,19 @@ public class OrderService {
 
 	// 주문 정보 조회
 	public OrderInfo getOrderInfo(int orderNum) {
-		OrderInfo orderInfo = new OrderInfo();
-		try {
-			// 주문 기본 정보 조회
-			try (ResultSet orderRs = ordersDAO.getOrder(orderNum)) {
-				if (orderRs.next()) {
-					orderInfo.setOrderNum(orderRs.getInt("order_num"));
-					orderInfo.setUserId(orderRs.getString("user_id"));
-					orderInfo.setOrderTotal(orderRs.getInt("order_total"));
-					orderInfo.setOrderStatus(orderRs.getInt("order_status"));
-					orderInfo.setOrderDate(orderRs.getDate("order_date"));
-				} else {
-					return null; // 주문 정보가 없음
-				}
-			}
-
-			// 주문 상세 정보 조회
-			orderInfo.setOrderDetails(getOrderDetailsByOrderNum(orderNum));
-
-		} catch (SQLException e) {System.out.println("주문 정보 조회 중 오류 발생: " + e.getMessage());
-			e.printStackTrace();
-			return null;
-		}
-		return orderInfo;
+	    try {
+	        OrderInfo orderInfo = ordersDAO.getOrderInfo(orderNum);
+	        
+	        if (orderInfo != null) {
+	            // 주문 상세 정보 조회
+	            orderInfo.setOrderDetails(getOrderDetailsByOrderNum(orderNum));
+	        }
+	        
+	        return orderInfo;
+	    } catch (SQLException e) {
+	        System.out.println("주문 정보 조회 중 오류 발생: " + e.getMessage());
+	        return null;
+	    }
 	}
 
 	// 사용자의 주문 목록 조회
@@ -431,6 +441,7 @@ public class OrderService {
 		return orderList;
 	}
 
+	/*
 	// 관리자용: 모든 주문 목록 조회
 	public List<OrderInfo> getAllOrders() {
 		List<OrderInfo> orderList = new ArrayList<>();
@@ -455,6 +466,7 @@ public class OrderService {
 		}
 		return orderList;
 	}
+	*/
 
 	// 주문번호로 상세 정보 조회
 	private List<OrderDetailInfo> getOrderDetailsByOrderNum(int orderNum) {
@@ -512,7 +524,7 @@ public class OrderService {
 	// 관리자용: 모든 주문 내역 출력
 	public void displayAllOrders() {
 		try {
-			List<OrderInfo> orders = getAllOrders();
+			List<OrderInfo> orders = ordersDAO.getAllOrders();
 
 			if (orders == null || orders.isEmpty()) {System.out.println("주문 내역이 없습니다.");
 				return;

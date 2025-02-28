@@ -43,7 +43,7 @@ public class Order_detailsDAO {
         return pstmt.executeQuery();
     }
     
-    // 주문별 상세 목록 조회 (수정: o -> od로 변경)
+    // 주문별 상세 목록 조회 
     public ResultSet getOrderDetails(int orderNum) throws SQLException {
         sql = "SELECT od.*, b.book_title " +
              "FROM order_details od " +
