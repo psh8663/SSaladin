@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import kr.util.DBUtil;
 
@@ -16,9 +18,11 @@ public class BookListDAO {
 	private String sql = null;
 
 	// 전체 도서 목록 보기
-	public void selectBook() {
+	public List<Integer> selectBook() {
+		List<Integer> validBookCodes = new ArrayList<>();
 		try {
 			conn = DBUtil.getConnection();
+			
 			sql = "SELECT book_code, book_title, '(' || book_author || ')', CONCAT(book_price, '원') AS book_price FROM BOOKS "
 					+ "WHERE book_status IN (0, 1)";
 			pstmt = conn.prepareStatement(sql);
@@ -29,6 +33,7 @@ public class BookListDAO {
 			System.out.println("-".repeat(100));
 			if (rs.next()) {
 				do {
+					validBookCodes.add(rs.getInt("book_code"));
 					int bookCode = rs.getInt(1);
 					String bookTitle = rs.getString(2);
 					String bookAuthor = rs.getString(3);
@@ -45,6 +50,7 @@ public class BookListDAO {
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
+		return validBookCodes;
 	}
 
 	// 조회하는 도서코드가 유효한지 여부 체크
@@ -106,7 +112,8 @@ public class BookListDAO {
 	}
 
 	// 도서검색(제목)
-	public void selectBookByTitle(String title) {
+	public List<Integer> selectBookByTitle(String title) {
+		List<Integer> validBookCodes = new ArrayList<>();
 		try {
 			conn = DBUtil.getConnection();
 			sql = "SELECT * FROM books b JOIN categories c ON b.category_num = c.category_num "
@@ -119,6 +126,7 @@ public class BookListDAO {
 			boolean found = false;
 			while (rs.next()) {
 				found = true;
+				validBookCodes.add(rs.getInt("book_code"));
 				System.out.println("도서코드 : " + rs.getInt("book_code"));
 				System.out.println("카테고리명 : " + rs.getString("category_name"));
 				System.out.println("도서명 : " + rs.getString("book_title"));
@@ -135,6 +143,7 @@ public class BookListDAO {
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
+		return validBookCodes;
 	}
 
 	// 카테고리 조회
@@ -158,7 +167,8 @@ public class BookListDAO {
 	}
 
 	// 카테고리내 도서 조회
-	public void selectBooksByCategory(int categoryNum) {
+	public List<Integer> selectBooksByCategory(int categoryNum) {
+		List<Integer> validBookCodes = new ArrayList<>();
 		try {
 			conn = DBUtil.getConnection();
 			sql = "SELECT c.category_name, b.book_code, b.book_title, b.book_author, b.book_price "
@@ -176,6 +186,7 @@ public class BookListDAO {
 					categoryName = rs.getString("category_name");
 					System.out.println("=== " + categoryName + " 카테고리의 도서 목록 ===");
 				}
+				validBookCodes.add(rs.getInt("book_code"));
 				found = true;
 				System.out.println("도서코드: " + rs.getInt("book_code"));
 				System.out.println("도서명: " + rs.getString("book_title"));
@@ -192,10 +203,12 @@ public class BookListDAO {
 		} finally {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
+		return validBookCodes;
 	}
 
 	// 베스트셀러 도서
-	public void selectBestSeller() throws SQLException, ClassNotFoundException {
+	public List<Integer> selectBestSeller() throws SQLException, ClassNotFoundException {
+		List<Integer> validBookCodes = new ArrayList<>();
 		try {
 			String sql = "SELECT * FROM (" + "    SELECT ROWNUM AS ranking, t.*" + "    FROM ("
 					+ "        SELECT b.book_code, b.book_title, b.book_author, b.book_price, SUM(od.order_quantity) AS total_quantity"
@@ -210,6 +223,7 @@ public class BookListDAO {
 			System.out.println("-".repeat(100));
 			System.out.println("=== 베스트셀러 도서 ===");
 			while (rs.next()) {
+				validBookCodes.add(rs.getInt("book_code"));
 				System.out.println("순위: " + rs.getInt("ranking"));
 				System.out.println("도서 코드: " + rs.getInt("book_code"));
 				System.out.println("도서명: " + rs.getString("book_title"));
@@ -223,6 +237,7 @@ public class BookListDAO {
 	    } finally {
 			DBUtil.executeClose(rs, pstmt, conn);
 		}
+		return validBookCodes;
 	}
 
 	public int getBookPrice(int bookCode) throws SQLException, ClassNotFoundException {

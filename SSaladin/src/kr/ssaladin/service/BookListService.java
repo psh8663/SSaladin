@@ -51,33 +51,69 @@ public class BookListService {
 				int no = Integer.parseInt(br.readLine());
 				if (no == 1) {
 					// 전체 도서 목록 조회
-					dao.selectBook();
-					System.out.print("도서코드 선택: ");
-					int num = Integer.parseInt(br.readLine());
-					showBookDetails(num);
+					List<Integer> validBookCodes = dao.selectBook();
+					int num;
+				    while (true) {
+				        System.out.print("도서코드 선택: ");
+				        num = Integer.parseInt(br.readLine());
+
+				        if (validBookCodes.contains(num)) {
+				            showBookDetails(num);
+				            break; // 올바른 도서 코드 선택 시 루프 탈출
+				        } else {
+				            System.out.println("목록중에서 선택해야 합니다. 다시 입력하세요.");
+				        }
+				    }
 				} else if (no == 2) {
 					// 도서 제목 검색 기능
 					System.out.print("검색할 도서 제목 입력: ");
 					String title = br.readLine();
-					dao.selectBookByTitle(title);
-					System.out.print("도서코드 선택: ");
-					int num = Integer.parseInt(br.readLine());
-					showBookDetails(num);
+					List<Integer> validBookCodes = dao.selectBookByTitle(title);
+					int num;
+				    while (true) {
+				        System.out.print("도서코드 선택: ");
+				        num = Integer.parseInt(br.readLine());
+
+				        if (validBookCodes.contains(num)) {
+				            showBookDetails(num);
+				            break; // 올바른 도서 코드 선택 시 루프 탈출
+				        } else {
+				            System.out.println("목록중에서 선택해야 합니다. 다시 입력하세요.");
+				        }
+				    }
 				} else if (no == 3) {
 					// 카테고리별 도서 검색
 					dao.selectCategories(); // 카테고리 목록 출력
 					System.out.print("조회할 카테고리 번호 선택: ");
 					int categoryNum = Integer.parseInt(br.readLine());
-					dao.selectBooksByCategory(categoryNum); // 해당 카테고리의 도서 출력
-					System.out.print("도서코드 선택: ");
-					int num = Integer.parseInt(br.readLine());
-					showBookDetails(num);
+					List<Integer> validBookCodes = dao.selectBooksByCategory(categoryNum); // 해당 카테고리의 도서 출력
+					int num;
+					while (true) {
+				        System.out.print("도서코드 선택: ");
+				        num = Integer.parseInt(br.readLine());
+
+				        if (validBookCodes.contains(num)) {
+				            showBookDetails(num);
+				            break; // 올바른 도서 코드 선택 시 루프 탈출
+				        } else {
+				            System.out.println("목록중에서 선택해야 합니다. 다시 입력하세요.");
+				        }
+				    }
 				} else if (no == 4) {
 					// 베스트셀러 도서 조회
-					dao.selectBestSeller(); // 베스트셀러 도서 조회
-					System.out.print("도서코드 선택: ");
-					int num = Integer.parseInt(br.readLine());
-					showBookDetails(num);
+					List<Integer> validBookCodes = dao.selectBestSeller(); // 베스트셀러 도서 조회
+					int num;
+					while (true) {
+				        System.out.print("도서코드 선택: ");
+				        num = Integer.parseInt(br.readLine());
+
+				        if (validBookCodes.contains(num)) {
+				            showBookDetails(num);
+				            break; // 올바른 도서 코드 선택 시 루프 탈출
+				        } else {
+				            System.out.println("목록중에서 선택해야 합니다. 다시 입력하세요.");
+				        }
+				    }
 				} else if (no == 6) {
 					break;
 				} else {
